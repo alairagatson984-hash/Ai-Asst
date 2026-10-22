@@ -1,0 +1,72 @@
+{
+  "date": "2026-10-22",
+  "example": true,
+  "updatedAt": "2026-10-22T05:40:00-07:00",
+  "verdict": {
+    "headline": "1 A-grade and 1 B-grade setup",
+    "reason": "EUR/USD broke H1 support with displacement and is retesting it from below. USD/JPY broke its double-top neckline but follow-through was weak. Jobless Claims at 5:30 is out, so both setups have requalified."
+  },
+  "calendar": [
+    { "time": "05:30", "currency": "USD", "event": "Initial Jobless Claims", "impact": "high" },
+    { "time": "07:00", "currency": "USD", "event": "Existing Home Sales", "impact": "high" }
+  ],
+  "levels": [
+    { "id": "eu-1", "pair": "EUR_USD", "price": 1.12300, "tf": "H1", "label": "H1 support (broken)" },
+    { "id": "eu-2", "pair": "EUR_USD", "price": 1.11900, "tf": "H1", "label": "H1 support" },
+    { "id": "uj-1", "pair": "USD_JPY", "price": 157.400, "tf": "M15", "label": "Double-top neckline (broken)" },
+    { "id": "uj-2", "pair": "USD_JPY", "price": 156.800, "tf": "H1", "label": "H1 support" },
+    { "id": "gu-1", "pair": "GBP_USD", "price": 1.34000, "tf": "H1", "label": "H1 resistance" },
+    { "id": "au-1", "pair": "AUD_USD", "price": 0.70000, "tf": "H1", "label": "Round-number support" }
+  ],
+  "setups": [
+    {
+      "id": "s1",
+      "pair": "EUR_USD",
+      "direction": "short",
+      "pattern": "clean-br",
+      "levelId": "eu-1",
+      "tpLevelId": "eu-2",
+      "entry": 1.12280,
+      "sl": 1.12430,
+      "tp": 1.11900,
+      "checks": { "close": true, "displacement": true, "followThrough": true, "structure": true, "retest": true },
+      "trigger": { "type": "engulfing", "note": "Bearish engulfing on the M15 retest of 1.1230" },
+      "news": { "status": "requalified", "note": "USD Jobless Claims 5:30 released; retest still holding" },
+      "notes": "SL 2 pips above the retest swing at 1.1241. TP at the next H1 support."
+    },
+    {
+      "id": "s2",
+      "pair": "USD_JPY",
+      "direction": "short",
+      "pattern": "double-top-bottom",
+      "levelId": "uj-1",
+      "tpLevelId": "uj-2",
+      "entry": 157.380,
+      "sl": 157.620,
+      "tp": 156.800,
+      "checks": { "close": true, "displacement": true, "followThrough": false, "structure": true, "retest": true },
+      "trigger": { "type": "pinbar", "note": "Upper-wick rejection on the M5 retest of the neckline" },
+      "news": { "status": "requalified", "note": "USD Jobless Claims 5:30 released" },
+      "notes": "Follow-through stalled after the break, so this is B, not A."
+    }
+  ],
+  "watchlist": [
+    { "pair": "GBP_USD", "level": 1.34000, "missing": "Broke above, but no candle trigger on the retest yet" },
+    { "pair": "AUD_USD", "level": 0.70000, "missing": "Next S/R only gives 1.4R" }
+  ],
+  "newsBlocks": [],
+  "watchFor": [
+    "GBP/USD: a bullish engulfing or pin bar on the 1.3400 retest would make it a B.",
+    "Existing Home Sales at 7:00 blocks USD pairs until it's released."
+  ],
+  "review": {
+    "writtenAt": "2026-10-22T14:15:00-07:00",
+    "planVsOutcome": [
+      { "setupId": "s1", "result": "Example: triggered at 6:20, hit TP at 9:05", "r": 2.5 },
+      { "setupId": "s2", "result": "Example: never retested the neckline; expired at 2:00", "r": null }
+    ],
+    "mistakes": ["Example: none. Both setups were handled by the rules."],
+    "lessons": ["Example: weak follow-through (USD/JPY) often means the retest never comes."],
+    "gradingAudit": "Example: the A held up. The B correctly flagged weak follow-through."
+  }
+}

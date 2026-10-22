@@ -1,13 +1,23 @@
 # Ai-Asst
 
-A personal London/NY-overlap forex trading dashboard ("TruLux Analytics"). Claude updates it every trading morning with evidence-graded break-and-retest setups on the 7 majors.
+TruLux Analytics: a personal London/NY-overlap forex dashboard. Claude updates it every trading morning with evidence-graded break-and-retest setups on the 7 majors.
 
-## What's here
-- `docs/index.html`: the live markets page, served by GitHub Pages at https://alairagatson984-hash.github.io/Ai-Asst/ (TradingView chart, calendar, tiles, currency strength, and the OANDA practice connection).
-- `strategy/RULES.md`: the trading rules every setup is graded against (grades, R:R, risk, news filter).
-- `strategy/patterns.md`: the 7-pattern library.
-- `reference/`: the design references the dashboard is modeled on.
+**Live site:** https://alairagatson984-hash.github.io/Ai-Asst/
 
-Your OANDA token is never stored in this repo. The live page keeps it only in your browser.
+## Tabs
+- **Today's Plan**: verdict, A/B setup cards with live status and 2% position sizes, C watchlist, red-folder events.
+- **Markets**: live majors, 28-pair currency strength since the Asian open, an OANDA chart with your editable levels, the economic calendar.
+- **Calculator**: units and lots at your risk %, R:R check, room left before the daily limit.
+- **Journal / Analytics**: your OANDA practice trades, auto-matched to the plan, with stats by grade, pattern, pair and discipline.
+- **Patterns**: the 7-pattern playbook with your stats.
+- **Daily Review**: Claude's write-up after setups expire.
+- **Settings**: OANDA practice token (saved in your browser only), risk rules, session times.
 
-The plan, journal and review dashboard and the daily routines are still being built.
+## Files
+- `docs/`: the site (GitHub Pages serves `main` from `/docs`).
+- `docs/data/days/`: one JSON file per trading day, written by Claude. `docs/data/index.json` lists them.
+- `strategy/RULES.md`, `strategy/patterns.md`: the rules every setup is graded against.
+- `routines/`: the morning-build and daily-review checklists Claude follows.
+- `reference/`: the design references.
+
+The repo is public. Tokens, account IDs, balances and screenshots are never committed.

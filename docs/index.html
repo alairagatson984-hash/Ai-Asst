@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TruLux Live Markets</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>TruLux Analytics</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-  /* Layout: slim top bar, OANDA connection strip, then a 2-column grid of live panels that stacks on phones. */
+  /* Layout: sidebar nav + one visible tab panel (TruLux template). On phones the sidebar becomes a scrolling tab row. */
   :root {
     --bg: #0b0809;
     --panel: #151012;
@@ -18,6 +18,7 @@
     --muted: #a8949a;
     --rose: #e98aa6;
     --rose-deep: #b8506f;
+    --on-rose: #2a0e17;
     --up: #3fcf8e;
     --down: #ef5a6f;
     --warn: #f0b44c;
@@ -33,271 +34,1059 @@
       radial-gradient(1200px 500px at 85% -10%, rgba(233,138,166,.10), transparent 60%),
       radial-gradient(900px 400px at -10% 110%, rgba(184,80,111,.10), transparent 60%),
       var(--bg);
+    background-attachment: fixed;
     color: var(--fg);
     font: 14px/1.5 var(--body);
     min-height: 100vh;
   }
-  .wrap {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding-block: 20px 40px;
+  [hidden] { display: none !important; }
+  .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  .muted { color: var(--muted); }
+  .up { color: var(--up); } .down { color: var(--down); } .warn { color: var(--warn); }
+  a { color: var(--rose); }
+
+  header.top {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px;
+    padding-block: 16px 14px;
     padding-left: max(16px, env(safe-area-inset-left, 0px));
     padding-right: max(16px, env(safe-area-inset-right, 0px));
-    display: grid;
-    gap: 16px;
-  }
-  header {
-    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px;
-    border-bottom: 1px solid var(--line); padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
   }
   .brand { display: grid; line-height: 1; }
-  .brand b { font: 600 34px/1 var(--display); letter-spacing: .01em; color: var(--fg); }
-  .brand small { font-size: 10px; letter-spacing: .42em; color: var(--rose); margin-top: 4px; text-transform: uppercase; }
-  .clock { display: flex; gap: 18px; flex-wrap: wrap; font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .brand b { font: 600 32px/1 var(--display); letter-spacing: .01em; }
+  .brand small { font-size: 9px; letter-spacing: .42em; color: var(--rose); margin-top: 5px; text-transform: uppercase; }
+  .clock { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; font-family: var(--mono); font-size: 12px; color: var(--muted); }
   .clock strong { color: var(--fg); font-weight: 500; }
-  .pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; border: 1px solid var(--line); background: var(--panel-2); }
+
+  .pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font: 500 11px var(--body); letter-spacing: .06em; text-transform: uppercase; border: 1px solid var(--line); background: var(--panel-2); color: var(--fg); white-space: nowrap; }
   .pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--muted); }
-  .pill.live::before { background: var(--up); box-shadow: 0 0 8px var(--up); }
-  .pill.off::before { background: var(--down); }
+  .pill.live::before, .pill.good::before { background: var(--up); box-shadow: 0 0 8px var(--up); }
+  .pill.off::before, .pill.bad::before { background: var(--down); }
   .pill.wait::before { background: var(--warn); }
 
+  .app { display: grid; grid-template-columns: 210px minmax(0, 1fr); min-height: calc(100vh - 70px); }
+  nav.side { border-right: 1px solid var(--line); padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
+  nav.side a { display: block; padding: 9px 12px; border-radius: 8px; color: var(--muted); text-decoration: none; font-weight: 500; }
+  nav.side a:hover { color: var(--fg); background: var(--panel); }
+  nav.side a[aria-current="page"] { background: var(--rose); color: var(--on-rose); }
+  nav.side .motto { margin-top: auto; padding: 18px 8px 4px; font-size: 9px; letter-spacing: .38em; text-transform: uppercase; color: var(--rose-deep); line-height: 2; text-align: center; }
+  main {
+    padding-block: 20px 48px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    min-width: 0;
+  }
+  @media (max-width: 820px) {
+    .app { grid-template-columns: minmax(0, 1fr); }
+    nav.side { flex-direction: row; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--line); padding: 8px max(16px, env(safe-area-inset-left, 0px)); }
+    nav.side a { white-space: nowrap; }
+    nav.side .motto { display: none; }
+  }
+
+  section.tab { display: grid; gap: 16px; max-width: 1280px; }
+  .tab-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 16px; }
+  .tab-head h1 { margin: 0; font: 600 34px/1.05 var(--display); text-wrap: balance; }
+  .tab-head p { margin: 0; color: var(--muted); }
+
   .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; min-width: 0; }
-  .panel h2 { margin: 0 0 12px; font: 600 22px/1.1 var(--display); text-wrap: balance; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .panel h2 { margin: 0 0 12px; font: 600 21px/1.15 var(--display); display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; text-wrap: balance; }
   .panel h2 span { font: 400 12px var(--body); color: var(--muted); }
+  .label { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .grid2 { display: grid; gap: 16px; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+  .grid-even { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  @media (max-width: 1000px) { .grid2 { grid-template-columns: minmax(0, 1fr); } }
 
-  .grid { display: grid; gap: 16px; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
-  @media (max-width: 900px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+  .notice { border: 1px solid var(--line); border-left: 3px solid var(--warn); background: var(--panel-2); border-radius: 8px; padding: 10px 14px; color: var(--fg); }
+  .notice.bad { border-left-color: var(--down); }
+  .notice.info { border-left-color: var(--rose); }
+  #plan-notices { display: grid; gap: 8px; }
+  #plan-notices:empty { display: none; }
 
-  /* OANDA connection */
-  .conn { display: grid; gap: 12px; }
-  .conn form { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; }
-  .field { display: grid; gap: 4px; flex: 1 1 220px; min-width: 0; }
-  .field label { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
-  input {
+  .verdict { display: grid; gap: 6px; padding: 20px; border-radius: 12px; border: 1px solid var(--line);
+    background: linear-gradient(135deg, rgba(233,138,166,.16), rgba(233,138,166,.02) 60%), var(--panel); }
+  .verdict.none { background: var(--panel); }
+  .verdict h2 { margin: 0; font: 600 30px/1.1 var(--display); text-wrap: balance; }
+  .verdict p { margin: 0; max-width: 75ch; }
+  .verdict .meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+  .cards { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
+  .cards:empty { display: none; }
+  @media (max-width: 400px) { .cards { grid-template-columns: minmax(0, 1fr); } }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: grid; gap: 12px; align-content: start; min-width: 0; }
+  .card.dim { opacity: .62; }
+  .card-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .card-top .pair { font: 600 20px var(--body); }
+  .dir { font: 600 11px var(--body); letter-spacing: .1em; text-transform: uppercase; padding: 3px 8px; border-radius: 6px; }
+  .dir.long { background: rgba(63,207,142,.15); color: var(--up); }
+  .dir.short { background: rgba(239,90,111,.15); color: var(--down); }
+  .grade { margin-left: auto; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; font: 600 18px var(--display); border: 1px solid var(--line); }
+  .grade.A { background: var(--rose); color: var(--on-rose); border-color: var(--rose); }
+  .grade.B { color: var(--rose); border-color: var(--rose); }
+  .grade.C { color: var(--muted); }
+  .prices { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .prices div { background: var(--panel-2); border-radius: 8px; padding: 8px; display: grid; gap: 2px; min-width: 0; }
+  .prices b { font: 500 14px var(--mono); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+  @media (max-width: 400px) { .prices { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .sizing { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; }
+  .sizing b { font-family: var(--mono); font-weight: 500; }
+  .checks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 12px; margin: 0; padding: 0; list-style: none; font-size: 13px; }
+  .checks li { display: flex; gap: 6px; align-items: baseline; }
+  .checks li::before { content: "✕"; color: var(--down); font-size: 11px; width: 12px; }
+  .checks li.ok::before { content: "✓"; color: var(--up); }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag { font-size: 12px; padding: 2px 8px; border-radius: 6px; background: var(--panel-2); border: 1px solid var(--line); color: var(--muted); }
+  .card .note { margin: 0; font-size: 13px; color: var(--muted); }
+
+  .watch-row { display: grid; grid-template-columns: 90px 90px minmax(0, 1fr); gap: 12px; padding: 9px 0; border-top: 1px solid var(--line); align-items: baseline; }
+  .watch-row:first-child { border-top: 0; }
+  @media (max-width: 520px) { .watch-row { grid-template-columns: 80px minmax(0, 1fr); } .watch-row .why { grid-column: 1 / -1; } }
+  ul.plain { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+
+  .cal { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .cal td, .cal th { padding: 8px 6px; border-top: 1px solid var(--line); text-align: left; vertical-align: baseline; }
+  .cal th { font-weight: 500; color: var(--muted); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; border-top: 0; }
+
+  .tiles { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+  .tile { background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px 0; display: grid; gap: 1px; overflow: hidden; }
+  .tile .sym { font-size: 12px; color: var(--muted); }
+  .tile .px { font: 500 19px var(--mono); font-variant-numeric: tabular-nums; }
+  .tile .chg { font: 12px var(--mono); }
+  .tile svg { display: block; width: calc(100% + 24px); max-width: none; margin: 6px -12px 0; height: 46px; }
+  .strength { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+  .scard { background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; display: grid; gap: 2px; }
+  .scard .cur { font-weight: 600; }
+  .scard .val { font: 500 18px var(--mono); }
+  .rankbar { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; margin-bottom: 12px; }
+  .rankbar:empty { display: none; }
+  .rankbar div { text-align: center; padding: 8px 0; border-radius: 6px; font: 600 12px var(--mono); }
+  .chart-box { height: 460px; position: relative; }
+  @media (max-width: 600px) { .chart-box { height: 340px; } }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .seg button { background: transparent; color: var(--muted); border: 0; border-radius: 0; padding: 6px 12px; font: 500 12px var(--body); }
+  .seg button[aria-pressed="true"] { background: var(--rose); color: var(--on-rose); }
+  .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px; }
+  .levels-edit { display: grid; gap: 8px; margin-top: 12px; }
+  .lvl-row { display: grid; grid-template-columns: minmax(0, 1fr) 130px auto; gap: 10px; align-items: center; }
+  .tv-cal { height: 520px; }
+
+  input, select {
     background: var(--panel-2); border: 1px solid var(--line); color: var(--fg); border-radius: 8px;
-    padding: 9px 11px; font: 13px var(--mono); width: 100%;
+    padding: 9px 11px; font: 13px var(--mono); width: 100%; min-width: 0;
   }
-  input:focus-visible, button:focus-visible { outline: 2px solid var(--rose); outline-offset: 2px; }
-  button {
-    background: var(--rose); color: #2a0e17; border: 0; border-radius: 8px; padding: 10px 16px;
-    font: 600 13px var(--body); cursor: pointer;
-  }
+  input:disabled { color: var(--muted); }
+  input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid var(--rose); outline-offset: 2px; }
+  button { background: var(--rose); color: var(--on-rose); border: 0; border-radius: 8px; padding: 10px 16px; font: 600 13px var(--body); cursor: pointer; }
   button.ghost { background: transparent; color: var(--muted); border: 1px solid var(--line); }
+  button.small { padding: 5px 10px; font-size: 12px; }
   button:hover { filter: brightness(1.08); }
-  .msg { font-size: 13px; color: var(--muted); }
-  .msg.err { color: var(--down); }
-  .msg.ok { color: var(--up); }
+  .form { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); align-items: end; }
+  .field { display: grid; gap: 4px; min-width: 0; }
+  .field label { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .out { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+  .out div { background: var(--panel-2); border-radius: 8px; padding: 10px 12px; display: grid; gap: 2px; }
+  .out b { font: 500 20px var(--mono); font-variant-numeric: tabular-nums; }
+  #calc-warn { display: grid; gap: 8px; margin-top: 12px; }
+  #calc-warn:empty { display: none; }
 
-  /* OANDA live quotes */
-  .quotes { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
-  .q { background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; display: grid; gap: 2px; }
-  .q .sym { font-size: 12px; color: var(--muted); letter-spacing: .04em; }
-  .q .px { font: 500 18px var(--mono); font-variant-numeric: tabular-nums; }
-  .q .sp { font: 11px var(--mono); color: var(--muted); }
-  .q.up .px { color: var(--up); }
-  .q.down .px { color: var(--down); }
+  .scroll { overflow-x: auto; }
+  table.data { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 900px; }
+  table.data th, table.data td { padding: 9px 8px; border-top: 1px solid var(--line); text-align: left; white-space: nowrap; }
+  table.data th { font-weight: 500; color: var(--muted); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; border-top: 0; }
+  table.data td.num { text-align: right; }
+  .chip { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+  .chip.won { background: rgba(63,207,142,.15); color: var(--up); }
+  .chip.lost { background: rgba(239,90,111,.15); color: var(--down); }
+  .chip.be { background: var(--panel-2); color: var(--muted); }
+  .chip.on { background: rgba(233,138,166,.18); color: var(--rose); }
+  .chip.offp { background: rgba(240,180,76,.15); color: var(--warn); }
 
-  .tv { min-height: 120px; }
-  .tv-chart { height: 560px; }
-  .tv-cal { height: 560px; }
-  .tv-heat { height: 380px; }
-  @media (max-width: 600px) { .tv-chart, .tv-cal { height: 460px; } }
+  .kpis { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+  .kpis:empty { display: none; }
+  .kpis div { background: var(--panel-2); border-radius: 10px; padding: 12px; display: grid; gap: 2px; }
+  .kpis b { font: 500 22px var(--mono); font-variant-numeric: tabular-nums; }
+  .bars { display: grid; gap: 8px; }
+  .bar-row { display: grid; grid-template-columns: 120px minmax(0, 1fr) 130px; gap: 10px; align-items: center; font-size: 13px; }
+  @media (max-width: 460px) { .bar-row { grid-template-columns: 100px minmax(0, 1fr); } .bar-row .mono { grid-column: 1 / -1; } }
+  .bar-track { height: 10px; background: var(--panel-2); border-radius: 5px; overflow: hidden; }
+  .bar-fill { height: 100%; background: var(--rose); border-radius: 5px; }
+  .eq svg { width: 100%; height: 220px; display: block; }
 
-  footer { text-align: center; font-size: 10px; letter-spacing: .4em; text-transform: uppercase; color: var(--muted); padding-top: 8px; }
+  .pcard svg { width: 100%; height: auto; display: block; background: var(--panel-2); border-radius: 8px; }
+  .pcard h3 { margin: 0; font: 600 20px var(--display); }
+  .pcard .fam { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--rose); }
+  .pstats { display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px; }
+  .pstats b { font-family: var(--mono); font-weight: 500; }
+  .review-block { display: grid; gap: 8px; }
+  .review-block h3 { margin: 0; font: 600 18px var(--display); }
+
+  footer.foot { text-align: center; font-size: 10px; letter-spacing: .4em; text-transform: uppercase; color: var(--muted); padding: 24px 16px 32px; }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <div class="brand"><b>TruLux</b><small>Live Markets</small></div>
-    <div class="clock">
-      <span>PT <strong id="clk-pt">--:--</strong></span>
-      <span>London <strong id="clk-ldn">--:--</strong></span>
-      <span>New York <strong id="clk-ny">--:--</strong></span>
-      <span id="sess" class="pill">Session</span>
-    </div>
-  </header>
+<header class="top">
+  <div class="brand"><b>TruLux</b><small>Trade · Analyze · Grow</small></div>
+  <div class="clock">
+    <span>PT <strong id="clk-pt">--:--</strong></span>
+    <span>London <strong id="clk-ldn">--:--</strong></span>
+    <span>New York <strong id="clk-ny">--:--</strong></span>
+    <span id="sess" class="pill">Session</span>
+    <span id="oanda-pill" class="pill wait">OANDA not connected</span>
+  </div>
+</header>
 
-  <section class="panel conn" aria-labelledby="conn-h">
-    <h2 id="conn-h">OANDA practice connection <span id="conn-state" class="pill wait">Not connected</span></h2>
-    <form id="conn-form">
-      <div class="field">
-        <label for="acct">Account ID</label>
-        <input id="acct" autocomplete="off" placeholder="101-001-1234567-001">
+<div class="app">
+  <nav class="side" aria-label="Dashboard sections">
+    <a href="#plan">Today's Plan</a>
+    <a href="#markets">Markets</a>
+    <a href="#calculator">Calculator</a>
+    <a href="#journal">Journal</a>
+    <a href="#analytics">Analytics</a>
+    <a href="#patterns">Patterns</a>
+    <a href="#review">Daily Review</a>
+    <a href="#setup">Settings</a>
+    <div class="motto">Discipline<br>creates<br>freedom</div>
+  </nav>
+
+  <main>
+    <section class="tab" id="tab-plan">
+      <div class="tab-head"><h1>Today's Plan</h1><p id="plan-date"></p></div>
+      <div id="plan-notices"></div>
+      <div id="verdict"></div>
+      <div class="cards" id="cards"></div>
+      <div class="grid2">
+        <div class="panel"><h2>Watchlist <span>C grade, not a trade yet</span></h2><div id="watchlist"></div></div>
+        <div class="panel"><h2>Red-folder events <span>PT</span></h2><div id="plan-cal"></div></div>
       </div>
-      <div class="field">
-        <label for="tok">Practice API token</label>
-        <input id="tok" type="password" autocomplete="off" placeholder="Paste your demo token">
+      <div class="panel" id="watchfor-panel"><h2>What to watch for</h2><div id="watchfor"></div></div>
+    </section>
+
+    <section class="tab" id="tab-markets" hidden>
+      <div class="tab-head"><h1>Markets</h1><p>Live from your OANDA practice feed</p></div>
+      <div class="panel">
+        <h2>Majors <span>change since the Asian open, 4:00pm PT</span></h2>
+        <div class="tiles" id="tiles"></div>
       </div>
-      <button type="submit">Connect</button>
-      <button type="button" class="ghost" id="forget">Forget token</button>
-    </form>
-    <p class="msg" id="conn-msg">Your token is saved only in this browser. It never goes into the repo or to Claude. Use a <strong>practice</strong> account token.</p>
-    <div class="quotes" id="quotes" hidden></div>
-  </section>
+      <div class="panel">
+        <h2>Currency strength <span>average move across 28 pairs since the Asian open</span></h2>
+        <div class="rankbar" id="rankbar"></div>
+        <div class="strength" id="strength"></div>
+      </div>
+      <div class="panel">
+        <h2>Chart <span>OANDA candles with your levels and today's setups</span></h2>
+        <div class="toolbar">
+          <select id="chart-pair" aria-label="Pair" style="width:auto"></select>
+          <div class="seg" id="chart-tf" role="group" aria-label="Timeframe">
+            <button type="button" data-tf="M5" aria-pressed="false">M5</button>
+            <button type="button" data-tf="M15" aria-pressed="true">M15</button>
+            <button type="button" data-tf="H1" aria-pressed="false">H1</button>
+          </div>
+          <a id="tv-link" href="https://www.tradingview.com/chart/?symbol=OANDA:EURUSD" target="_blank" rel="noopener">Open in TradingView ↗</a>
+        </div>
+        <div class="chart-box" id="chart"></div>
+        <div class="levels-edit" id="levels-edit"></div>
+      </div>
+      <div class="grid2">
+        <div class="panel"><h2>Economic calendar <span>TradingView, high impact, 8 currencies</span></h2><div class="tv-cal" id="tv-cal"></div></div>
+        <div class="panel"><h2>Today's red-folder <span>from Claude's plan</span></h2><div id="mk-cal"></div></div>
+      </div>
+    </section>
 
-  <section class="grid">
-    <div class="panel">
-      <h2>Chart <span>TradingView · OANDA feed</span></h2>
-      <div class="tv tv-chart" id="tv-chart"></div>
-    </div>
-    <div class="panel">
-      <h2>Economic calendar <span>high impact · your 7 majors</span></h2>
-      <div class="tv tv-cal" id="tv-cal"></div>
-    </div>
-  </section>
+    <section class="tab" id="tab-calculator" hidden>
+      <div class="tab-head"><h1>Position Size</h1><p id="calc-sub"></p></div>
+      <div class="panel">
+        <form class="form" id="calc-form">
+          <div class="field"><label for="c-pair">Pair</label><select id="c-pair"></select></div>
+          <div class="field"><label for="c-entry">Entry</label><input id="c-entry" inputmode="decimal" placeholder="1.12280"></div>
+          <div class="field"><label for="c-sl">Stop loss</label><input id="c-sl" inputmode="decimal" placeholder="1.12430"></div>
+          <div class="field"><label for="c-tp">Take profit (optional)</label><input id="c-tp" inputmode="decimal" placeholder="1.11900"></div>
+          <div class="field"><label for="c-bal">Balance</label><input id="c-bal" inputmode="decimal" placeholder="From OANDA"></div>
+        </form>
+      </div>
+      <div class="panel">
+        <div class="out" id="calc-out"></div>
+        <div id="calc-warn"></div>
+      </div>
+    </section>
 
-  <section class="grid">
-    <div class="panel">
-      <h2>Majors <span>live tiles</span></h2>
-      <div class="tv" id="tv-tiles"></div>
-    </div>
-    <div class="panel">
-      <h2>Currency strength <span>heat map</span></h2>
-      <div class="tv tv-heat" id="tv-heat"></div>
-    </div>
-  </section>
+    <section class="tab" id="tab-journal" hidden>
+      <div class="tab-head"><h1>Journal</h1><p>OANDA demo trades, matched to your plans</p></div>
+      <div id="journal-notice"></div>
+      <div class="panel"><div class="scroll"><table class="data" id="journal-table"></table></div></div>
+    </section>
 
-  <footer>Strategy turns information into opportunity</footer>
+    <section class="tab" id="tab-analytics" hidden>
+      <div class="tab-head"><h1>Analytics</h1><p>From your closed OANDA trades</p></div>
+      <div id="an-notice"></div>
+      <div class="kpis" id="an-kpis"></div>
+      <div class="panel eq"><h2>Equity curve <span>realized P/L</span></h2><div id="an-eq"></div></div>
+      <div class="grid-even">
+        <div class="panel"><h2>By grade <span>win rate · avg R</span></h2><div class="bars" id="an-grade"></div></div>
+        <div class="panel"><h2>By pattern <span>win rate · avg R</span></h2><div class="bars" id="an-pattern"></div></div>
+        <div class="panel"><h2>By pair <span>win rate · avg R</span></h2><div class="bars" id="an-pair"></div></div>
+        <div class="panel"><h2>Discipline</h2><div class="bars" id="an-disc"></div></div>
+      </div>
+    </section>
+
+    <section class="tab" id="tab-patterns" hidden>
+      <div class="tab-head"><h1>Patterns</h1><p>Your playbook, with your stats from the journal</p></div>
+      <div class="cards" id="patterns"></div>
+    </section>
+
+    <section class="tab" id="tab-review" hidden>
+      <div class="tab-head"><h1>Daily Review</h1><select id="rv-date" aria-label="Day" style="width:auto"></select></div>
+      <div id="review" style="display:grid;gap:16px"></div>
+    </section>
+
+    <section class="tab" id="tab-setup" hidden>
+      <div class="tab-head"><h1>Settings</h1><p>Saved only in this browser</p></div>
+      <div class="panel">
+        <h2>OANDA practice account <span id="conn-state" class="pill wait">Not connected</span></h2>
+        <form class="form" id="conn-form">
+          <div class="field"><label for="acct">Account ID</label><input id="acct" autocomplete="off" placeholder="101-001-1234567-001"></div>
+          <div class="field"><label for="tok">Practice API token</label><input id="tok" type="password" autocomplete="off" placeholder="Paste your demo token"></div>
+          <button type="submit">Connect</button>
+          <button type="button" class="ghost" id="forget">Forget token</button>
+        </form>
+        <p class="muted" id="conn-msg" style="margin:12px 0 0">Your token stays in this browser and is only sent to OANDA. Use a practice-account token.</p>
+      </div>
+      <div class="panel">
+        <h2>Risk rules <span>defaults from strategy/RULES.md</span></h2>
+        <form class="form" id="risk-form">
+          <div class="field"><label for="s-risk">Risk per trade %</label><input id="s-risk" inputmode="decimal"></div>
+          <div class="field"><label for="s-limit">Daily loss limit %</label><input id="s-limit" inputmode="decimal"></div>
+          <div class="field"><label for="s-rr">Minimum R:R (1:x)</label><input id="s-rr" inputmode="decimal"></div>
+          <div class="field"><label for="s-buffer">SL buffer (pips)</label><input id="s-buffer"></div>
+          <div class="field"><label for="s-atentry">"At entry" within (pips)</label><input id="s-atentry" inputmode="decimal"></div>
+          <div class="field"><label for="s-match">Trade matching (pips)</label><input id="s-match" inputmode="decimal"></div>
+          <div class="field"><label for="s-news">News block before (min)</label><input id="s-news" inputmode="decimal"></div>
+        </form>
+      </div>
+      <div class="panel">
+        <h2>Session times <span>Pacific time</span></h2>
+        <form class="form" id="sess-form">
+          <div class="field"><label for="s-asia">Asian range</label><input id="s-asia" disabled></div>
+          <div class="field"><label for="s-start">Window starts</label><input id="s-start" type="time"></div>
+          <div class="field"><label for="s-expiry">Setups expire</label><input id="s-expiry" type="time"></div>
+          <div class="field"><label for="s-days">Trading days</label><input id="s-days" disabled></div>
+        </form>
+      </div>
+      <div class="panel">
+        <h2>Pairs</h2>
+        <p class="muted" style="margin:0">EUR/USD · GBP/USD · USD/JPY · USD/CHF · AUD/USD · USD/CAD · NZD/USD</p>
+      </div>
+      <div class="panel">
+        <h2>Level edits</h2>
+        <p class="muted" style="margin:0 0 10px">Levels you adjust on the chart are saved in this browser for that day.</p>
+        <button type="button" class="ghost" id="reset-levels">Reset today's level edits</button>
+      </div>
+    </section>
+  </main>
 </div>
+<footer class="foot">Strategy turns information into opportunity</footer>
 
+<script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
 <script>
 (function () {
-  const PAIRS = ["EUR_USD", "GBP_USD", "USD_JPY", "USD_CHF", "AUD_USD", "USD_CAD", "NZD_USD"];
-  const TV = PAIRS.map(p => "OANDA:" + p.replace("_", ""));
+  "use strict";
+
+  // ================= constants =================
   const API = "https://api-fxpractice.oanda.com/v3";
+  const MAJORS = ["EUR_USD", "GBP_USD", "USD_JPY", "USD_CHF", "AUD_USD", "USD_CAD", "NZD_USD"];
+  const CURRENCIES = ["USD", "EUR", "GBP", "JPY", "CHF", "AUD", "CAD", "NZD"];
+  const ALL28 = ["EUR_USD","EUR_GBP","EUR_JPY","EUR_CHF","EUR_AUD","EUR_CAD","EUR_NZD",
+    "GBP_USD","GBP_JPY","GBP_CHF","GBP_AUD","GBP_CAD","GBP_NZD",
+    "AUD_USD","AUD_JPY","AUD_CHF","AUD_CAD","AUD_NZD",
+    "NZD_USD","NZD_JPY","NZD_CHF","NZD_CAD",
+    "USD_JPY","USD_CHF","USD_CAD","CAD_JPY","CAD_CHF","CHF_JPY"];
+  const CHECKS = [["close", "Close beyond level"], ["displacement", "Displacement"], ["followThrough", "Follow-through"], ["structure", "M5 structure break"], ["retest", "Retest holds"]];
+  const PATTERN_NAMES = { "clean-br": "Clean break & retest", "asian-range": "Asian range B&R", "head-shoulders": "Head & shoulders", "double-top-bottom": "Double top / bottom", "flag-pennant": "Flag / pennant" };
+  const TRIGGER_NAMES = { engulfing: "Engulfing", pinbar: "Pin bar / rejection" };
+  const DEFAULTS = { risk: 2, limit: 4, rr: 2, buffer: "2-3", atEntry: 3, match: 10, news: 30, start: "06:00", expiry: "14:00" };
 
-  // ---------- clocks + session pill ----------
-  const fmt = tz => new Intl.DateTimeFormat("en-US", { timeZone: tz, hour: "2-digit", minute: "2-digit", hour12: false });
-  const fPT = fmt("America/Los_Angeles"), fLDN = fmt("Europe/London"), fNY = fmt("America/New_York");
-  function tick() {
-    const now = new Date();
-    document.getElementById("clk-pt").textContent = fPT.format(now);
-    document.getElementById("clk-ldn").textContent = fLDN.format(now);
-    document.getElementById("clk-ny").textContent = fNY.format(now);
-    const [h, m] = fPT.format(now).split(":").map(Number);
-    const mins = h * 60 + m;
-    const day = new Intl.DateTimeFormat("en-US", { timeZone: "America/Los_Angeles", weekday: "short" }).format(now);
-    const s = document.getElementById("sess");
-    if (day === "Fri" || day === "Sat") { s.textContent = "No trading today"; s.className = "pill off"; }
-    else if (mins >= 360 && mins < 840 && day !== "Sun") { s.textContent = "Trading window"; s.className = "pill live"; }
-    else if (mins >= 300 && mins < 360 && day !== "Sun") { s.textContent = "Plan build"; s.className = "pill wait"; }
-    else { s.textContent = "Outside window"; s.className = "pill"; }
-  }
-  tick(); setInterval(tick, 15000);
-
-  // ---------- TradingView widgets ----------
-  function tvWidget(id, file, config) {
-    const host = document.getElementById(id);
-    const box = document.createElement("div");
-    box.className = "tradingview-widget-container";
-    box.style.height = "100%";
-    const inner = document.createElement("div");
-    inner.className = "tradingview-widget-container__widget";
-    inner.style.height = "100%";
-    box.appendChild(inner);
-    const sc = document.createElement("script");
-    sc.src = "https://s3.tradingview.com/external-embedding/" + file;
-    sc.async = true;
-    sc.textContent = JSON.stringify(config);
-    box.appendChild(sc);
-    host.appendChild(box);
-  }
-  const base = { colorTheme: "dark", isTransparent: true, locale: "en" };
-  tvWidget("tv-chart", "embed-widget-advanced-chart.js", Object.assign({}, base, {
-    autosize: true, symbol: "OANDA:EURUSD", interval: "15", timezone: "America/Los_Angeles",
-    style: "1", allow_symbol_change: true, watchlist: TV, withdateranges: true, hide_side_toolbar: false,
-    support_host: "https://www.tradingview.com"
-  }));
-  tvWidget("tv-cal", "embed-widget-events.js", Object.assign({}, base, {
-    width: "100%", height: "100%", importanceFilter: "0,1", countryFilter: "us,eu,gb,jp,ch,ca,au,nz"
-  }));
-  tvWidget("tv-tiles", "embed-widget-market-quotes.js", Object.assign({}, base, {
-    width: "100%", height: 420, showSymbolLogo: true,
-    symbolsGroups: [{ name: "Majors", symbols: TV.map(s => ({ name: s })) }]
-  }));
-  tvWidget("tv-heat", "embed-widget-forex-heat-map.js", Object.assign({}, base, {
-    width: "100%", height: "100%", currencies: ["EUR", "USD", "JPY", "GBP", "CHF", "AUD", "CAD", "NZD"]
-  }));
-
-  // ---------- OANDA practice connection ----------
+  // ================= helpers =================
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const pipOf = p => p.endsWith("JPY") ? 0.01 : 0.0001;
+  const digitsOf = p => p.endsWith("JPY") ? 3 : 5;
+  const fx = (p, v) => v == null || isNaN(v) ? "—" : Number(v).toFixed(digitsOf(p));
+  const pairName = p => p.replace("_", "/");
+  const money = (v, cur) => v == null || isNaN(v) ? "—" : (v < 0 ? "−" : "") + (!cur || cur === "USD" ? "$" : "") + Math.abs(v).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + (cur && cur !== "USD" ? " " + cur : "");
+  const signed = (v, d = 2) => v == null || isNaN(v) ? "—" : (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(d);
   const store = {
-    get(k) { try { return localStorage.getItem(k) || ""; } catch (e) { return ""; } },
-    set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
+    get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
     del(k) { try { localStorage.removeItem(k); } catch (e) {} }
   };
-  const acctEl = document.getElementById("acct"), tokEl = document.getElementById("tok");
-  const msg = document.getElementById("conn-msg"), state = document.getElementById("conn-state");
-  const quotesEl = document.getElementById("quotes");
-  acctEl.value = store.get("oanda_acct");
-  tokEl.value = store.get("oanda_tok");
-  let timer = null, last = {};
+  // The first live page saved these as plain strings; read both shapes.
+  const legacy = k => { try { const v = localStorage.getItem(k); if (v == null) return ""; try { return JSON.parse(v); } catch (e) { return v; } } catch (e) { return ""; } };
 
-  function setState(text, cls) { state.textContent = text; state.className = "pill " + cls; }
-  function setMsg(text, cls) { msg.textContent = text; msg.className = "msg " + (cls || ""); }
+  // ---------- Pacific time ----------
+  const ptFmt = new Intl.DateTimeFormat("en-US", { timeZone: "America/Los_Angeles", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23", weekday: "short" });
+  function pt(d) {
+    const o = {};
+    for (const p of ptFmt.formatToParts(d)) o[p.type] = p.value;
+    return { y: +o.year, m: +o.month, d: +o.day, h: +o.hour, mi: +o.minute, wd: o.weekday, date: o.year + "-" + o.month + "-" + o.day, mins: (+o.hour) * 60 + (+o.minute) };
+  }
+  function ptToUtc(dateStr, h, mi) {
+    const [y, m, d] = dateStr.split("-").map(Number);
+    const want = Date.UTC(y, m - 1, d, h, mi);
+    let t = want;
+    for (let i = 0; i < 3; i++) { const p = pt(new Date(t)); t += want - Date.UTC(p.y, p.m - 1, p.d, p.h, p.mi); }
+    return new Date(t);
+  }
+  function addDays(dateStr, n) { const [y, m, d] = dateStr.split("-").map(Number); return new Date(Date.UTC(y, m - 1, d + n)).toISOString().slice(0, 10); }
+  const hm = s => { const [h, m] = String(s).split(":").map(Number); return h * 60 + (m || 0); };
+  const fmtHM = mins => { let h = Math.floor(mins / 60); const m = mins % 60, ap = h >= 12 ? "pm" : "am"; h = h % 12 || 12; return h + ":" + String(m).padStart(2, "0") + ap; };
+  const longDate = s => new Date(s + "T12:00:00Z").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", timeZone: "UTC" });
+  function asianOpen() { const n = pt(new Date()); return ptToUtc(n.mins >= 960 ? n.date : addDays(n.date, -1), 16, 0); }
 
-  async function poll(acct, tok) {
-    const r = await fetch(API + "/accounts/" + encodeURIComponent(acct) + "/pricing?instruments=" + PAIRS.join(","), {
-      headers: { Authorization: "Bearer " + tok }
-    });
-    if (!r.ok) {
-      const body = await r.text().catch(() => "");
-      throw Object.assign(new Error("HTTP " + r.status), { status: r.status, body });
-    }
+  // ================= settings + state =================
+  let S = Object.assign({}, DEFAULTS, store.get("settings", {}));
+  const saveSettings = () => store.set("settings", S);
+  const state = {
+    index: [], days: {}, today: null,
+    acct: legacy("oanda_acct"), tok: legacy("oanda_tok"),
+    connected: false, account: null,
+    prices: {}, baseline: {}, spark: {},
+    closed: [], open: [], failed: {}
+  };
+
+  // ================= data files =================
+  async function loadData() {
+    try {
+      const idx = await (await fetch("data/index.json", { cache: "no-store" })).json();
+      state.index = (idx.days || []).slice().sort();
+      await Promise.all(state.index.map(async d => {
+        try { state.days[d] = await (await fetch("data/days/" + d + ".json", { cache: "no-store" })).json(); } catch (e) {}
+      }));
+    } catch (e) { state.index = []; }
+  }
+  const levelOverrides = date => store.get("lvl:" + date, {});
+  function levelsFor(day) {
+    const ov = levelOverrides(day.date), map = {};
+    for (const l of day.levels || []) map[l.id] = Object.assign({}, l, { orig: l.price, price: ov[l.id] != null ? ov[l.id] : l.price, edited: ov[l.id] != null });
+    return map;
+  }
+
+  // Recompute a setup from its (possibly edited) levels and the grading rules.
+  function derive(s, day) {
+    const lv = levelsFor(day);
+    const L = s.levelId && lv[s.levelId];
+    const entry = L && L.edited ? s.entry + (L.price - L.orig) : s.entry;
+    const T = s.tpLevelId && lv[s.tpLevelId];
+    const tp = T ? T.price : s.tp;
+    const sl = s.sl;
+    const risk = Math.abs(entry - sl), rr = risk > 0 ? Math.abs(tp - entry) / risk : 0;
+    const ok = CHECKS.filter(([k]) => s.checks && s.checks[k]).length;
+    const trig = !!(s.trigger && s.trigger.type);
+    const failed = !!state.failed[s.id];
+    const grade = failed ? "C" : trig && ok === 5 ? "A" : trig && ok === 4 ? "B" : "C";
+    const sane = s.direction === "long" ? (sl < entry && tp > entry) : (sl > entry && tp < entry);
+    return { s, entry, sl, tp, rr, ok, trig, grade, failed, sane, rrOK: rr >= S.rr - 1e-9, edited: !!((L && L.edited) || (T && T.edited)) };
+  }
+
+  // ================= OANDA =================
+  async function oanda(path) {
+    const r = await fetch(API + path, { headers: { Authorization: "Bearer " + state.tok, "Accept-Datetime-Format": "RFC3339" } });
+    if (!r.ok) throw Object.assign(new Error("OANDA " + r.status), { status: r.status });
     return r.json();
   }
-
-  function render(prices) {
-    quotesEl.hidden = false;
-    quotesEl.innerHTML = "";
-    for (const p of prices) {
+  const acctPath = () => "/accounts/" + encodeURIComponent(state.acct);
+  async function pollPrices() {
+    const d = await oanda(acctPath() + "/pricing?instruments=" + MAJORS.join(","));
+    for (const p of d.prices) {
       const bid = parseFloat(p.bids[0].price), ask = parseFloat(p.asks[0].price);
-      const mid = (bid + ask) / 2;
-      const pip = p.instrument.endsWith("JPY") ? 0.01 : 0.0001;
-      const dir = last[p.instrument] == null ? "" : mid > last[p.instrument] ? "up" : mid < last[p.instrument] ? "down" : "";
-      last[p.instrument] = mid;
-      const el = document.createElement("div");
-      el.className = "q " + dir;
-      const digits = p.instrument.endsWith("JPY") ? 3 : 5;
-      el.innerHTML = '<span class="sym"></span><span class="px"></span><span class="sp"></span>';
-      el.querySelector(".sym").textContent = p.instrument.replace("_", "/");
-      el.querySelector(".px").textContent = mid.toFixed(digits);
-      el.querySelector(".sp").textContent = "spread " + ((ask - bid) / pip).toFixed(1) + " pips";
-      quotesEl.appendChild(el);
+      state.prices[p.instrument] = { bid, ask, mid: (bid + ask) / 2, spread: (ask - bid) / pipOf(p.instrument) };
+    }
+  }
+  async function pollAccount() {
+    const d = await oanda(acctPath() + "/summary");
+    state.account = { balance: parseFloat(d.account.balance), currency: d.account.currency };
+  }
+  async function pollTrades() {
+    const [c, o] = await Promise.all([oanda(acctPath() + "/trades?state=CLOSED&count=500"), oanda(acctPath() + "/openTrades")]);
+    state.closed = c.trades || []; state.open = o.trades || [];
+  }
+  async function pollStrength() {
+    const from = encodeURIComponent(asianOpen().toISOString());
+    await Promise.all(ALL28.map(async inst => {
+      try {
+        const cs = (await oanda("/instruments/" + inst + "/candles?granularity=M15&price=M&from=" + from)).candles || [];
+        if (!cs.length) return;
+        state.baseline[inst] = parseFloat(cs[0].mid.o);
+        state.spark[inst] = cs.map(c => parseFloat(c.mid.c));
+        if (!MAJORS.includes(inst)) state.prices[inst] = { mid: parseFloat(cs[cs.length - 1].mid.c) };
+      } catch (e) {}
+    }));
+  }
+  // A break has failed when a completed M5 candle after the plan was written closes back through the broken level.
+  async function checkFailedBreaks() {
+    const day = state.today;
+    if (!day) return;
+    const since = encodeURIComponent((day.updatedAt ? new Date(day.updatedAt) : ptToUtc(day.date, 5, 45)).toISOString());
+    const lv = levelsFor(day);
+    const trades = state.open.concat(state.closed).map(tradeInfo);
+    for (const s of day.setups || []) {
+      const L = lv[s.levelId];
+      if (!L) continue;
+      // Once a trade is on, what price does afterwards can't fail the break.
+      const taken = trades.filter(x => x.match && x.match.s.id === s.id && x.date === day.date).map(x => +x.open);
+      const until = taken.length ? Math.min(...taken) : Infinity;
+      try {
+        const closes = ((await oanda("/instruments/" + s.pair + "/candles?granularity=M5&price=M&from=" + since)).candles || [])
+          .filter(c => c.complete && new Date(c.time).getTime() + 3e5 <= until).map(c => parseFloat(c.mid.c));
+        state.failed[s.id] = s.direction === "short" ? closes.some(c => c > L.price) : closes.some(c => c < L.price);
+      } catch (e) {}
     }
   }
 
-  async function connect() {
-    const acct = acctEl.value.trim(), tok = tokEl.value.trim();
-    if (!acct || !tok) { setMsg("Enter both your practice account ID and token.", "err"); return; }
-    store.set("oanda_acct", acct); store.set("oanda_tok", tok);
-    clearInterval(timer);
-    setState("Connecting", "wait"); setMsg("Calling OANDA practice API from this browser…");
+  // ================= trade matching =================
+  function tradeInfo(t) {
+    const dir = parseFloat(t.initialUnits) > 0 ? "long" : "short";
+    const entry = parseFloat(t.price);
+    const open = new Date(t.openTime);
+    const closeT = t.closeTime ? new Date(t.closeTime) : null;
+    const exit = t.averageClosePrice != null ? parseFloat(t.averageClosePrice) : null;
+    const pl = t.realizedPL != null ? parseFloat(t.realizedPL) : 0;
+    const date = pt(open).date;
+    const pip = pipOf(t.instrument);
+    // Match: same pair, direction and PT day, filled within the tolerance of the planned entry.
+    let match = null, best = Infinity;
+    const day = state.days[date];
+    if (day) for (const s of day.setups || []) {
+      if (s.pair !== t.instrument || s.direction !== dir) continue;
+      const dv = derive(s, day), dist = Math.abs(entry - dv.entry) / pip;
+      if (dist <= S.match && dist < best) { best = dist; match = dv; }
+    }
+    const slOrder = t.stopLossOrder && t.stopLossOrder.price ? parseFloat(t.stopLossOrder.price) : null;
+    const sl = match ? match.sl : slOrder;
+    const sign = dir === "long" ? 1 : -1;
+    const r = exit != null && sl != null && Math.abs(entry - sl) > 0 ? (exit - entry) * sign / Math.abs(entry - sl) : null;
+    return {
+      id: t.id, pair: t.instrument, dir, entry, exit, pl, open, closeT, date, match, r, isOpen: !t.closeTime,
+      onPlan: !!match && match.grade !== "C" && match.rrOK,
+      slip: match ? (entry - match.entry) * sign / pip : null,
+      slMoved: !!match && slOrder != null && Math.abs(slOrder - match.sl) / pip > 1,
+      manualExit: !!match && exit != null && Math.abs(exit - match.tp) / pip > 2 && Math.abs(exit - match.sl) / pip > 2
+    };
+  }
+
+  // ================= daily limit =================
+  function dailyState() {
+    if (!state.account) return null;
+    const today = pt(new Date()).date;
+    const todayPL = state.closed.filter(t => t.closeTime && pt(new Date(t.closeTime)).date === today).reduce((a, t) => a + parseFloat(t.realizedPL || 0), 0);
+    const start = state.account.balance - todayPL;
+    const pct = start > 0 ? todayPL / start * 100 : 0;
+    return { todayPL, start, pct, locked: pct <= -S.limit, room: start * (S.limit + pct) / 100 };
+  }
+
+  // ================= setup status =================
+  const evText = e => e.currency + " " + e.event + " " + fmtHM(hm(e.time));
+  function statusOf(dv, day) {
+    const n = pt(new Date()), s = dv.s;
+    const mine = state.open.concat(state.closed).map(tradeInfo).filter(x => x.match && x.match.s.id === s.id && x.date === day.date);
+    if (mine.length) {
+      const x = mine[mine.length - 1];
+      if (x.isOpen) return { text: "Triggered · open", cls: "live" };
+      return { text: "Closed " + (x.r != null ? signed(x.r, 1) + "R" : money(x.pl, state.account && state.account.currency)), cls: x.pl >= 0 ? "good" : "bad" };
+    }
+    if (day.date !== n.date || n.mins >= hm(S.expiry)) return { text: "Expired", cls: "" };
+    if (dv.failed) return { text: "Break failed", cls: "bad" };
+    const dl = dailyState();
+    if (dl && dl.locked) return { text: "Locked: daily limit", cls: "bad" };
+    const cur = s.pair.split("_");
+    const block = (day.calendar || []).find(e => cur.includes(e.currency) && hm(e.time) > n.mins && hm(e.time) - n.mins <= S.news);
+    if (block) return { text: "Blocked: " + evText(block), cls: "wait" };
+    if (n.mins < hm(S.start)) return { text: "Window opens " + fmtHM(hm(S.start)), cls: "wait" };
+    const p = state.prices[s.pair];
+    if (!p || !p.mid) return { text: "Waiting", cls: "wait" };
+    const dist = (p.mid - dv.entry) / pipOf(s.pair) * (s.direction === "long" ? 1 : -1);
+    if (Math.abs(dist) <= S.atEntry) return { text: "At entry", cls: "live" };
+    return { text: "Waiting · " + Math.abs(dist).toFixed(1) + " pips away", cls: "wait" };
+  }
+
+  // Units so a stop-out loses `risk` in USD (the account currency).
+  function unitsFor(pair, entry, sl, risk) {
+    const dist = Math.abs(entry - sl);
+    if (!dist || !risk || isNaN(dist) || isNaN(risk)) return null;
+    const [base, quote] = pair.split("_");
+    if (quote === "USD") return risk / dist;
+    if (base === "USD") return risk * entry / dist;
+    return null;
+  }
+
+  // ================= RENDER: plan =================
+  function renderPlan() {
+    const n = pt(new Date());
+    const notices = [];
+    const day = state.days[n.date];
+    if (n.wd === "Fri" || n.wd === "Sat") notices.push('<div class="notice info">No trading on Fridays.</div>');
+    if (!day) {
+      state.today = null;
+      const last = state.index[state.index.length - 1];
+      if (["Mon", "Tue", "Wed", "Thu"].includes(n.wd)) notices.push('<div class="notice">No plan for today yet. Send Claude your marked chart at about 5:00am PT and the plan lands here by 5:45.' + (last ? ' Latest plan: <a href="#review">' + esc(longDate(last)) + "</a>." : "") + "</div>");
+      $("plan-date").textContent = longDate(n.date);
+      $("plan-notices").innerHTML = notices.join("");
+      $("verdict").innerHTML = ""; $("cards").innerHTML = "";
+      $("watchlist").innerHTML = '<p class="muted" style="margin:0">Nothing yet.</p>';
+      $("plan-cal").innerHTML = '<p class="muted" style="margin:0">Nothing yet.</p>';
+      $("watchfor-panel").hidden = true;
+      return;
+    }
+    state.today = day;
+    $("plan-date").textContent = longDate(day.date) + (day.updatedAt ? " · updated " + fmtHM(pt(new Date(day.updatedAt)).mins) + " PT" : "");
+    if (day.example) notices.push('<div class="notice info">This is example data showing how the page works. Your first real plan replaces it.</div>');
+    const dl = dailyState();
+    if (dl && dl.locked) notices.push('<div class="notice bad"><b>Daily loss limit hit (' + signed(dl.pct) + "%).</b> No new trades today.</div>");
+    if (!state.connected) notices.push('<div class="notice">Connect OANDA in <a href="#setup">Settings</a> for live status, position sizes and trade matching.</div>');
+    $("plan-notices").innerHTML = notices.join("");
+
+    const dvs = (day.setups || []).map(s => derive(s, day));
+    const trades = dvs.filter(d => d.grade !== "C" && d.rrOK && d.sane).sort((a, b) => b.rr - a.rr);
+    const dropped = dvs.filter(d => !trades.includes(d));
+    const v = day.verdict || {};
+    const count = trades.length ? trades.length + " trade" + (trades.length > 1 ? "s" : "") : "No trade today";
+    $("verdict").innerHTML = '<div class="verdict' + (trades.length ? "" : " none") + '"><div class="meta"><span class="pill ' + (trades.length ? "good" : "") + '">' + count + "</span></div><h2>" + esc(v.headline || count) + "</h2>" + (v.reason ? "<p>" + esc(v.reason) + "</p>" : "") + "</div>";
+    $("cards").innerHTML = trades.map(d => cardHTML(d, day, false)).join("") + dropped.map(d => cardHTML(d, day, true)).join("");
+    $("watchlist").innerHTML = (day.watchlist || []).map(w => '<div class="watch-row"><b>' + esc(pairName(w.pair)) + '</b><span class="mono">' + esc(fx(w.pair, w.level)) + '</span><span class="why muted">' + esc(w.missing) + "</span></div>").join("") || '<p class="muted" style="margin:0">Nothing on the watchlist.</p>';
+    $("plan-cal").innerHTML = calHTML(day);
+    const wf = (day.newsBlocks || []).concat(day.watchFor || []);
+    $("watchfor-panel").hidden = !wf.length;
+    $("watchfor").innerHTML = '<ul class="plain">' + wf.map(x => "<li>" + esc(x) + "</li>").join("") + "</ul>";
+  }
+
+  function cardHTML(d, day, dim) {
+    const s = d.s, st = statusOf(d, day), pip = pipOf(s.pair);
+    const riskAmt = state.account ? state.account.balance * S.risk / 100 : null;
+    const units = riskAmt ? unitsFor(s.pair, d.entry, d.sl, riskAmt) : null;
+    let why = "";
+    if (dim) why = d.failed ? "Break failed: an M5 candle closed back through the level. Downgraded to C." : !d.sane ? "Stop or target is on the wrong side of the entry." : !d.rrOK ? "R:R 1:" + d.rr.toFixed(2) + " is below 1:" + S.rr + "." : d.trig ? "Not enough evidence for A or B." : "Needs a candle trigger to be a trade.";
+    return '<article class="card' + (dim ? " dim" : "") + '">' +
+      '<div class="card-top"><span class="pair">' + esc(pairName(s.pair)) + '</span><span class="dir ' + esc(s.direction) + '">' + esc(s.direction) + '</span><span class="pill ' + st.cls + '">' + esc(st.text) + '</span><span class="grade ' + d.grade + '" title="Grade ' + d.grade + '">' + d.grade + "</span></div>" +
+      (why ? '<div class="notice" style="font-size:13px">' + esc(why) + "</div>" : "") +
+      '<div class="prices"><div><span class="label">Entry</span><b>' + fx(s.pair, d.entry) + '</b></div><div><span class="label">Stop</span><b>' + fx(s.pair, d.sl) + '</b></div><div><span class="label">Target</span><b>' + fx(s.pair, d.tp) + '</b></div><div><span class="label">R:R</span><b class="' + (d.rrOK ? "" : "down") + '">1:' + d.rr.toFixed(2) + "</b></div></div>" +
+      '<div class="sizing"><span>Risk <b>' + (Math.abs(d.entry - d.sl) / pip).toFixed(1) + "</b> pips</span><span>Reward <b>" + (Math.abs(d.tp - d.entry) / pip).toFixed(1) + "</b> pips</span><span>" + S.risk + "% = <b>" + (units ? Math.round(units).toLocaleString("en-US") + " units" : "connect OANDA") + "</b>" + (units ? ' <span class="muted">(' + (units / 100000).toFixed(2) + " lots)</span>" : "") + "</span>" + (d.edited ? '<span class="warn">Level edited</span>' : "") + "</div>" +
+      '<ul class="checks">' + CHECKS.map(([k, label]) => '<li class="' + (s.checks && s.checks[k] ? "ok" : "") + '">' + label + "</li>").join("") + '<li class="' + (d.trig ? "ok" : "") + '">' + esc(d.trig ? TRIGGER_NAMES[s.trigger.type] || s.trigger.type : "Candle trigger") + "</li></ul>" +
+      '<div class="tags"><span class="tag">' + esc(PATTERN_NAMES[s.pattern] || s.pattern || "No pattern") + "</span>" + (s.news ? '<span class="tag">News: ' + esc(s.news.status) + "</span>" : "") + "</div>" +
+      (s.trigger && s.trigger.note ? '<p class="note">' + esc(s.trigger.note) + "</p>" : "") +
+      (s.news && s.news.note ? '<p class="note">' + esc(s.news.note) + "</p>" : "") +
+      (s.notes ? '<p class="note">' + esc(s.notes) + "</p>" : "") + "</article>";
+  }
+
+  function calHTML(day) {
+    const n = pt(new Date()), live = day.date === n.date;
+    const ev = (day.calendar || []).slice().sort((a, b) => hm(a.time) - hm(b.time));
+    if (!ev.length) return '<p class="muted" style="margin:0">No red-folder events today.</p>';
+    return '<table class="cal"><thead><tr><th>Time</th><th>Event</th><th>Status</th></tr></thead><tbody>' + ev.map(e => {
+      const left = hm(e.time) - n.mins;
+      const status = !live ? "" : left > 0 ? "in " + (left >= 60 ? Math.floor(left / 60) + "h " : "") + (left % 60) + "m" : "Released";
+      const pairs = MAJORS.filter(p => p.split("_").includes(e.currency)).map(pairName).join(", ");
+      return '<tr><td class="mono">' + esc(fmtHM(hm(e.time))) + "</td><td><b>" + esc(e.currency) + "</b> " + esc(e.event) + '<br><span class="muted" style="font-size:12px">' + esc(pairs) + '</span></td><td class="' + (live && left > 0 && left <= S.news ? "warn" : "muted") + '">' + esc(status) + "</td></tr>";
+    }).join("") + "</tbody></table>";
+  }
+
+  // ================= RENDER: markets =================
+  function sparkSVG(vals, up) {
+    if (!vals || vals.length < 2) return "";
+    const w = 200, h = 46, min = Math.min(...vals), max = Math.max(...vals), span = max - min || 1;
+    const pts = vals.map((v, i) => [i / (vals.length - 1) * w, h - 4 - (v - min) / span * (h - 10)]);
+    const line = pts.map(p => p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" ");
+    const col = up ? "var(--up)" : "var(--down)", last = pts[pts.length - 1];
+    return '<svg viewBox="0 0 ' + w + " " + h + '" preserveAspectRatio="none" aria-hidden="true"><polygon points="0,' + h + " " + line + " " + w + "," + h + '" fill="' + col + '" fill-opacity=".14"/><polyline points="' + line + '" fill="none" stroke="' + col + '" stroke-width="1.5" vector-effect="non-scaling-stroke"/><circle cx="' + last[0].toFixed(1) + '" cy="' + last[1].toFixed(1) + '" r="2.5" fill="' + col + '"/></svg>';
+  }
+  const chgSince = inst => { const b = state.baseline[inst], p = state.prices[inst]; return b && p && p.mid ? (p.mid - b) / b * 100 : null; };
+  function renderTiles() {
+    $("tiles").innerHTML = MAJORS.map(p => {
+      const pr = state.prices[p], c = chgSince(p);
+      return '<div class="tile"><span class="sym">' + pairName(p) + '</span><span class="px">' + (pr ? fx(p, pr.mid) : "—") + '</span><span class="chg ' + (c == null ? "muted" : c >= 0 ? "up" : "down") + '">' + (c == null ? (state.connected ? "loading…" : "connect OANDA") : signed(c) + "%") + (pr && pr.spread != null ? ' <span class="muted">· ' + pr.spread.toFixed(1) + " pip spread</span>" : "") + "</span>" + sparkSVG(state.spark[p], (c || 0) >= 0) + "</div>";
+    }).join("");
+  }
+  function renderStrength() {
+    const sc = {};
+    for (const c of CURRENCIES) {
+      const vals = [];
+      for (const inst of ALL28) {
+        const [b, q] = inst.split("_"), ch = chgSince(inst);
+        if (ch == null) continue;
+        if (b === c) vals.push(ch); else if (q === c) vals.push(-ch);
+      }
+      sc[c] = vals.length ? vals.reduce((a, v) => a + v, 0) / vals.length : null;
+    }
+    const ranked = CURRENCIES.filter(c => sc[c] != null).sort((a, b) => sc[b] - sc[a]);
+    if (!ranked.length) { $("rankbar").innerHTML = ""; $("strength").innerHTML = '<p class="muted" style="margin:0">' + (state.connected ? "Loading…" : "Connect OANDA in Settings to see currency strength.") + "</p>"; return; }
+    const maxAbs = Math.max(...ranked.map(c => Math.abs(sc[c]))) || 1;
+    $("rankbar").innerHTML = ranked.map(c => '<div style="background:rgba(' + (sc[c] >= 0 ? "63,207,142," : "239,90,111,") + (Math.abs(sc[c]) / maxAbs * 0.45 + 0.08).toFixed(2) + ')">' + c + "</div>").join("");
+    $("strength").innerHTML = ranked.map((c, i) => '<div class="scard"><span class="label">#' + (i + 1) + '</span><span class="cur">' + c + '</span><span class="val ' + (sc[c] >= 0 ? "up" : "down") + '">' + signed(sc[c]) + "%</span></div>").join("");
+  }
+  const renderMarketCal = () => { $("mk-cal").innerHTML = state.today ? calHTML(state.today) : '<p class="muted" style="margin:0">No plan for today yet.</p>'; };
+
+  // ---------- chart ----------
+  let chart = null, series = null, lines = [], chartPair = "EUR_USD", chartTf = "M15";
+  const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const ptLabel = t => { const p = pt(new Date(t * 1000)); return String(p.h).padStart(2, "0") + ":" + String(p.mi).padStart(2, "0"); };
+  function initChart() {
+    if (chart || !window.LightweightCharts) return;
+    $("chart").innerHTML = "";
+    chart = LightweightCharts.createChart($("chart"), {
+      autoSize: true,
+      layout: { background: { type: "solid", color: cssVar("--panel") }, textColor: cssVar("--muted"), fontFamily: "JetBrains Mono, monospace" },
+      grid: { vertLines: { color: cssVar("--line") }, horzLines: { color: cssVar("--line") } },
+      rightPriceScale: { borderColor: cssVar("--line") },
+      timeScale: { borderColor: cssVar("--line"), timeVisible: true, tickMarkFormatter: ptLabel },
+      localization: { timeFormatter: t => pt(new Date(t * 1000)).date + " " + ptLabel(t) + " PT" }
+    });
+    series = chart.addCandlestickSeries({ upColor: cssVar("--up"), downColor: cssVar("--down"), borderVisible: false, wickUpColor: cssVar("--up"), wickDownColor: cssVar("--down") });
+  }
+  async function loadChart() {
+    if (!state.connected) {
+      if (chart) { chart.remove(); chart = null; series = null; lines = []; }
+      $("chart").innerHTML = '<p class="muted" style="padding:16px;margin:0">Connect OANDA in Settings to load candles.</p>';
+      return;
+    }
+    initChart();
+    if (!chart) return;
     try {
-      const data = await poll(acct, tok);
-      render(data.prices);
-      setState("Live", "live");
-      setMsg("Connected. OANDA allows browser calls, so live prices, auto-status and trade sync can all run on this site.", "ok");
-      timer = setInterval(async () => {
-        try { render((await poll(acct, tok)).prices); }
-        catch (e) { setState("Error", "off"); setMsg("Lost connection: " + e.message, "err"); clearInterval(timer); }
-      }, 2000);
-    } catch (e) {
-      setState("Failed", "off");
-      if (e.status === 401) setMsg("OANDA rejected the token (401). Check that it's a practice-account token.", "err");
-      else if (e.status === 400 || e.status === 403 || e.status === 404) setMsg("OANDA answered " + e.status + ". Check the account ID matches the token.", "err");
-      else setMsg("The browser blocked the call before OANDA answered. This usually means OANDA doesn't allow browser (CORS) requests. Tell Claude: \"OANDA blocked\". We'll switch to the backup feed.", "err");
+      const d = await oanda("/instruments/" + chartPair + "/candles?granularity=" + chartTf + "&price=M&count=250");
+      series.applyOptions({ priceFormat: { type: "price", precision: digitsOf(chartPair), minMove: Math.pow(10, -digitsOf(chartPair)) } });
+      series.setData((d.candles || []).map(c => ({ time: Math.floor(new Date(c.time).getTime() / 1000), open: +c.mid.o, high: +c.mid.h, low: +c.mid.l, close: +c.mid.c })));
+      drawLines();
+    } catch (e) {}
+  }
+  function drawLines() {
+    if (!series) return;
+    lines.forEach(l => series.removePriceLine(l)); lines = [];
+    const day = state.today;
+    if (!day) return;
+    for (const l of Object.values(levelsFor(day))) if (l.pair === chartPair) lines.push(series.createPriceLine({ price: l.price, color: cssVar("--rose"), lineWidth: 1, lineStyle: 2, axisLabelVisible: true, title: l.tf + (l.edited ? " edited" : "") }));
+    for (const s of day.setups || []) {
+      if (s.pair !== chartPair) continue;
+      const d = derive(s, day);
+      lines.push(series.createPriceLine({ price: d.entry, color: cssVar("--fg"), lineWidth: 1, lineStyle: 0, axisLabelVisible: true, title: "Entry " + d.grade }));
+      lines.push(series.createPriceLine({ price: d.sl, color: cssVar("--down"), lineWidth: 1, lineStyle: 1, axisLabelVisible: true, title: "SL" }));
+      lines.push(series.createPriceLine({ price: d.tp, color: cssVar("--up"), lineWidth: 1, lineStyle: 1, axisLabelVisible: true, title: "TP" }));
     }
   }
-
-  document.getElementById("conn-form").addEventListener("submit", e => { e.preventDefault(); connect(); });
-  document.getElementById("forget").addEventListener("click", () => {
-    store.del("oanda_tok"); store.del("oanda_acct"); tokEl.value = ""; acctEl.value = "";
-    clearInterval(timer); quotesEl.hidden = true; setState("Not connected", "wait");
-    setMsg("Token removed from this browser.");
+  function renderLevelEditor() {
+    const day = state.today;
+    if (!day) { $("levels-edit").innerHTML = ""; return; }
+    if ($("levels-edit").contains(document.activeElement)) return; // don't clobber a level being typed
+    const lv = Object.values(levelsFor(day)).filter(l => l.pair === chartPair);
+    $("levels-edit").innerHTML = lv.length ? '<span class="label">Your levels on ' + pairName(chartPair) + " (type to adjust)</span>" + lv.map(l =>
+      '<div class="lvl-row"><span>' + esc(l.label || l.tf) + (l.edited ? ' <span class="warn">· was ' + fx(l.pair, l.orig) + "</span>" : "") + '</span><input data-lvl="' + esc(l.id) + '" value="' + fx(l.pair, l.price) + '" inputmode="decimal" aria-label="' + esc(l.label || l.id) + ' price"><button type="button" class="ghost small" data-reset="' + esc(l.id) + '">Reset</button></div>').join("")
+      : '<span class="muted">No levels on ' + pairName(chartPair) + " today.</span>";
+  }
+  $("levels-edit").addEventListener("change", e => {
+    const id = e.target.getAttribute("data-lvl"), v = parseFloat(e.target.value);
+    if (!id || !state.today || isNaN(v)) return;
+    const ov = levelOverrides(state.today.date); ov[id] = v; store.set("lvl:" + state.today.date, ov);
+    e.target.blur(); renderAll();
   });
-  if (acctEl.value && tokEl.value) connect();
+  $("levels-edit").addEventListener("click", e => {
+    const id = e.target.getAttribute("data-reset");
+    if (!id || !state.today) return;
+    const ov = levelOverrides(state.today.date); delete ov[id]; store.set("lvl:" + state.today.date, ov);
+    renderAll();
+  });
+  $("chart-pair").innerHTML = MAJORS.map(p => '<option value="' + p + '">' + pairName(p) + "</option>").join("");
+  $("chart-pair").addEventListener("change", e => { chartPair = e.target.value; $("tv-link").href = "https://www.tradingview.com/chart/?symbol=OANDA:" + chartPair.replace("_", ""); renderLevelEditor(); loadChart(); });
+  $("chart-tf").addEventListener("click", e => {
+    const tf = e.target.getAttribute("data-tf"); if (!tf) return;
+    chartTf = tf;
+    for (const b of $("chart-tf").querySelectorAll("button")) b.setAttribute("aria-pressed", String(b === e.target));
+    loadChart();
+  });
+
+  let tvLoaded = false;
+  function loadTvCalendar() {
+    if (tvLoaded) return; tvLoaded = true;
+    const box = document.createElement("div"); box.className = "tradingview-widget-container"; box.style.height = "100%";
+    const inner = document.createElement("div"); inner.className = "tradingview-widget-container__widget"; inner.style.height = "100%";
+    const sc = document.createElement("script"); sc.src = "https://s3.tradingview.com/external-embedding/embed-widget-events.js"; sc.async = true;
+    sc.textContent = JSON.stringify({ colorTheme: "dark", isTransparent: true, locale: "en", width: "100%", height: "100%", importanceFilter: "0,1", countryFilter: "us,eu,gb,jp,ch,ca,au,nz" });
+    box.appendChild(inner); box.appendChild(sc); $("tv-cal").appendChild(box);
+  }
+
+  // ================= RENDER: calculator =================
+  $("c-pair").innerHTML = MAJORS.map(p => '<option value="' + p + '">' + pairName(p) + "</option>").join("");
+  $("calc-form").addEventListener("input", renderCalc);
+  $("calc-form").addEventListener("submit", e => e.preventDefault());
+  function renderCalc() {
+    const pair = $("c-pair").value, entry = parseFloat($("c-entry").value), sl = parseFloat($("c-sl").value), tp = parseFloat($("c-tp").value);
+    const bal = parseFloat($("c-bal").value) || (state.account ? state.account.balance : NaN);
+    const cur = state.account && state.account.currency;
+    $("c-bal").placeholder = state.account ? state.account.balance.toFixed(2) + " (OANDA)" : "Enter balance";
+    $("calc-sub").textContent = "Risking " + S.risk + "% per trade · daily limit −" + S.limit + "%";
+    const pip = pipOf(pair), risk = bal * S.risk / 100;
+    const units = unitsFor(pair, entry, sl, risk);
+    const slp = Math.abs(entry - sl) / pip;
+    const rr = !isNaN(tp) && slp ? Math.abs(tp - entry) / Math.abs(entry - sl) : null;
+    const dl = dailyState();
+    const box = (l, v, cls) => '<div><span class="label">' + l + '</span><b class="' + (cls || "") + '">' + v + "</b></div>";
+    $("calc-out").innerHTML =
+      box("Units", units ? Math.round(units).toLocaleString("en-US") : "—") + box("Lots", units ? (units / 100000).toFixed(2) : "—") +
+      box("Risk", isNaN(risk) ? "—" : money(risk, cur)) + box("Stop distance", slp ? slp.toFixed(1) + " pips" : "—") +
+      box("R:R", rr ? "1:" + rr.toFixed(2) : "—", rr && rr < S.rr ? "down" : "") +
+      box("Room before limit", dl ? money(dl.room, cur) : "—", dl && !isNaN(risk) && dl.room < risk ? "down" : "");
+    const warn = [];
+    if (rr && rr < S.rr) warn.push("R:R is below 1:" + S.rr + ". By your rules this is not a trade.");
+    if (dl && dl.locked) warn.push("Daily loss limit already hit. No new trades today.");
+    else if (dl && !isNaN(risk) && risk > dl.room) warn.push("If this stops out you'll go past the −" + S.limit + "% daily limit.");
+    if (cur && cur !== "USD") warn.push("Your account isn't in USD, so units are approximate.");
+    $("calc-warn").innerHTML = warn.map(w => '<div class="notice bad">' + esc(w) + "</div>").join("");
+  }
+
+  // ================= RENDER: journal =================
+  function renderJournal() {
+    if (!state.connected) { $("journal-notice").innerHTML = '<div class="notice">Connect OANDA in <a href="#setup">Settings</a> to load your trades.</div>'; $("journal-table").innerHTML = ""; return; }
+    $("journal-notice").innerHTML = "";
+    const rows = state.closed.concat(state.open).map(tradeInfo).sort((a, b) => b.open - a.open);
+    if (!rows.length) { $("journal-table").innerHTML = '<tbody><tr><td class="muted">No trades on this account yet. They show up here as soon as you place them.</td></tr></tbody>'; return; }
+    const cur = state.account && state.account.currency;
+    $("journal-table").innerHTML = "<thead><tr><th>Opened (PT)</th><th>Pair</th><th>Side</th><th>Grade</th><th>Pattern</th><th>Plan entry</th><th>Fill</th><th>Slip</th><th>Exit</th><th>Result</th><th>R</th><th>P/L</th><th>Plan</th><th>Flags</th></tr></thead><tbody>" +
+      rows.map(x => {
+        const p = pt(x.open);
+        const res = x.isOpen ? '<span class="chip be">Open</span>' : x.pl > 0 ? '<span class="chip won">Won</span>' : x.pl < 0 ? '<span class="chip lost">Lost</span>' : '<span class="chip be">BE</span>';
+        const plan = x.match ? (x.onPlan ? '<span class="chip on">On plan</span>' : '<span class="chip offp">' + (x.match.grade === "C" ? "C grade" : "Below 1:" + S.rr) + "</span>") : '<span class="chip offp">Unplanned</span>';
+        const flags = [x.slMoved ? "SL moved" : "", x.manualExit && !x.isOpen ? "Manual exit" : ""].filter(Boolean).join(", ");
+        return '<tr><td class="mono">' + p.date.slice(5) + " " + fmtHM(p.mins) + "</td><td><b>" + pairName(x.pair) + '</b></td><td><span class="dir ' + x.dir + '">' + x.dir + "</span></td><td>" + (x.match ? x.match.grade : "—") + "</td><td>" + esc(x.match ? PATTERN_NAMES[x.match.s.pattern] || x.match.s.pattern : "—") + "</td>" +
+          '<td class="num mono">' + (x.match ? fx(x.pair, x.match.entry) : "—") + '</td><td class="num mono">' + fx(x.pair, x.entry) + '</td><td class="num mono ' + (x.slip > 0.5 ? "warn" : "") + '">' + (x.slip == null ? "—" : signed(x.slip, 1)) + '</td><td class="num mono">' + (x.exit == null ? "—" : fx(x.pair, x.exit)) + "</td><td>" + res + '</td><td class="num mono">' + (x.r == null ? "—" : signed(x.r, 2)) + '</td><td class="num mono ' + (x.pl > 0 ? "up" : x.pl < 0 ? "down" : "") + '">' + (x.isOpen ? "—" : money(x.pl, cur)) + "</td><td>" + plan + '</td><td class="muted">' + esc(flags || "—") + "</td></tr>";
+      }).join("") + "</tbody>";
+  }
+
+  // ================= RENDER: analytics =================
+  function group(rows, keyFn) { const g = {}; for (const x of rows) { const k = keyFn(x); if (k != null) (g[k] = g[k] || []).push(x); } return g; }
+  function stats(rows) {
+    const n = rows.length, rs = rows.filter(x => x.r != null).map(x => x.r);
+    return { n, win: n ? rows.filter(x => x.pl > 0).length / n * 100 : 0, avgR: rs.length ? rs.reduce((a, v) => a + v, 0) / rs.length : null };
+  }
+  function barsHTML(g, order) {
+    const keys = (order || Object.keys(g).sort()).filter(k => g[k]);
+    if (!keys.length) return '<p class="muted" style="margin:0">No matched trades yet.</p>';
+    return keys.map(k => { const s = stats(g[k]); return '<div class="bar-row"><span>' + esc(k) + '</span><div class="bar-track" title="Win rate"><div class="bar-fill" style="width:' + s.win.toFixed(0) + '%"></div></div><span class="mono">' + s.win.toFixed(0) + "% · " + (s.avgR == null ? "—" : signed(s.avgR, 2) + "R") + ' <span class="muted">(' + s.n + ")</span></span></div>"; }).join("");
+  }
+  function renderAnalytics() {
+    const closed = state.closed.map(tradeInfo).sort((a, b) => a.closeT - b.closeT);
+    if (!state.connected || !closed.length || !state.account) {
+      $("an-notice").innerHTML = '<div class="notice">' + (state.connected ? "No closed trades yet. Stats build up as you trade." : 'Connect OANDA in <a href="#setup">Settings</a> to see your stats.') + "</div>";
+      ["an-kpis", "an-eq", "an-grade", "an-pattern", "an-pair", "an-disc"].forEach(id => $(id).innerHTML = "");
+      return;
+    }
+    $("an-notice").innerHTML = "";
+    const cur = state.account.currency, all = stats(closed);
+    const total = closed.reduce((a, x) => a + x.pl, 0), startBal = state.account.balance - total;
+    let eq = startBal, peak = startBal, maxDD = 0;
+    const pts = [[+closed[0].open, startBal]], byDay = {};
+    for (const x of closed) {
+      eq += x.pl; pts.push([+x.closeT, eq]);
+      peak = Math.max(peak, eq); maxDD = Math.max(maxDD, peak > 0 ? (peak - eq) / peak * 100 : 0);
+      const d = pt(x.closeT).date; byDay[d] = (byDay[d] || 0) + x.pl;
+    }
+    let run = startBal, hits = 0;
+    for (const d of Object.keys(byDay).sort()) { if (run > 0 && byDay[d] / run * 100 <= -S.limit) hits++; run += byDay[d]; }
+    const k = (l, v, cls) => '<div><span class="label">' + l + '</span><b class="' + (cls || "") + '">' + v + "</b></div>";
+    $("an-kpis").innerHTML = k("Trades", all.n) + k("Win rate", all.win.toFixed(0) + "%") + k("Avg R", all.avgR == null ? "—" : signed(all.avgR, 2)) + k("Net P/L", money(total, cur), total >= 0 ? "up" : "down") + k("Max drawdown", maxDD.toFixed(1) + "%", maxDD > 0 ? "down" : "") + k("Daily-limit hits", hits, hits ? "down" : "");
+    $("an-eq").innerHTML = equitySVG(pts, cur);
+    $("an-grade").innerHTML = barsHTML(group(closed, x => x.match ? "Grade " + x.match.grade : "Unplanned"), ["Grade A", "Grade B", "Grade C", "Unplanned"]);
+    $("an-pattern").innerHTML = barsHTML(group(closed, x => x.match ? PATTERN_NAMES[x.match.s.pattern] || x.match.s.pattern : null));
+    $("an-pair").innerHTML = barsHTML(group(closed, x => pairName(x.pair)));
+    const on = closed.filter(x => x.onPlan), clean = on.filter(x => !x.slMoved && !x.manualExit && (x.slip == null || x.slip <= 1));
+    const row = (label, a, b, note) => '<div class="bar-row"><span>' + label + '</span><div class="bar-track"><div class="bar-fill" style="width:' + (b ? a / b * 100 : 0).toFixed(0) + '%"></div></div><span class="mono">' + (b ? (a / b * 100).toFixed(0) + "%" : "—") + ' <span class="muted">' + note + "</span></span></div>";
+    $("an-disc").innerHTML = row("On plan", on.length, closed.length, "(" + on.length + "/" + closed.length + ")") + row("Clean execution", clean.length, on.length, "of on-plan") +
+      barsHTML(group(closed, x => x.onPlan ? "On-plan results" : "Off-plan results"), ["On-plan results", "Off-plan results"]);
+  }
+  function equitySVG(pts, cur) {
+    const W = 800, H = 220, P = { l: 70, r: 14, t: 12, b: 26 };
+    const t0 = pts[0][0], t1 = Math.max(pts[pts.length - 1][0], t0 + 1);
+    const vs = pts.map(p => p[1]), min = Math.min(...vs), max = Math.max(...vs), span = max - min || 1;
+    const X = t => P.l + (t - t0) / (t1 - t0) * (W - P.l - P.r);
+    const Y = v => P.t + (1 - (v - min) / span) * (H - P.t - P.b);
+    const line = pts.map(p => X(p[0]).toFixed(1) + "," + Y(p[1]).toFixed(1)).join(" ");
+    const last = pts[pts.length - 1];
+    const txt = (x, y, s, anchor) => '<text x="' + x + '" y="' + y + '" fill="var(--muted)" font-size="11" text-anchor="' + (anchor || "start") + '" font-family="JetBrains Mono, monospace">' + esc(s) + "</text>";
+    return '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Equity curve">' +
+      [min, (min + max) / 2, max].map(v => '<line x1="' + P.l + '" x2="' + (W - P.r) + '" y1="' + Y(v).toFixed(1) + '" y2="' + Y(v).toFixed(1) + '" stroke="var(--line)"/>' + txt(P.l - 6, (Y(v) + 4).toFixed(1), money(v, cur), "end")).join("") +
+      '<polygon points="' + X(t0).toFixed(1) + "," + (H - P.b) + " " + line + " " + X(last[0]).toFixed(1) + "," + (H - P.b) + '" fill="var(--rose)" fill-opacity=".14"/>' +
+      '<polyline points="' + line + '" fill="none" stroke="var(--rose)" stroke-width="2"/><circle cx="' + X(last[0]).toFixed(1) + '" cy="' + Y(last[1]).toFixed(1) + '" r="4" fill="var(--rose)"/>' +
+      txt(P.l, H - 6, pt(new Date(t0)).date) + txt(W - P.r, H - 6, pt(new Date(t1)).date, "end") + "</svg>";
+  }
+
+  // ================= RENDER: patterns =================
+  // Diagrams: 240×120 box, y grows downward (lower price = larger y). Candles are [x, open, high, close, low].
+  const PATTERNS = [
+    { id: "clean-br", fam: "S/R", name: "Clean break & retest",
+      rules: ["Level from H1 or M15.", "Break: close beyond, displacement, follow-through.", "M5 structure breaks the same way.", "Enter on the retest with an engulfing or pin bar.", "SL 2–3 pips beyond the retest swing. TP at the next S/R (at least 1:2)."],
+      path: [[8, 96], [34, 76], [52, 88], [78, 66], [96, 76], [116, 40], [134, 28], [152, 58], [168, 42], [196, 24], [232, 12]], level: 60, entry: [152, 60], sl: 72, tp: 14 },
+    { id: "asian-range", fam: "S/R", name: "Asian range break & retest",
+      rules: ["Mark the Asian high and low (4:00–11:00pm PT).", "Wait for a break of one side that passes the 5 checks.", "Enter on the retest of the broken side with a candle trigger.", "SL beyond the retest swing. TP at the next S/R."],
+      box: [10, 50, 96, 82], path: [[10, 70], [26, 54], [42, 78], [58, 56], [74, 80], [92, 60], [116, 34], [132, 26], [150, 50], [170, 36], [200, 22], [232, 12]], level: 50, entry: [150, 50], sl: 62, tp: 14 },
+    { id: "head-shoulders", fam: "Chart · M15/H1", name: "Head & shoulders",
+      rules: ["Left shoulder, higher head, lower right shoulder.", "Neckline break passes the 5 checks.", "Enter on the neckline retest with a candle trigger.", "Inverse version for longs."],
+      path: [[8, 96], [30, 58], [50, 76], [80, 26], [108, 76], [132, 56], [152, 76], [172, 98], [194, 78], [214, 100], [232, 110]], level: 76, entry: [194, 76], sl: 64, tp: 110 },
+    { id: "double-top-bottom", fam: "Chart · M15/H1", name: "Double top / bottom",
+      rules: ["Two failed pushes at the same area.", "Neckline is the swing between them.", "Break and retest of the neckline with a candle trigger.", "Double bottom is the long version."],
+      path: [[8, 98], [44, 38], [74, 72], [106, 38], [132, 72], [150, 94], [172, 74], [200, 100], [232, 112]], level: 72, entry: [172, 72], sl: 60, tp: 110 },
+    { id: "flag-pennant", fam: "Chart · M15/H1", name: "Flag / pennant",
+      rules: ["Strong impulse, then a tight pullback channel or small triangle.", "Break in the impulse direction.", "Enter on the retest of the broken edge with a candle trigger."],
+      path: [[8, 108], [58, 36], [74, 50], [88, 40], [104, 54], [120, 46], [136, 58], [152, 36], [168, 48], [200, 22], [232, 10]], level: 47, entry: [168, 47], sl: 60, tp: 12 },
+    { id: "engulfing", fam: "Candle trigger", name: "Engulfing",
+      rules: ["At the retest of the broken level.", "Body fully covers the previous candle's body.", "Bullish engulfing for longs, bearish for shorts.", "Required (or a pin bar) for A and B grades."],
+      candles: [[40, 50, 46, 64, 70], [80, 58, 52, 70, 76], [120, 66, 58, 74, 80], [160, 72, 64, 52, 82], [200, 54, 38, 30, 58]], level: 72 },
+    { id: "pinbar", fam: "Candle trigger", name: "Pin bar / rejection",
+      rules: ["Long wick into the retested level.", "Body closes back on the break side.", "A clear rejection wick counts even if it isn't textbook.", "Required (or engulfing) for A and B grades."],
+      candles: [[40, 46, 40, 56, 60], [80, 56, 50, 64, 68], [120, 64, 58, 68, 72], [160, 66, 60, 62, 96], [200, 60, 40, 44, 64]], level: 86 }
+  ];
+  function patternSVG(p) {
+    const out = ['<svg viewBox="0 0 240 120" role="img" aria-label="' + esc(p.name) + ' diagram">'];
+    if (p.box) out.push('<rect x="' + p.box[0] + '" y="' + p.box[1] + '" width="' + (p.box[2] - p.box[0]) + '" height="' + (p.box[3] - p.box[1]) + '" fill="var(--rose)" fill-opacity=".08" stroke="var(--rose)" stroke-opacity=".4" stroke-dasharray="3 3"/>');
+    out.push('<line x1="4" x2="236" y1="' + p.level + '" y2="' + p.level + '" stroke="var(--rose)" stroke-dasharray="5 4"/>');
+    if (p.path) out.push('<polyline points="' + p.path.map(q => q.join(",")).join(" ") + '" fill="none" stroke="var(--fg)" stroke-width="2" stroke-linejoin="round"/>');
+    if (p.candles) for (const [x, o, h, c, l] of p.candles) {
+      const col = c < o ? "var(--up)" : "var(--down)";
+      out.push('<line x1="' + x + '" x2="' + x + '" y1="' + h + '" y2="' + l + '" stroke="' + col + '" stroke-width="2"/><rect x="' + (x - 9) + '" y="' + Math.min(o, c) + '" width="18" height="' + Math.max(2, Math.abs(c - o)) + '" fill="' + col + '"/>');
+    }
+    if (p.entry) {
+      const x = p.entry[0];
+      const x2 = Math.min(x + 30, 214);
+      const mark = (y, col, t) => '<line x1="' + (x - 16) + '" x2="' + x2 + '" y1="' + y + '" y2="' + y + '" stroke="' + col + '" stroke-width="1.5"/><text x="' + (x2 + 4) + '" y="' + (y + 4) + '" fill="' + col + '" font-size="10" font-family="JetBrains Mono, monospace">' + t + "</text>";
+      out.push('<circle cx="' + x + '" cy="' + p.entry[1] + '" r="4.5" fill="var(--rose)"/>' + mark(p.sl, "var(--down)", "SL") + mark(p.tp, "var(--up)", "TP"));
+    }
+    out.push("</svg>");
+    return out.join("");
+  }
+  function renderPatterns() {
+    const closed = state.closed.map(tradeInfo);
+    $("patterns").innerHTML = PATTERNS.map(p => {
+      const s = stats(closed.filter(x => x.match && (p.fam === "Candle trigger" ? x.match.s.trigger && x.match.s.trigger.type === p.id : x.match.s.pattern === p.id)));
+      return '<article class="card pcard"><span class="fam">' + esc(p.fam) + "</span><h3>" + esc(p.name) + "</h3>" + patternSVG(p) +
+        '<ul class="plain">' + p.rules.map(r => "<li>" + esc(r) + "</li>").join("") + "</ul>" +
+        '<div class="pstats"><span>Trades <b>' + s.n + "</b></span><span>Win rate <b>" + (s.n ? s.win.toFixed(0) + "%" : "—") + "</b></span><span>Avg R <b>" + (s.avgR == null ? "—" : signed(s.avgR, 2)) + "</b></span></div></article>";
+    }).join("");
+  }
+
+  // ================= RENDER: review =================
+  function renderReviewSelect() {
+    const sel = $("rv-date"), cur = sel.value;
+    sel.innerHTML = state.index.slice().reverse().map(d => '<option value="' + d + '">' + esc(longDate(d)) + "</option>").join("");
+    if (cur && state.index.includes(cur)) sel.value = cur;
+  }
+  $("rv-date").addEventListener("change", renderReview);
+  function renderReview() {
+    const d = state.days[$("rv-date").value];
+    if (!d) { $("review").innerHTML = '<div class="notice">No days yet.</div>'; return; }
+    const rv = d.review, v = d.verdict || {};
+    let html = (d.example ? '<div class="notice info">Example review.</div>' : "") +
+      '<div class="panel"><h2>The plan <span>' + esc(longDate(d.date)) + '</span></h2><p style="margin:0"><b>' + esc(v.headline || "") + "</b></p>" + (v.reason ? '<p class="muted" style="margin:6px 0 0">' + esc(v.reason) + "</p>" : "") + "</div>";
+    if (!rv) html += '<div class="notice">Claude writes this review at about 2:15pm PT, after setups expire.</div>';
+    else {
+      const byId = {}; (d.setups || []).forEach(s => byId[s.id] = s);
+      html += '<div class="panel review-block"><h3>Plan vs outcome</h3><div class="scroll"><table class="cal"><thead><tr><th>Setup</th><th>What happened</th><th>R</th></tr></thead><tbody>' +
+        (rv.planVsOutcome || []).map(o => { const s = byId[o.setupId]; return "<tr><td><b>" + esc(s ? pairName(s.pair) + " " + s.direction : o.setupId) + "</b></td><td>" + esc(o.result) + '</td><td class="mono ' + (o.r > 0 ? "up" : o.r < 0 ? "down" : "muted") + '">' + (o.r == null ? "—" : signed(o.r, 1)) + "</td></tr>"; }).join("") + "</tbody></table></div></div>" +
+        '<div class="grid-even"><div class="panel review-block"><h3>Mistakes</h3><ul class="plain">' + (rv.mistakes || []).map(x => "<li>" + esc(x) + "</li>").join("") + '</ul></div><div class="panel review-block"><h3>Lessons</h3><ul class="plain">' + (rv.lessons || []).map(x => "<li>" + esc(x) + "</li>").join("") + "</ul></div></div>" +
+        '<div class="panel review-block"><h3>Grading audit</h3><p style="margin:0">' + esc(rv.gradingAudit || "") + "</p></div>";
+    }
+    $("review").innerHTML = html;
+  }
+
+  // ================= settings =================
+  const sFields = { "s-risk": "risk", "s-limit": "limit", "s-rr": "rr", "s-buffer": "buffer", "s-atentry": "atEntry", "s-match": "match", "s-news": "news", "s-start": "start", "s-expiry": "expiry" };
+  for (const [id, k] of Object.entries(sFields)) {
+    $(id).value = S[k];
+    $(id).addEventListener("change", e => {
+      const v = e.target.value;
+      S[k] = ["start", "expiry", "buffer"].includes(k) ? (v || DEFAULTS[k]) : (isNaN(parseFloat(v)) ? DEFAULTS[k] : parseFloat(v));
+      saveSettings(); renderAll();
+    });
+  }
+  $("s-asia").value = "4:00pm – 11:00pm";
+  $("s-days").value = "Monday – Thursday";
+  for (const f of ["risk-form", "sess-form"]) $(f).addEventListener("submit", e => e.preventDefault());
+  $("reset-levels").addEventListener("click", () => { store.del("lvl:" + pt(new Date()).date); renderAll(); });
+
+  // ---------- OANDA connect ----------
+  $("acct").value = state.acct; $("tok").value = state.tok;
+  function connState(text, cls, msg, msgCls) {
+    $("conn-state").textContent = text; $("conn-state").className = "pill " + cls;
+    $("oanda-pill").textContent = "OANDA " + text.toLowerCase(); $("oanda-pill").className = "pill " + cls;
+    if (msg) { $("conn-msg").textContent = msg; $("conn-msg").className = msgCls || "muted"; }
+  }
+  async function connect() {
+    state.acct = $("acct").value.trim(); state.tok = $("tok").value.trim();
+    if (!state.acct || !state.tok) { connState("Not connected", "wait", "Enter both your practice account ID and token."); return; }
+    store.set("oanda_acct", state.acct); store.set("oanda_tok", state.tok);
+    connState("Connecting", "wait", "Calling OANDA…");
+    try {
+      await Promise.all([pollAccount(), pollPrices()]);
+      state.connected = true;
+      connState("Live", "live", "Connected to your " + state.account.currency + " practice account.", "up");
+      renderAll();
+      await Promise.all([safe(pollTrades), safe(pollStrength)]);
+      await safe(checkFailedBreaks);
+      renderAll(); if (current === "markets") loadChart();
+    } catch (e) {
+      state.connected = false;
+      connState("Failed", "off", e.status === 401 ? "OANDA rejected the token (401). Check that it's a practice-account token." : e.status ? "OANDA answered " + e.status + ". Check the account ID matches the token." : "Couldn't reach OANDA from this browser.", "down");
+      renderAll();
+    }
+  }
+  $("conn-form").addEventListener("submit", e => { e.preventDefault(); connect(); });
+  $("forget").addEventListener("click", () => {
+    store.del("oanda_tok"); store.del("oanda_acct"); $("tok").value = ""; $("acct").value = "";
+    Object.assign(state, { tok: "", acct: "", connected: false, account: null, closed: [], open: [], prices: {}, baseline: {}, spark: {}, failed: {} });
+    connState("Not connected", "wait", "Token removed from this browser.");
+    renderAll(); loadChart();
+  });
+  async function safe(fn) {
+    try { await fn(); }
+    catch (e) { if (e.status === 401) { state.connected = false; connState("Failed", "off", "OANDA rejected the token (401).", "down"); } }
+  }
+
+  // ================= routing =================
+  const TABS = ["plan", "markets", "calculator", "journal", "analytics", "patterns", "review", "setup"];
+  let current = "plan";
+  function route() {
+    const h = (location.hash || "#plan").slice(1);
+    current = TABS.includes(h) ? h : "plan";
+    for (const t of TABS) $("tab-" + t).hidden = t !== current;
+    for (const a of document.querySelectorAll("nav.side a")) {
+      if (a.getAttribute("href") === "#" + current) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+    }
+    renderAll();
+    if (current === "markets") { loadTvCalendar(); loadChart(); }
+  }
+  window.addEventListener("hashchange", route);
+
+  function renderAll() {
+    renderPlan();
+    renderTiles(); renderStrength(); renderMarketCal(); renderLevelEditor(); drawLines();
+    renderCalc(); renderJournal(); renderAnalytics(); renderPatterns();
+    renderReviewSelect(); renderReview();
+  }
+
+  // ================= clocks + loops =================
+  const clock = tz => new Intl.DateTimeFormat("en-US", { timeZone: tz, hour: "numeric", minute: "2-digit" });
+  const cPT = clock("America/Los_Angeles"), cL = clock("Europe/London"), cNY = clock("America/New_York");
+  function tick() {
+    const now = new Date(), n = pt(now), s = $("sess");
+    $("clk-pt").textContent = cPT.format(now); $("clk-ldn").textContent = cL.format(now); $("clk-ny").textContent = cNY.format(now);
+    if (!["Mon", "Tue", "Wed", "Thu"].includes(n.wd)) { s.textContent = n.wd === "Fri" ? "No trading Fridays" : "Weekend"; s.className = "pill off"; }
+    else if (n.mins >= hm(S.start) && n.mins < hm(S.expiry)) { s.textContent = "Trading window"; s.className = "pill live"; }
+    else if (n.mins >= 300 && n.mins < hm(S.start)) { s.textContent = "Plan build"; s.className = "pill wait"; }
+    else { s.textContent = "Outside window"; s.className = "pill"; }
+  }
+
+  async function boot() {
+    tick(); setInterval(tick, 15000);
+    await loadData();
+    route();
+    if (state.acct && state.tok) await connect();
+    setInterval(async () => { if (!state.connected) return; await safe(pollPrices); renderPlan(); if (current === "markets") { renderTiles(); renderStrength(); } }, 2000);
+    setInterval(async () => { if (!state.connected) return; await safe(pollAccount); await safe(pollTrades); renderAll(); }, 30000);
+    setInterval(async () => { if (!state.connected) return; await safe(pollStrength); await safe(checkFailedBreaks); if (current === "markets") loadChart(); renderAll(); }, 60000);
+    setInterval(async () => { await loadData(); renderAll(); }, 5 * 60000);
+  }
+  boot();
 })();
 </script>
 </body>
