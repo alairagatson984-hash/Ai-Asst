@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TruLux Live Markets</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: slim top bar, OANDA connection strip, then a 2-column grid of live panels that stacks on phones. */
+  :root {
+    --bg: #0b0809;
+    --panel: #151012;
+    --panel-2: #1c1517;
+    --line: #2e2226;
+    --fg: #f3e9ec;
+    --muted: #a8949a;
+    --rose: #e98aa6;
+    --rose-deep: #b8506f;
+    --up: #3fcf8e;
+    --down: #ef5a6f;
+    --warn: #f0b44c;
+    --display: "Cormorant Garamond", "Times New Roman", serif;
+    --body: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background:
+      radial-gradient(1200px 500px at 85% -10%, rgba(233,138,166,.10), transparent 60%),
+      radial-gradient(900px 400px at -10% 110%, rgba(184,80,111,.10), transparent 60%),
+      var(--bg);
+    color: var(--fg);
+    font: 14px/1.5 var(--body);
+    min-height: 100vh;
+  }
+  .wrap {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding-block: 20px 40px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    display: grid;
+    gap: 16px;
+  }
+  header {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px;
+    border-bottom: 1px solid var(--line); padding-bottom: 14px;
+  }
+  .brand { display: grid; line-height: 1; }
+  .brand b { font: 600 34px/1 var(--display); letter-spacing: .01em; color: var(--fg); }
+  .brand small { font-size: 10px; letter-spacing: .42em; color: var(--rose); margin-top: 4px; text-transform: uppercase; }
+  .clock { display: flex; gap: 18px; flex-wrap: wrap; font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .clock strong { color: var(--fg); font-weight: 500; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; border: 1px solid var(--line); background: var(--panel-2); }
+  .pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--muted); }
+  .pill.live::before { background: var(--up); box-shadow: 0 0 8px var(--up); }
+  .pill.off::before { background: var(--down); }
+  .pill.wait::before { background: var(--warn); }
+
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; min-width: 0; }
+  .panel h2 { margin: 0 0 12px; font: 600 22px/1.1 var(--display); text-wrap: balance; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .panel h2 span { font: 400 12px var(--body); color: var(--muted); }
+
+  .grid { display: grid; gap: 16px; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+  @media (max-width: 900px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+
+  /* OANDA connection */
+  .conn { display: grid; gap: 12px; }
+  .conn form { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; }
+  .field { display: grid; gap: 4px; flex: 1 1 220px; min-width: 0; }
+  .field label { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  input {
+    background: var(--panel-2); border: 1px solid var(--line); color: var(--fg); border-radius: 8px;
+    padding: 9px 11px; font: 13px var(--mono); width: 100%;
+  }
+  input:focus-visible, button:focus-visible { outline: 2px solid var(--rose); outline-offset: 2px; }
+  button {
+    background: var(--rose); color: #2a0e17; border: 0; border-radius: 8px; padding: 10px 16px;
+    font: 600 13px var(--body); cursor: pointer;
+  }
+  button.ghost { background: transparent; color: var(--muted); border: 1px solid var(--line); }
+  button:hover { filter: brightness(1.08); }
+  .msg { font-size: 13px; color: var(--muted); }
+  .msg.err { color: var(--down); }
+  .msg.ok { color: var(--up); }
+
+  /* OANDA live quotes */
+  .quotes { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+  .q { background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; display: grid; gap: 2px; }
+  .q .sym { font-size: 12px; color: var(--muted); letter-spacing: .04em; }
+  .q .px { font: 500 18px var(--mono); font-variant-numeric: tabular-nums; }
+  .q .sp { font: 11px var(--mono); color: var(--muted); }
+  .q.up .px { color: var(--up); }
+  .q.down .px { color: var(--down); }
+
+  .tv { min-height: 120px; }
+  .tv-chart { height: 560px; }
+  .tv-cal { height: 560px; }
+  .tv-heat { height: 380px; }
+  @media (max-width: 600px) { .tv-chart, .tv-cal { height: 460px; } }
+
+  footer { text-align: center; font-size: 10px; letter-spacing: .4em; text-transform: uppercase; color: var(--muted); padding-top: 8px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand"><b>TruLux</b><small>Live Markets</small></div>
+    <div class="clock">
+      <span>PT <strong id="clk-pt">--:--</strong></span>
+      <span>London <strong id="clk-ldn">--:--</strong></span>
+      <span>New York <strong id="clk-ny">--:--</strong></span>
+      <span id="sess" class="pill">Session</span>
+    </div>
+  </header>
+
+  <section class="panel conn" aria-labelledby="conn-h">
+    <h2 id="conn-h">OANDA practice connection <span id="conn-state" class="pill wait">Not connected</span></h2>
+    <form id="conn-form">
+      <div class="field">
+        <label for="acct">Account ID</label>
+        <input id="acct" autocomplete="off" placeholder="101-001-1234567-001">
+      </div>
+      <div class="field">
+        <label for="tok">Practice API token</label>
+        <input id="tok" type="password" autocomplete="off" placeholder="Paste your demo token">
+      </div>
+      <button type="submit">Connect</button>
+      <button type="button" class="ghost" id="forget">Forget token</button>
+    </form>
+    <p class="msg" id="conn-msg">Your token is saved only in this browser. It never goes into the repo or to Claude. Use a <strong>practice</strong> account token.</p>
+    <div class="quotes" id="quotes" hidden></div>
+  </section>
+
+  <section class="grid">
+    <div class="panel">
+      <h2>Chart <span>TradingView · OANDA feed</span></h2>
+      <div class="tv tv-chart" id="tv-chart"></div>
+    </div>
+    <div class="panel">
+      <h2>Economic calendar <span>high impact · your 7 majors</span></h2>
+      <div class="tv tv-cal" id="tv-cal"></div>
+    </div>
+  </section>
+
+  <section class="grid">
+    <div class="panel">
+      <h2>Majors <span>live tiles</span></h2>
+      <div class="tv" id="tv-tiles"></div>
+    </div>
+    <div class="panel">
+      <h2>Currency strength <span>heat map</span></h2>
+      <div class="tv tv-heat" id="tv-heat"></div>
+    </div>
+  </section>
+
+  <footer>Strategy turns information into opportunity</footer>
+</div>
+
+<script>
+(function () {
+  const PAIRS = ["EUR_USD", "GBP_USD", "USD_JPY", "USD_CHF", "AUD_USD", "USD_CAD", "NZD_USD"];
+  const TV = PAIRS.map(p => "OANDA:" + p.replace("_", ""));
+  const API = "https://api-fxpractice.oanda.com/v3";
+
+  // ---------- clocks + session pill ----------
+  const fmt = tz => new Intl.DateTimeFormat("en-US", { timeZone: tz, hour: "2-digit", minute: "2-digit", hour12: false });
+  const fPT = fmt("America/Los_Angeles"), fLDN = fmt("Europe/London"), fNY = fmt("America/New_York");
+  function tick() {
+    const now = new Date();
+    document.getElementById("clk-pt").textContent = fPT.format(now);
+    document.getElementById("clk-ldn").textContent = fLDN.format(now);
+    document.getElementById("clk-ny").textContent = fNY.format(now);
+    const [h, m] = fPT.format(now).split(":").map(Number);
+    const mins = h * 60 + m;
+    const day = new Intl.DateTimeFormat("en-US", { timeZone: "America/Los_Angeles", weekday: "short" }).format(now);
+    const s = document.getElementById("sess");
+    if (day === "Fri" || day === "Sat") { s.textContent = "No trading today"; s.className = "pill off"; }
+    else if (mins >= 360 && mins < 840 && day !== "Sun") { s.textContent = "Trading window"; s.className = "pill live"; }
+    else if (mins >= 300 && mins < 360 && day !== "Sun") { s.textContent = "Plan build"; s.className = "pill wait"; }
+    else { s.textContent = "Outside window"; s.className = "pill"; }
+  }
+  tick(); setInterval(tick, 15000);
+
+  // ---------- TradingView widgets ----------
+  function tvWidget(id, file, config) {
+    const host = document.getElementById(id);
+    const box = document.createElement("div");
+    box.className = "tradingview-widget-container";
+    box.style.height = "100%";
+    const inner = document.createElement("div");
+    inner.className = "tradingview-widget-container__widget";
+    inner.style.height = "100%";
+    box.appendChild(inner);
+    const sc = document.createElement("script");
+    sc.src = "https://s3.tradingview.com/external-embedding/" + file;
+    sc.async = true;
+    sc.textContent = JSON.stringify(config);
+    box.appendChild(sc);
+    host.appendChild(box);
+  }
+  const base = { colorTheme: "dark", isTransparent: true, locale: "en" };
+  tvWidget("tv-chart", "embed-widget-advanced-chart.js", Object.assign({}, base, {
+    autosize: true, symbol: "OANDA:EURUSD", interval: "15", timezone: "America/Los_Angeles",
+    style: "1", allow_symbol_change: true, watchlist: TV, withdateranges: true, hide_side_toolbar: false,
+    support_host: "https://www.tradingview.com"
+  }));
+  tvWidget("tv-cal", "embed-widget-events.js", Object.assign({}, base, {
+    width: "100%", height: "100%", importanceFilter: "0,1", countryFilter: "us,eu,gb,jp,ch,ca,au,nz"
+  }));
+  tvWidget("tv-tiles", "embed-widget-market-quotes.js", Object.assign({}, base, {
+    width: "100%", height: 420, showSymbolLogo: true,
+    symbolsGroups: [{ name: "Majors", symbols: TV.map(s => ({ name: s })) }]
+  }));
+  tvWidget("tv-heat", "embed-widget-forex-heat-map.js", Object.assign({}, base, {
+    width: "100%", height: "100%", currencies: ["EUR", "USD", "JPY", "GBP", "CHF", "AUD", "CAD", "NZD"]
+  }));
+
+  // ---------- OANDA practice connection ----------
+  const store = {
+    get(k) { try { return localStorage.getItem(k) || ""; } catch (e) { return ""; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
+    del(k) { try { localStorage.removeItem(k); } catch (e) {} }
+  };
+  const acctEl = document.getElementById("acct"), tokEl = document.getElementById("tok");
+  const msg = document.getElementById("conn-msg"), state = document.getElementById("conn-state");
+  const quotesEl = document.getElementById("quotes");
+  acctEl.value = store.get("oanda_acct");
+  tokEl.value = store.get("oanda_tok");
+  let timer = null, last = {};
+
+  function setState(text, cls) { state.textContent = text; state.className = "pill " + cls; }
+  function setMsg(text, cls) { msg.textContent = text; msg.className = "msg " + (cls || ""); }
+
+  async function poll(acct, tok) {
+    const r = await fetch(API + "/accounts/" + encodeURIComponent(acct) + "/pricing?instruments=" + PAIRS.join(","), {
+      headers: { Authorization: "Bearer " + tok }
+    });
+    if (!r.ok) {
+      const body = await r.text().catch(() => "");
+      throw Object.assign(new Error("HTTP " + r.status), { status: r.status, body });
+    }
+    return r.json();
+  }
+
+  function render(prices) {
+    quotesEl.hidden = false;
+    quotesEl.innerHTML = "";
+    for (const p of prices) {
+      const bid = parseFloat(p.bids[0].price), ask = parseFloat(p.asks[0].price);
+      const mid = (bid + ask) / 2;
+      const pip = p.instrument.endsWith("JPY") ? 0.01 : 0.0001;
+      const dir = last[p.instrument] == null ? "" : mid > last[p.instrument] ? "up" : mid < last[p.instrument] ? "down" : "";
+      last[p.instrument] = mid;
+      const el = document.createElement("div");
+      el.className = "q " + dir;
+      const digits = p.instrument.endsWith("JPY") ? 3 : 5;
+      el.innerHTML = '<span class="sym"></span><span class="px"></span><span class="sp"></span>';
+      el.querySelector(".sym").textContent = p.instrument.replace("_", "/");
+      el.querySelector(".px").textContent = mid.toFixed(digits);
+      el.querySelector(".sp").textContent = "spread " + ((ask - bid) / pip).toFixed(1) + " pips";
+      quotesEl.appendChild(el);
+    }
+  }
+
+  async function connect() {
+    const acct = acctEl.value.trim(), tok = tokEl.value.trim();
+    if (!acct || !tok) { setMsg("Enter both your practice account ID and token.", "err"); return; }
+    store.set("oanda_acct", acct); store.set("oanda_tok", tok);
+    clearInterval(timer);
+    setState("Connecting", "wait"); setMsg("Calling OANDA practice API from this browser…");
+    try {
+      const data = await poll(acct, tok);
+      render(data.prices);
+      setState("Live", "live");
+      setMsg("Connected. OANDA allows browser calls, so live prices, auto-status and trade sync can all run on this site.", "ok");
+      timer = setInterval(async () => {
+        try { render((await poll(acct, tok)).prices); }
+        catch (e) { setState("Error", "off"); setMsg("Lost connection: " + e.message, "err"); clearInterval(timer); }
+      }, 2000);
+    } catch (e) {
+      setState("Failed", "off");
+      if (e.status === 401) setMsg("OANDA rejected the token (401). Check that it's a practice-account token.", "err");
+      else if (e.status === 400 || e.status === 403 || e.status === 404) setMsg("OANDA answered " + e.status + ". Check the account ID matches the token.", "err");
+      else setMsg("The browser blocked the call before OANDA answered. This usually means OANDA doesn't allow browser (CORS) requests. Tell Claude: \"OANDA blocked\". We'll switch to the backup feed.", "err");
+    }
+  }
+
+  document.getElementById("conn-form").addEventListener("submit", e => { e.preventDefault(); connect(); });
+  document.getElementById("forget").addEventListener("click", () => {
+    store.del("oanda_tok"); store.del("oanda_acct"); tokEl.value = ""; acctEl.value = "";
+    clearInterval(timer); quotesEl.hidden = true; setState("Not connected", "wait");
+    setMsg("Token removed from this browser.");
+  });
+  if (acctEl.value && tokEl.value) connect();
+})();
+</script>
+</body>
+</html>
