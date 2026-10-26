@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-26",
+  "updatedAt": "2026-10-26T05:30:00-07:00",
+  "verdict": {
+    "headline": "No trade today",
+    "reason": "Neither marked chart has a broken level. EUR/GBP is sitting just above M5 support and USD/CAD is mid-range between its two levels, so there is nothing to retest yet."
+  },
+  "calendar": [],
+  "levels": [
+    { "id": "eg-1", "pair": "EUR_GBP", "price": 0.83810, "tf": "M15", "label": "Support (intact)" },
+    { "id": "eg-2", "pair": "EUR_GBP", "price": 0.84025, "tf": "H1", "label": "Resistance (swing high)" },
+    { "id": "uc-1", "pair": "USD_CAD", "price": 1.40460, "tf": "M15", "label": "Resistance (intact)" },
+    { "id": "uc-2", "pair": "USD_CAD", "price": 1.39690, "tf": "M15", "label": "Support (intact)" }
+  ],
+  "setups": [],
+  "watchlist": [
+    { "pair": "EUR_GBP", "level": 0.8381, "missing": "Support not broken yet (price 0.83855, about 4 pips above). Needs a body close below, displacement, follow-through, an M5 structure break and a retest from below." },
+    { "pair": "USD_CAD", "level": 1.4046, "missing": "Price 1.4017 is mid-range, about 29 pips below resistance. No break or retest." },
+    { "pair": "USD_CAD", "level": 1.3969, "missing": "Price is about 48 pips above support. No break or retest." }
+  ],
+  "newsBlocks": [],
+  "watchFor": [
+    "EUR/GBP: an M5 body close below 0.8381 with a strong candle, then a retest from below with an engulfing or pin-bar trigger. A short would need at least 1:2 to a next level.",
+    "USD/CAD: a body close beyond 1.4046 or 1.3969, then a retest with a trigger.",
+    "No red-folder events found today. Fed decision is Wednesday, so check pair blocks then."
+  ],
+  "review": null
+}
