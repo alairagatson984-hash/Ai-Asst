@@ -1,28 +1,27 @@
 {
   "date": "2026-10-26",
-  "updatedAt": "2026-10-26T05:30:00-07:00",
+  "updatedAt": "2026-10-26T06:45:00-07:00",
   "verdict": {
-    "headline": "No trade today",
-    "reason": "Neither marked chart has a broken level. EUR/GBP is sitting just above M5 support and USD/CAD is mid-range between its two levels, so there is nothing to retest yet."
+    "headline": "No trade yet",
+    "reason": "USD/CAD broke above 1.4026 with displacement but hasn't retested it yet (C). EUR/GBP's break of 0.8381 failed, and it isn't one of the 7 majors anyway."
   },
   "calendar": [],
   "levels": [
-    { "id": "eg-1", "pair": "EUR_GBP", "price": 0.83810, "tf": "M15", "label": "Support (intact)" },
-    { "id": "eg-2", "pair": "EUR_GBP", "price": 0.84025, "tf": "H1", "label": "Resistance (swing high)" },
-    { "id": "uc-1", "pair": "USD_CAD", "price": 1.40460, "tf": "M15", "label": "Resistance (intact)" },
-    { "id": "uc-2", "pair": "USD_CAD", "price": 1.39690, "tf": "M15", "label": "Support (intact)" }
+    { "id": "uc-1", "pair": "USD_CAD", "price": 1.3969, "tf": "M15", "label": "Support (marked)" },
+    { "id": "uc-2", "pair": "USD_CAD", "price": 1.4026, "tf": "M15", "label": "Today's high (broken, retest pending)" },
+    { "id": "uc-3", "pair": "USD_CAD", "price": 1.4046, "tf": "M15", "label": "Resistance (marked)" },
+    { "id": "eg-1", "pair": "EUR_GBP", "price": 0.8381, "tf": "M15", "label": "Support (failed break)" }
   ],
   "setups": [],
   "watchlist": [
-    { "pair": "EUR_GBP", "level": 0.8381, "missing": "Support not broken yet (price 0.83855, about 4 pips above). Needs a body close below, displacement, follow-through, an M5 structure break and a retest from below." },
-    { "pair": "USD_CAD", "level": 1.4046, "missing": "Price 1.4017 is mid-range, about 29 pips below resistance. No break or retest." },
-    { "pair": "USD_CAD", "level": 1.3969, "missing": "Price is about 48 pips above support. No break or retest." }
+    { "pair": "USD_CAD", "level": 1.4026, "missing": "4/5 checks. Needs a retest of 1.4026 with a bullish engulfing or pin bar. Plan if it comes: entry ~1.4028, SL ~1.4023, TP 1.4046 (~1:3.6)." },
+    { "pair": "EUR_GBP", "level": 0.8381, "missing": "Failed break: closed below, then snapped back above. Not one of the 7 majors, reference only." }
   ],
   "newsBlocks": [],
   "watchFor": [
-    "EUR/GBP: an M5 body close below 0.8381 with a strong candle, then a retest from below with an engulfing or pin-bar trigger. A short would need at least 1:2 to a next level.",
-    "USD/CAD: a body close beyond 1.4046 or 1.3969, then a retest with a trigger.",
-    "No red-folder events found today. Fed decision is Wednesday, so check pair blocks then."
+    "USD/CAD pullback to 1.4026 that holds with a trigger candle: becomes an A long.",
+    "USD/CAD close above 1.4046 with displacement: new retest setup. Mark the next resistance first to check R:R.",
+    "No red-folder events today. Setups expire 2:00pm PT."
   ],
   "review": null
 }
