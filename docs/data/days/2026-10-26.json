@@ -2,26 +2,24 @@
   "date": "2026-10-26",
   "updatedAt": "2026-10-26T06:45:00-07:00",
   "verdict": {
-    "headline": "No trade yet",
-    "reason": "USD/CAD broke above 1.4026 with displacement but hasn't retested it yet (C). EUR/GBP's break of 0.8381 failed, and it isn't one of the 7 majors anyway."
+    "headline": "No trade today",
+    "reason": "USD/CAD broke above 1.4046 with displacement, then closed back below it and has dropped about 25 pips. The break failed, so it is a C and there is nothing to enter."
   },
-  "calendar": [],
+  "calendar": [
+    { "time": "01:00", "currency": "EUR", "event": "German Ifo Business Climate (out: 90.2 vs 89.8 forecast)", "impact": "high" }
+  ],
   "levels": [
-    { "id": "uc-1", "pair": "USD_CAD", "price": 1.3969, "tf": "M15", "label": "Support (marked)" },
-    { "id": "uc-2", "pair": "USD_CAD", "price": 1.4026, "tf": "M15", "label": "Today's high (broken, retest pending)" },
-    { "id": "uc-3", "pair": "USD_CAD", "price": 1.4046, "tf": "M15", "label": "Resistance (marked)" },
-    { "id": "eg-1", "pair": "EUR_GBP", "price": 0.8381, "tf": "M15", "label": "Support (failed break)" }
+    { "id": "uc-1", "pair": "USD_CAD", "price": 1.4046, "tf": "M15", "label": "Resistance (marked, failed break)" }
   ],
   "setups": [],
   "watchlist": [
-    { "pair": "USD_CAD", "level": 1.4026, "missing": "4/5 checks. Needs a retest of 1.4026 with a bullish engulfing or pin bar. Plan if it comes: entry ~1.4028, SL ~1.4023, TP 1.4046 (~1:3.6)." },
-    { "pair": "EUR_GBP", "level": 0.8381, "missing": "Failed break: closed below, then snapped back above. Not one of the 7 majors, reference only." }
+    { "pair": "USD_CAD", "level": 1.4046, "missing": "Failed break (C): a strong push to 1.4054, then closed back below 1.4046 and fell to about 1.4020. No retest hold and no trigger candle. Only 1.4046 was marked, so there is no marked support to check 1:2 R:R against. Only the 5-minute chart was sent, so checks that need H1/M15 can't be confirmed." }
   ],
   "newsBlocks": [],
   "watchFor": [
-    "USD/CAD pullback to 1.4026 that holds with a trigger candle: becomes an A long.",
-    "USD/CAD close above 1.4046 with displacement: new retest setup. Mark the next resistance first to check R:R.",
-    "No red-folder events today. Setups expire 2:00pm PT."
+    "USD/CAD close back above 1.4046 with displacement, then a retest that holds with an engulfing or pin bar: fresh long setup. Mark the next resistance first to check R:R.",
+    "Mark support below price (and the Asian range 4pm-11pm PT) to check any short for 1:2.",
+    "Only USD/CAD was sent. The other 6 majors are not graded. Setups expire 2:00pm PT. The 5:30am PT US data window has passed."
   ],
   "review": null
 }
