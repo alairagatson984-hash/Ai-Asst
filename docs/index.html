@@ -167,7 +167,6 @@
   .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px; }
   .levels-edit { display: grid; gap: 8px; margin-top: 12px; }
   .lvl-row { display: grid; grid-template-columns: minmax(0, 1fr) 130px auto; gap: 10px; align-items: center; }
-  .tv-cal { height: 520px; }
 
   input, select {
     background: var(--panel-2); border: 1px solid var(--line); color: var(--fg); border-radius: 8px;
@@ -254,10 +253,7 @@
       <div id="plan-notices"></div>
       <div id="verdict"></div>
       <div class="cards" id="cards"></div>
-      <div class="grid2">
-        <div class="panel"><h2>Watchlist <span>C grade, not a trade yet</span></h2><div id="watchlist"></div></div>
-        <div class="panel"><h2>Red-folder events <span>PT</span></h2><div id="plan-cal"></div></div>
-      </div>
+      <div class="panel"><h2>Watchlist <span>C grade, not a trade yet</span></h2><div id="watchlist"></div></div>
       <div class="panel" id="watchfor-panel"><h2>What to watch for</h2><div id="watchfor"></div></div>
     </section>
 
@@ -285,10 +281,6 @@
         </div>
         <div class="chart-box" id="chart"></div>
         <div class="levels-edit" id="levels-edit"></div>
-      </div>
-      <div class="grid2">
-        <div class="panel"><h2>Economic calendar <span>TradingView, high impact, 8 currencies</span></h2><div class="tv-cal" id="tv-cal"></div></div>
-        <div class="panel"><h2>Today's red-folder <span>from Claude's plan</span></h2><div id="mk-cal"></div></div>
       </div>
     </section>
 
@@ -631,7 +623,6 @@
       $("plan-notices").innerHTML = notices.join("");
       $("verdict").innerHTML = ""; $("cards").innerHTML = "";
       $("watchlist").innerHTML = '<p class="muted" style="margin:0">Nothing yet.</p>';
-      $("plan-cal").innerHTML = '<p class="muted" style="margin:0">Nothing yet.</p>';
       $("watchfor-panel").hidden = true;
       return;
     }
@@ -651,7 +642,6 @@
     $("verdict").innerHTML = '<div class="verdict' + (trades.length ? "" : " none") + '"><div class="meta"><span class="pill ' + (trades.length ? "good" : "") + '">' + count + "</span></div><h2>" + esc(v.headline || count) + "</h2>" + (v.reason ? "<p>" + esc(v.reason) + "</p>" : "") + "</div>";
     $("cards").innerHTML = trades.map(d => cardHTML(d, day, false)).join("") + dropped.map(d => cardHTML(d, day, true)).join("");
     $("watchlist").innerHTML = (day.watchlist || []).map(w => '<div class="watch-row"><b>' + esc(pairName(w.pair)) + '</b><span class="mono">' + esc(fx(w.pair, w.level)) + '</span><span class="why muted">' + esc(w.missing) + "</span></div>").join("") || '<p class="muted" style="margin:0">Nothing on the watchlist.</p>';
-    $("plan-cal").innerHTML = calHTML(day);
     const wf = (day.newsBlocks || []).concat(day.watchFor || []);
     $("watchfor-panel").hidden = !wf.length;
     $("watchfor").innerHTML = '<ul class="plain">' + wf.map(x => "<li>" + esc(x) + "</li>").join("") + "</ul>";
@@ -673,18 +663,6 @@
       (s.trigger && s.trigger.note ? '<p class="note">' + esc(s.trigger.note) + "</p>" : "") +
       (s.news && s.news.note ? '<p class="note">' + esc(s.news.note) + "</p>" : "") +
       (s.notes ? '<p class="note">' + esc(s.notes) + "</p>" : "") + "</article>";
-  }
-
-  function calHTML(day) {
-    const n = pt(new Date()), live = day.date === n.date;
-    const ev = (day.calendar || []).slice().sort((a, b) => hm(a.time) - hm(b.time));
-    if (!ev.length) return '<p class="muted" style="margin:0">No red-folder events today.</p>';
-    return '<table class="cal"><thead><tr><th>Time</th><th>Event</th><th>Status</th></tr></thead><tbody>' + ev.map(e => {
-      const left = hm(e.time) - n.mins;
-      const status = !live ? "" : left > 0 ? "in " + (left >= 60 ? Math.floor(left / 60) + "h " : "") + (left % 60) + "m" : "Released";
-      const pairs = MAJORS.filter(p => p.split("_").includes(e.currency)).map(pairName).join(", ");
-      return '<tr><td class="mono">' + esc(fmtHM(hm(e.time))) + "</td><td><b>" + esc(e.currency) + "</b> " + esc(e.event) + '<br><span class="muted" style="font-size:12px">' + esc(pairs) + '</span></td><td class="' + (live && left > 0 && left <= S.news ? "warn" : "muted") + '">' + esc(status) + "</td></tr>";
-    }).join("") + "</tbody></table>";
   }
 
   // ================= RENDER: markets =================
@@ -720,7 +698,6 @@
     $("rankbar").innerHTML = ranked.map(c => '<div style="background:rgba(' + (sc[c] >= 0 ? "63,207,142," : "239,90,111,") + (Math.abs(sc[c]) / maxAbs * 0.45 + 0.08).toFixed(2) + ')">' + c + "</div>").join("");
     $("strength").innerHTML = ranked.map((c, i) => '<div class="scard"><span class="label">#' + (i + 1) + '</span><span class="cur">' + c + '</span><span class="val ' + (sc[c] >= 0 ? "up" : "down") + '">' + signed(sc[c]) + "%</span></div>").join("");
   }
-  const renderMarketCal = () => { $("mk-cal").innerHTML = state.today ? calHTML(state.today) : '<p class="muted" style="margin:0">No plan for today yet.</p>'; };
 
   // ---------- chart ----------
   let chart = null, series = null, lines = [], chartPair = "EUR_USD", chartTf = "M15";
@@ -798,15 +775,6 @@
     loadChart();
   });
 
-  let tvLoaded = false;
-  function loadTvCalendar() {
-    if (tvLoaded) return; tvLoaded = true;
-    const box = document.createElement("div"); box.className = "tradingview-widget-container"; box.style.height = "100%";
-    const inner = document.createElement("div"); inner.className = "tradingview-widget-container__widget"; inner.style.height = "100%";
-    const sc = document.createElement("script"); sc.src = "https://s3.tradingview.com/external-embedding/embed-widget-events.js"; sc.async = true;
-    sc.textContent = JSON.stringify({ colorTheme: "dark", isTransparent: true, locale: "en", width: "100%", height: "100%", importanceFilter: "0,1", countryFilter: "us,eu,gb,jp,ch,ca,au,nz" });
-    box.appendChild(inner); box.appendChild(sc); $("tv-cal").appendChild(box);
-  }
 
   // ================= RENDER: calculator =================
   $("c-pair").innerHTML = MAJORS.map(p => '<option value="' + p + '">' + pairName(p) + "</option>").join("");
@@ -1053,13 +1021,13 @@
       if (a.getAttribute("href") === "#" + current) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
     }
     renderAll();
-    if (current === "markets") { loadTvCalendar(); loadChart(); }
+    if (current === "markets") loadChart();
   }
   window.addEventListener("hashchange", route);
 
   function renderAll() {
     renderPlan();
-    renderTiles(); renderStrength(); renderMarketCal(); renderLevelEditor(); drawLines();
+    renderTiles(); renderStrength(); renderLevelEditor(); drawLines();
     renderCalc(); renderJournal(); renderAnalytics(); renderPatterns();
     renderReviewSelect(); renderReview();
   }
