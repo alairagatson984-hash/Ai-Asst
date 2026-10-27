@@ -1,6 +1,6 @@
 {
   "date": "2026-10-27",
-  "updatedAt": "2026-10-27T07:38:00-07:00",
+  "updatedAt": "2026-10-27T08:45:00-07:00",
   "verdict": {
     "headline": "One B trade: USD/CAD long",
     "reason": "USD/CAD broke 1.4028 and retested it with rejection wicks. With your new 1.4053 resistance as the target it clears 1:2 (about 1:2.3). Everything else is still on the watchlist with no setup."
@@ -142,7 +142,7 @@
     {
       "pair": "AUD_USD",
       "level": 0.7034,
-      "missing": "Price pushed above 0.7034 with strong green candles and is at 0.7036, but the break is fresh: no retest yet, so the retest check and the candle trigger are both missing (C for now). Resistance was tested earlier with wicks above it, so watch for a snap-back below. M5 structure break looks likely but only the 5-minute chart was sent. No marked resistance above price to use as TP, so 1:2 can't be checked."
+      "missing": "C. The first break of 0.7034 failed: price closed back below it (down to about 0.7029) before 2:00pm PT. It then pushed back above and spiked to about 0.7040, and is now at 0.7035 testing the level again, but a failed break stays C. The candles at the level are small with no clear engulfing or pin bar, and there is no marked resistance above price to check 1:2 (the 0.7040 high is only about 5 pips). A clean new setup needs a full-bodied close above with follow-through, a retest that holds with a trigger candle, and a marked target."
     },
     {
       "pair": "USD_CHF",
@@ -166,11 +166,11 @@
   ],
   "watchFor": [
     "USD/CAD long: a close back below 1.4028 before 2:00pm PT downgrades it to C. Set and forget otherwise: no moving the SL, no partials.",
+    "AUD/USD: the first break failed (C). It would need a fresh full-bodied close above 0.7034 with follow-through, a retest that holds with an engulfing or pin bar, and a marked resistance above price to check 1:2.",
     "USD/JPY: after 6:00am PT, a clear engulfing or pin bar at the 157.65 retest that holds, with entry at or below about 157.67, SL about 157.55 and TP at 157.91 or a newly marked resistance. Mark the next resistance above price to confirm 1:2.",
     "USD/JPY: a close back below 157.65 before 2:00pm PT makes the break fail (C).",
     "GBP/USD: a new retest of 1.3345 from below after 6:00am PT with an engulfing or pin bar (TP at 1.3313 only gives 1:2 from about 1.3340 with a 2-3 pip stop beyond the swing), or a full-bodied close below 1.3313 then a retest that holds from below with a trigger candle. Mark the next support below price to check R:R.",
     "NZD/USD: a full-bodied close above 0.5707 (or below 0.5677), then a retest that holds with a trigger candle. Mark the next level beyond to check 1:2. A fourth rejection at 0.5707 is not a trade.",
-    "AUD/USD: a pullback to 0.7034 that holds from above with an engulfing or pin bar after 6:00am PT. Mark the next resistance above price first to confirm 1:2. A close back below 0.7034 makes the break fail (C).",
     "EUR/USD: a full-bodied close below 1.1135, then a retest that holds from below with a trigger candle. Mark support below price first to check R:R.",
     "All 7 majors were sent. EUR/USD, USD/JPY, USD/CHF, NZD/USD and GBP/USD were sent on M15; USD/CAD and AUD/USD on M5. Setups expire 2:00pm PT."
   ],
