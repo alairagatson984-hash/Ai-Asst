@@ -1,9 +1,9 @@
 {
   "date": "2026-10-27",
-  "updatedAt": "2026-10-27T05:35:00-07:00",
+  "updatedAt": "2026-10-27T05:58:00-07:00",
   "verdict": {
     "headline": "No trade yet",
-    "reason": "EUR/USD is on marked support with no break. USD/CAD is ranging between its marked levels. USD/JPY and AUD/USD have both broken resistance, but neither has a retest and trigger yet, and no marked target above price gives a 1:2 check. All four stay on the watchlist until the 6:00am PT window."
+    "reason": "Nothing qualifies yet. EUR/USD is on marked support with no break, USD/CAD is ranging, USD/JPY and AUD/USD broke resistance but have no retest and trigger, and USD/CHF was sent with no levels marked. All stay on the watchlist; the 6:00am PT window opens now."
   },
   "calendar": [],
   "levels": [
@@ -85,6 +85,11 @@
       "pair": "AUD_USD",
       "level": 0.7034,
       "missing": "Price pushed above 0.7034 with strong green candles and is at 0.7036, but the break is fresh: no retest yet, so the retest check and the candle trigger are both missing (C for now). Resistance was tested earlier with wicks above it, so watch for a snap-back below. M5 structure break looks likely but only the 5-minute chart was sent. No marked resistance above price to use as TP, so 1:2 can't be checked."
+    },
+    {
+      "pair": "USD_CHF",
+      "level": 0.829,
+      "missing": "No S/R was marked, so nothing can be graded. Price is in an uptrend and sits near 0.8284 under a swing high of about 0.8290-0.8292 that has been tested twice (possible double top, not confirmed). Mark the levels you want graded; a close below the recent low near 0.8280 would need a trigger and a marked target to check 1:2."
     }
   ],
   "newsBlocks": [
@@ -97,7 +102,7 @@
     "AUD/USD: a pullback to 0.7034 that holds from above with an engulfing or pin bar after 6:00am PT. Mark the next resistance above price first to confirm 1:2. A close back below 0.7034 makes the break fail (C).",
     "USD/CAD: a full-bodied close above 1.4028 or below 1.4009 with follow-through, then a retest that holds with an engulfing or pin bar. Mark the next level beyond the range to check 1:2.",
     "EUR/USD: a full-bodied close below 1.1135, then a retest that holds from below with a trigger candle. Mark support below price first to check R:R.",
-    "Only EUR/USD, USD/JPY, USD/CAD and AUD/USD were sent. The other 3 majors are not graded. Setups expire 2:00pm PT. EUR/USD and USD/JPY were sent on M15; USD/CAD and AUD/USD on M5."
+    "Only EUR/USD, USD/JPY, USD/CAD, AUD/USD and USD/CHF were sent. GBP/USD and NZD/USD are not graded. Setups expire 2:00pm PT. EUR/USD, USD/JPY and USD/CHF were sent on M15; USD/CAD and AUD/USD on M5."
   ],
   "review": null
 }
