@@ -1,9 +1,9 @@
 {
   "date": "2026-10-27",
-  "updatedAt": "2026-10-27T07:32:00-07:00",
+  "updatedAt": "2026-10-27T07:38:00-07:00",
   "verdict": {
-    "headline": "No trade yet. USD/CAD is close but fails 1:2",
-    "reason": "USD/CAD broke 1.4028 and retested it with rejection wicks, which would be a B, but the next known resistance at 1.4046 only gives about 1:1.4, under the 1:2 minimum. Everything else is still on the watchlist."
+    "headline": "One B trade: USD/CAD long",
+    "reason": "USD/CAD broke 1.4028 and retested it with rejection wicks. With your new 1.4053 resistance as the target it clears 1:2 (about 1:2.3). Everything else is still on the watchlist with no setup."
   },
   "calendar": [],
   "levels": [
@@ -90,15 +90,45 @@
       "price": 1.3313,
       "tf": "M15",
       "label": "Support (marked, wicked through then held)"
+    },
+    {
+      "id": "uc-3",
+      "pair": "USD_CAD",
+      "price": 1.4053,
+      "tf": "M5",
+      "label": "Resistance (marked, target)"
     }
   ],
-  "setups": [],
-  "watchlist": [
+  "setups": [
     {
+      "id": "s1",
       "pair": "USD_CAD",
-      "level": 1.4028,
-      "missing": "Would grade B on the 4 checks the 5-minute chart can show (close beyond, displacement, M5 structure break, retest holds) plus rejection wicks at the retest, but follow-through is marked false because a full red candle gave back the whole spike to the level. Entry about 1.4032 (the ask), SL about 1.4022 (3 pips under the retest low near 1.4025), risk about 10 pips. The next known resistance is 1.4046 from yesterday's plan, which is only about 14 pips, or 1:1.4, so it is not a trade. It would need a target of about 1.4052 or higher. The 7-pip spike high at 1.4038 is even smaller. News: the 5:30am PT US data is out, but the calendar was never confirmed."
-    },
+      "direction": "long",
+      "pattern": "clean-br",
+      "levelId": "uc-1",
+      "tpLevelId": "uc-3",
+      "entry": 1.4032,
+      "sl": 1.4023,
+      "tp": 1.4053,
+      "checks": {
+        "close": true,
+        "displacement": true,
+        "followThrough": false,
+        "structure": true,
+        "retest": true
+      },
+      "trigger": {
+        "type": "pinbar",
+        "note": "Two small candles at the retest wicked about 2-4 pips below 1.4028 and closed back above it."
+      },
+      "news": {
+        "status": "clear",
+        "note": "The 5:30am PT US data is out. No red-folder time was confirmed for today. BoC and the Fed decide tomorrow, so expect cautious trade."
+      },
+      "notes": "Grade B: follow-through is false because one full red candle gave back the whole spike to the level before price recovered. Entry about 1.4032, SL 2 pips under the retest low near 1.4025, TP at your marked 1.4053. Risk about 9 pips, reward about 21, so about 1:2.3. Filling at the ask (about 1.4032-1.4033) trims that to about 1:2.2 or 1:2.1. Expires 2:00pm PT. The latest chart's candles lag the live quote, so this uses the 7:26am chart and the quote. A close back below 1.4028 downgrades it to C."
+    }
+  ],
+  "watchlist": [
     {
       "pair": "EUR_USD",
       "level": 1.1135,
@@ -135,13 +165,12 @@
     "Fed meeting starts today with the decision tomorrow (Oct 28, 11:00am PT); BoC and RBNZ also decide tomorrow. Expect thin, cautious trade."
   ],
   "watchFor": [
-    "USD/CAD: if a resistance at about 1.4052 or higher is marked, it clears 1:2 from 1.4032 with SL 1.4022. A close back below 1.4028 before 2:00pm PT makes the break fail (C).",
+    "USD/CAD long: a close back below 1.4028 before 2:00pm PT downgrades it to C. Set and forget otherwise: no moving the SL, no partials.",
     "USD/JPY: after 6:00am PT, a clear engulfing or pin bar at the 157.65 retest that holds, with entry at or below about 157.67, SL about 157.55 and TP at 157.91 or a newly marked resistance. Mark the next resistance above price to confirm 1:2.",
     "USD/JPY: a close back below 157.65 before 2:00pm PT makes the break fail (C).",
     "GBP/USD: a new retest of 1.3345 from below after 6:00am PT with an engulfing or pin bar (TP at 1.3313 only gives 1:2 from about 1.3340 with a 2-3 pip stop beyond the swing), or a full-bodied close below 1.3313 then a retest that holds from below with a trigger candle. Mark the next support below price to check R:R.",
     "NZD/USD: a full-bodied close above 0.5707 (or below 0.5677), then a retest that holds with a trigger candle. Mark the next level beyond to check 1:2. A fourth rejection at 0.5707 is not a trade.",
     "AUD/USD: a pullback to 0.7034 that holds from above with an engulfing or pin bar after 6:00am PT. Mark the next resistance above price first to confirm 1:2. A close back below 0.7034 makes the break fail (C).",
-    "USD/CAD: a full-bodied close above 1.4028 or below 1.4009 with follow-through, then a retest that holds with an engulfing or pin bar. Mark the next level beyond the range to check 1:2.",
     "EUR/USD: a full-bodied close below 1.1135, then a retest that holds from below with a trigger candle. Mark support below price first to check R:R.",
     "All 7 majors were sent. EUR/USD, USD/JPY, USD/CHF, NZD/USD and GBP/USD were sent on M15; USD/CAD and AUD/USD on M5. Setups expire 2:00pm PT."
   ],
