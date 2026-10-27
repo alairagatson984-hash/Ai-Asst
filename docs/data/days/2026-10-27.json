@@ -1,6 +1,6 @@
 {
   "date": "2026-10-27",
-  "updatedAt": "2026-10-27T08:45:00-07:00",
+  "updatedAt": "2026-10-27T09:15:00-07:00",
   "verdict": {
     "headline": "One B trade: USD/CAD long",
     "reason": "USD/CAD broke 1.4028 and retested it with rejection wicks. With your new 1.4053 resistance as the target it clears 1:2 (about 1:2.3). Everything else is still on the watchlist with no setup."
@@ -97,6 +97,13 @@
       "price": 1.4053,
       "tf": "M5",
       "label": "Resistance (marked, target)"
+    },
+    {
+      "id": "gu-3",
+      "pair": "GBP_USD",
+      "price": 1.3303,
+      "tf": "M5",
+      "label": "Support (marked, target)"
     }
   ],
   "setups": [
@@ -157,7 +164,7 @@
     {
       "pair": "GBP_USD",
       "level": 1.3345,
-      "missing": "Missed, not a trade now. Price closed below 1.3345 with displacement and follow-through (about 40 pips), came back to retest it from below and was rejected, then fell to the marked support at 1.3313 (wick to about 1.3303) and bounced to 1.3328. On paper a short from about 1.3340 with SL about 1.3350 and TP 1.3313 was over 1:2, but it formed before the 6:00am PT window and has already reached its target. The M5 structure break can't be confirmed from the M15 chart (marked false) and the retest candle is not a clean trigger. From 1.3328 there is only about 15 pips to 1.3313 and about 17 pips to 1.3345, so neither side gives 1:2."
+      "missing": "Short idea at the 1.3313 retest. A close below 1.3313, a retest from below and a bearish engulfing at the level are now on the chart, but the break had weak displacement and follow-through, and the marked target at 1.3303 is only about 6 pips away. With entry about 1.3309 and SL about 1.3317 (3 pips above the retest high near 1.3314) that is about 8 pips of risk for 6 of reward, roughly 1:0.75, under the 1:2 minimum. It would need a marked support at about 1.3293 or lower. A close back above 1.3313 kills the idea. The earlier long-side break at 1.3345 was missed."
     }
   ],
   "newsBlocks": [
