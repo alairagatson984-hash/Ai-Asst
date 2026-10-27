@@ -1,6 +1,6 @@
 {
   "date": "2026-10-27",
-  "updatedAt": "2026-10-27T09:15:00-07:00",
+  "updatedAt": "2026-10-27T11:10:00-07:00",
   "verdict": {
     "headline": "One B trade: USD/CAD long",
     "reason": "USD/CAD broke 1.4028 and retested it with rejection wicks. With your new 1.4053 resistance as the target it clears 1:2 (about 1:2.3). Everything else is still on the watchlist with no setup."
@@ -139,7 +139,7 @@
     {
       "pair": "EUR_USD",
       "level": 1.1135,
-      "missing": "Price fell about 90 pips to the marked support and bounced from a low of about 1.1134 without closing below it. No break, so no setup. A candle body closing below 1.1135 with displacement would start a short break-and-retest; the next marked level below does not exist yet."
+      "missing": "Break in progress. A full-bodied M5 candle closed below the marked 1.1135 support (displacement) and price is at about 1.1134, but there is no retest yet and no engulfing or pin bar, and the M15 structure can't be read from this M5 chart. No marked support below price to use as the target. For a short on the retest of 1.1135 with SL about 3 pips above the retest high (near 1.1140), the target needs to be about 1.1125 or lower to clear 1:2. A close back above 1.1135 before 2:00pm PT makes the break fail (C)."
     },
     {
       "pair": "USD_JPY",
@@ -172,6 +172,7 @@
     "Fed meeting starts today with the decision tomorrow (Oct 28, 11:00am PT); BoC and RBNZ also decide tomorrow. Expect thin, cautious trade."
   ],
   "watchFor": [
+    "EUR/USD: price retests 1.1135 from below and prints a bearish engulfing or pin bar. Mark a support at about 1.1125 or lower as the target first. A close back above 1.1135 makes the break fail.",
     "USD/CAD long: a close back below 1.4028 before 2:00pm PT downgrades it to C. Set and forget otherwise: no moving the SL, no partials.",
     "AUD/USD: the first break failed (C). It would need a fresh full-bodied close above 0.7034 with follow-through, a retest that holds with an engulfing or pin bar, and a marked resistance above price to check 1:2.",
     "USD/JPY: after 6:00am PT, a clear engulfing or pin bar at the 157.65 retest that holds, with entry at or below about 157.67, SL about 157.55 and TP at 157.91 or a newly marked resistance. Mark the next resistance above price to confirm 1:2.",
