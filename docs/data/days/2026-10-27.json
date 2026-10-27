@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-27",
+  "updatedAt": "2026-10-27T05:15:00-07:00",
+  "verdict": {
+    "headline": "No trade yet",
+    "reason": "EUR/USD is sitting on marked support at 1.1135 with no break. USD/JPY broke 157.65 and is retesting it, but there is no confirmed trigger candle and the marked levels give no target that reaches 1:2 from a market entry. Both stay on the watchlist until the 6:00am PT window."
+  },
+  "calendar": [],
+  "levels": [
+    { "id": "eu-1", "pair": "EUR_USD", "price": 1.1227, "tf": "M15", "label": "Resistance (marked)" },
+    { "id": "eu-2", "pair": "EUR_USD", "price": 1.1135, "tf": "M15", "label": "Support (marked, holding)" },
+    { "id": "uj-1", "pair": "USD_JPY", "price": 157.65, "tf": "M15", "label": "Resistance (marked, broken, now retesting)" },
+    { "id": "uj-2", "pair": "USD_JPY", "price": 157.25, "tf": "M15", "label": "Support (marked)" }
+  ],
+  "setups": [],
+  "watchlist": [
+    { "pair": "EUR_USD", "level": 1.1135, "missing": "Price fell about 90 pips to the marked support and bounced from a low of about 1.1134 without closing below it. No break, so no setup. A candle body closing below 1.1135 with displacement would start a short break-and-retest; the next marked level below does not exist yet." },
+    { "pair": "USD_JPY", "level": 157.65, "missing": "Level broke with displacement and follow-through (to about 157.91), and price is retesting it now. Lows near 157.58 poked under the line and closed back above, but there is no clean engulfing or pin bar yet, and the M5 structure break can't be confirmed from the M15 chart (marked false). Targeting the 157.91 swing high with SL at 157.55 only gives 1:2 if entry is at or below about 157.67. No marked resistance above price to use as TP." }
+  ],
+  "newsBlocks": [
+    "The calendar couldn't be confirmed. No red-folder times for today were found. US data usually lands at 5:30am PT; check it before entering anything on USD pairs.",
+    "Fed meeting starts today with the decision tomorrow (Oct 28, 11:00am PT); BoC and RBNZ also decide tomorrow. Expect thin, cautious trade."
+  ],
+  "watchFor": [
+    "USD/JPY: after 6:00am PT, a clear engulfing or pin bar at the 157.65 retest that holds, with entry at or below about 157.67, SL about 157.55 and TP at 157.91 or a newly marked resistance. Mark the next resistance above price to confirm 1:2.",
+    "USD/JPY: a close back below 157.65 before 2:00pm PT makes the break fail (C).",
+    "EUR/USD: a full-bodied close below 1.1135, then a retest that holds from below with a trigger candle. Mark support below price first to check R:R.",
+    "Only EUR/USD and USD/JPY were sent. The other 5 majors are not graded. Setups expire 2:00pm PT. Only 15-minute charts were sent."
+  ],
+  "review": null
+}
