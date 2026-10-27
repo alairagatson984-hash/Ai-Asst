@@ -1,9 +1,9 @@
 {
   "date": "2026-10-27",
-  "updatedAt": "2026-10-27T06:15:00-07:00",
+  "updatedAt": "2026-10-27T06:20:00-07:00",
   "verdict": {
     "headline": "No trade yet",
-    "reason": "Nothing qualifies yet. EUR/USD, USD/CAD and NZD/USD are sitting at marked levels with no break. USD/JPY and AUD/USD broke resistance but have no retest and trigger. USD/CHF has no levels marked. All stay on the watchlist."
+    "reason": "All 7 majors have been checked and none is actionable now. GBP/USD had a short break and retest of 1.3345 that has already run to the 1.3313 target, so it is missed. USD/JPY and AUD/USD broke resistance but have no retest and trigger. EUR/USD, USD/CAD and NZD/USD are at marked levels with no break, and USD/CHF has no levels marked."
   },
   "calendar": [],
   "levels": [
@@ -76,6 +76,20 @@
       "price": 0.5677,
       "tf": "M15",
       "label": "Support (marked, held twice)"
+    },
+    {
+      "id": "gu-1",
+      "pair": "GBP_USD",
+      "price": 1.3345,
+      "tf": "M15",
+      "label": "Resistance (marked, broken, retested from below)"
+    },
+    {
+      "id": "gu-2",
+      "pair": "GBP_USD",
+      "price": 1.3313,
+      "tf": "M15",
+      "label": "Support (marked, wicked through then held)"
     }
   ],
   "setups": [],
@@ -109,6 +123,11 @@
       "pair": "NZD_USD",
       "level": 0.5707,
       "missing": "Price is at 0.5702, just under marked resistance at 0.5707, which has been tested four times with wicks and no candle body closing above it. No break, so no setup. A full-bodied close above 0.5707 with follow-through, then a retest that holds with an engulfing or pin bar, would start a long; mark the next resistance above to check 1:2. Marked support is at 0.5677, about 30 pips below."
+    },
+    {
+      "pair": "GBP_USD",
+      "level": 1.3345,
+      "missing": "Missed, not a trade now. Price closed below 1.3345 with displacement and follow-through (about 40 pips), came back to retest it from below and was rejected, then fell to the marked support at 1.3313 (wick to about 1.3303) and bounced to 1.3328. On paper a short from about 1.3340 with SL about 1.3350 and TP 1.3313 was over 1:2, but it formed before the 6:00am PT window and has already reached its target. The M5 structure break can't be confirmed from the M15 chart (marked false) and the retest candle is not a clean trigger. From 1.3328 there is only about 15 pips to 1.3313 and about 17 pips to 1.3345, so neither side gives 1:2."
     }
   ],
   "newsBlocks": [
@@ -118,11 +137,12 @@
   "watchFor": [
     "USD/JPY: after 6:00am PT, a clear engulfing or pin bar at the 157.65 retest that holds, with entry at or below about 157.67, SL about 157.55 and TP at 157.91 or a newly marked resistance. Mark the next resistance above price to confirm 1:2.",
     "USD/JPY: a close back below 157.65 before 2:00pm PT makes the break fail (C).",
+    "GBP/USD: a new retest of 1.3345 from below after 6:00am PT with an engulfing or pin bar (TP at 1.3313 only gives 1:2 from about 1.3340 with a 2-3 pip stop beyond the swing), or a full-bodied close below 1.3313 then a retest that holds from below with a trigger candle. Mark the next support below price to check R:R.",
     "NZD/USD: a full-bodied close above 0.5707 (or below 0.5677), then a retest that holds with a trigger candle. Mark the next level beyond to check 1:2. A fourth rejection at 0.5707 is not a trade.",
     "AUD/USD: a pullback to 0.7034 that holds from above with an engulfing or pin bar after 6:00am PT. Mark the next resistance above price first to confirm 1:2. A close back below 0.7034 makes the break fail (C).",
     "USD/CAD: a full-bodied close above 1.4028 or below 1.4009 with follow-through, then a retest that holds with an engulfing or pin bar. Mark the next level beyond the range to check 1:2.",
     "EUR/USD: a full-bodied close below 1.1135, then a retest that holds from below with a trigger candle. Mark support below price first to check R:R.",
-    "Only EUR/USD, USD/JPY, USD/CAD, AUD/USD, USD/CHF and NZD/USD were sent. GBP/USD is not graded. Setups expire 2:00pm PT. EUR/USD, USD/JPY, USD/CHF and NZD/USD were sent on M15; USD/CAD and AUD/USD on M5."
+    "All 7 majors were sent. EUR/USD, USD/JPY, USD/CHF, NZD/USD and GBP/USD were sent on M15; USD/CAD and AUD/USD on M5. Setups expire 2:00pm PT."
   ],
   "review": null
 }
