@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-28",
+  "updatedAt": "2026-10-28T05:10:00-07:00",
+  "verdict": {
+    "headline": "No trade today",
+    "reason": "Skipped by choice: no marked chart was reviewed, so nothing was graded. FOMC is a heavy event day anyway, and a day with no trade is a normal result."
+  },
+  "calendar": [
+    { "time": "05:30", "currency": "GBP", "event": "UK Budget / Autumn Forecast Statement (one source, check time)", "impact": "high" },
+    { "time": "06:45", "currency": "CAD", "event": "Bank of Canada rate decision (one source, check time)", "impact": "high" },
+    { "time": "11:00", "currency": "USD", "event": "FOMC rate decision", "impact": "high" }
+  ],
+  "levels": [],
+  "setups": [],
+  "watchlist": [],
+  "newsBlocks": [
+    "USD/CAD blocked until the Bank of Canada decision is out",
+    "GBP pairs blocked around the UK Budget",
+    "All USD pairs blocked ahead of the FOMC decision at 11:00am PT"
+  ],
+  "watchFor": [
+    "Send a marked chart tomorrow before 5:00am PT for a full plan"
+  ],
+  "review": null
+}
