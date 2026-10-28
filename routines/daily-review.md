@@ -3,6 +3,7 @@
 Setups expire at 2:00pm PT. This review is written afterwards, without input from the user.
 
 1. Open today's `docs/data/days/YYYY-MM-DD.json`. If there's no file, there was no plan: stop.
+   - **No-trade days still get a review.** With no setups, review the watchlist and levels instead: did any pair later break and retest by the rules (and what grade would it have been)? Was standing aside the right call? `planVsOutcome` is then an empty list.
 2. For each setup, work out what price did after the plan (web search or the user's notes). Was the entry retested? Did it hit the TP or the SL first? Did it expire untouched? Did the break fail?
    - This sandbox can't reach OANDA, so actual fills come from the dashboard's Journal tab (the user's browser). If the user shared results, use them; otherwise review the setups against price only and say so.
 3. Fill `review`:
