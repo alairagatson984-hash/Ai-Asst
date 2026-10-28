@@ -7,7 +7,7 @@ The rules Claude grades every setup against. If a setup doesn't pass these, the 
 - **Time zone:** Pacific (PT). All times below are PT.
 - **Trading window:** London/New York overlap, starting **6:00am PT**. No fixed end time.
 - **Setup expiry:** every setup expires at **2:00pm PT** (end of the NY day).
-- **Days:** Monday–Thursday. **No trading on Fridays.**
+- **Days:** Monday–Friday.
 - **Asian range:** high/low from **4:00pm–11:00pm PT** (the previous evening). Used as a level.
 
 ## Direction

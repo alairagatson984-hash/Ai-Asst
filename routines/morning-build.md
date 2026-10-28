@@ -1,4 +1,4 @@
-# Morning Build (Mon–Thu, plan ready by 5:45am PT)
+# Morning Build (Mon–Fri, plan ready by 5:45am PT)
 
 Follow this when the user sends their marked TradingView screenshot (~5:00am PT).
 

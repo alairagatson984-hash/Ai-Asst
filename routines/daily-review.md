@@ -1,4 +1,4 @@
-# Daily Review (Mon–Thu, ~2:15pm PT)
+# Daily Review (Mon–Fri, ~2:15pm PT)
 
 Setups expire at 2:00pm PT. This review is written afterwards, without input from the user.
 

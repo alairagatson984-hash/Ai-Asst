@@ -614,11 +614,10 @@
     const n = pt(new Date());
     const notices = [];
     const day = state.days[n.date];
-    if (n.wd === "Fri" || n.wd === "Sat") notices.push('<div class="notice info">No trading on Fridays.</div>');
     if (!day) {
       state.today = null;
       const last = state.index[state.index.length - 1];
-      if (["Mon", "Tue", "Wed", "Thu"].includes(n.wd)) notices.push('<div class="notice">No plan for today yet. Send Claude your marked chart at about 5:00am PT and the plan lands here by 5:45.' + (last ? ' Latest plan: <a href="#review">' + esc(longDate(last)) + "</a>." : "") + "</div>");
+      if (["Mon", "Tue", "Wed", "Thu", "Fri"].includes(n.wd)) notices.push('<div class="notice">No plan for today yet. Send Claude your marked chart at about 5:00am PT and the plan lands here by 5:45.' + (last ? ' Latest plan: <a href="#review">' + esc(longDate(last)) + "</a>." : "") + "</div>");
       $("plan-date").textContent = longDate(n.date);
       $("plan-notices").innerHTML = notices.join("");
       $("verdict").innerHTML = ""; $("cards").innerHTML = "";
@@ -968,7 +967,7 @@
     });
   }
   $("s-asia").value = "4:00pm – 11:00pm";
-  $("s-days").value = "Monday – Thursday";
+  $("s-days").value = "Monday – Friday";
   for (const f of ["risk-form", "sess-form"]) $(f).addEventListener("submit", e => e.preventDefault());
   $("reset-levels").addEventListener("click", () => { store.del("lvl:" + pt(new Date()).date); renderAll(); });
 
@@ -1038,7 +1037,7 @@
   function tick() {
     const now = new Date(), n = pt(now), s = $("sess");
     $("clk-pt").textContent = cPT.format(now); $("clk-ldn").textContent = cL.format(now); $("clk-ny").textContent = cNY.format(now);
-    if (!["Mon", "Tue", "Wed", "Thu"].includes(n.wd)) { s.textContent = n.wd === "Fri" ? "No trading Fridays" : "Weekend"; s.className = "pill off"; }
+    if (!["Mon", "Tue", "Wed", "Thu", "Fri"].includes(n.wd)) { s.textContent = "Weekend"; s.className = "pill off"; }
     else if (n.mins >= hm(S.start) && n.mins < hm(S.expiry)) { s.textContent = "Trading window"; s.className = "pill live"; }
     else if (n.mins >= 300 && n.mins < hm(S.start)) { s.textContent = "Plan build"; s.className = "pill wait"; }
     else { s.textContent = "Outside window"; s.className = "pill"; }
