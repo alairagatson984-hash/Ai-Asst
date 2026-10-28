@@ -6,9 +6,24 @@
     "reason": "Skipped by choice: no marked chart was reviewed, so nothing was graded. FOMC is a heavy event day anyway, and a day with no trade is a normal result."
   },
   "calendar": [
-    { "time": "05:30", "currency": "GBP", "event": "UK Budget / Autumn Forecast Statement (one source, check time)", "impact": "high" },
-    { "time": "06:45", "currency": "CAD", "event": "Bank of Canada rate decision (one source, check time)", "impact": "high" },
-    { "time": "11:00", "currency": "USD", "event": "FOMC rate decision", "impact": "high" }
+    {
+      "time": "05:30",
+      "currency": "GBP",
+      "event": "UK Budget / Autumn Forecast Statement (one source, check time)",
+      "impact": "high"
+    },
+    {
+      "time": "06:45",
+      "currency": "CAD",
+      "event": "Bank of Canada rate decision (one source, check time)",
+      "impact": "high"
+    },
+    {
+      "time": "11:00",
+      "currency": "USD",
+      "event": "FOMC rate decision",
+      "impact": "high"
+    }
   ],
   "levels": [],
   "setups": [],
@@ -21,5 +36,11 @@
   "watchFor": [
     "Send a marked chart tomorrow before 5:00am PT for a full plan"
   ],
-  "review": null
+  "review": {
+    "writtenAt": "2026-10-28T12:13:04-07:00",
+    "planVsOutcome": [],
+    "mistakes": "None in execution. The plan had no marked chart, so there were no levels, setups or watchlist to grade. This review covers price action only, not actual fills, and no price data was checked against levels because none were set.",
+    "lessons": "Standing aside was reasonable on a day with the UK Budget, the BoC decision and FOMC all scheduled. Without levels, though, there is nothing to test afterwards, so we can't tell whether a valid break and retest happened. Send a marked chart before 5:00am PT so the next heavy-news day can be reviewed against real levels. Watch for post-FOMC (after 11:00am PT) requalification on USD pairs.",
+    "gradingAudit": "Nothing was graded, so there is nothing to audit. No setup was published and the watchlist was empty."
+  }
 }
