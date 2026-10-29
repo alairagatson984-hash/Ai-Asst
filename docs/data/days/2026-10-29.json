@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-29",
+  "updatedAt": "2026-10-29T05:30:00-07:00",
+  "verdict": {
+    "headline": "No trade today",
+    "reason": "No marked level has a confirmed break and retest yet. AUD/USD broke support but hasn't retested, and US GDP and PCE at 5:30am plus the ECB at about 6:15am PT block the USD pairs and EUR/USD."
+  },
+  "calendar": [
+    { "time": "02:00", "currency": "EUR", "event": "Eurozone GDP flash (Q3)", "impact": "high" },
+    { "time": "05:30", "currency": "USD", "event": "Advance GDP (Q3)", "impact": "high" },
+    { "time": "05:30", "currency": "USD", "event": "PCE inflation and personal income (Sept)", "impact": "high" },
+    { "time": "06:15", "currency": "EUR", "event": "ECB rate decision (press conference about 6:45)", "impact": "high" }
+  ],
+  "levels": [
+    { "id": "uc-1", "pair": "USD_CHF", "price": 0.82975, "tf": "M5", "label": "Resistance" },
+    { "id": "uc-2", "pair": "USD_CHF", "price": 0.82717, "tf": "M5", "label": "Support" },
+    { "id": "gu-1", "pair": "GBP_USD", "price": 1.33456, "tf": "M15", "label": "Resistance (upper)" },
+    { "id": "gu-2", "pair": "GBP_USD", "price": 1.33354, "tf": "M15", "label": "Resistance" },
+    { "id": "gu-3", "pair": "GBP_USD", "price": 1.3296, "tf": "M15", "label": "Support" },
+    { "id": "uj-1", "pair": "USD_JPY", "price": 158.345, "tf": "M15", "label": "Resistance" },
+    { "id": "uj-2", "pair": "USD_JPY", "price": 157.6, "tf": "M15", "label": "Support" },
+    { "id": "uj-3", "pair": "USD_JPY", "price": 157.25, "tf": "M15", "label": "Support (lower)" },
+    { "id": "eu-1", "pair": "EUR_USD", "price": 1.11696, "tf": "M15", "label": "Resistance" },
+    { "id": "eu-2", "pair": "EUR_USD", "price": 1.11254, "tf": "M15", "label": "Support" },
+    { "id": "ucad-1", "pair": "USD_CAD", "price": 1.4053, "tf": "M5", "label": "Resistance (upper)" },
+    { "id": "ucad-2", "pair": "USD_CAD", "price": 1.4, "tf": "M5", "label": "Resistance" },
+    { "id": "ucad-3", "pair": "USD_CAD", "price": 1.39702, "tf": "M5", "label": "Support" },
+    { "id": "au-1", "pair": "AUD_USD", "price": 0.70578, "tf": "M5", "label": "Resistance" },
+    { "id": "au-2", "pair": "AUD_USD", "price": 0.70309, "tf": "M5", "label": "Support (broken)" }
+  ],
+  "setups": [],
+  "watchlist": [
+    { "pair": "AUD_USD", "level": 0.70309, "missing": "Support broke with full-bodied candles and follow-through (price 0.70279), but there is no retest yet and no candle trigger. A short needs a bearish engulfing or pin bar on a retest from below, a lower S/R for at least 1:2 R:R, and USD data out first." },
+    { "pair": "USD_CAD", "level": 1.4, "missing": "Price rejected 1.4000 and is back near 1.3982, above support 1.3970. No break of either level yet." },
+    { "pair": "USD_CHF", "level": 0.82717, "missing": "Price is inside the 0.82717 to 0.82975 range with no close beyond either level." },
+    { "pair": "GBP_USD", "level": 1.3296, "missing": "Price is inside the 1.3296 to 1.3335 range with no close beyond either level." },
+    { "pair": "USD_JPY", "level": 157.6, "missing": "Price is inside the 157.60 to 158.345 range with no close beyond either level." },
+    { "pair": "EUR_USD", "level": 1.11254, "missing": "Price is inside the 1.1125 to 1.1170 range with no close beyond either level, and the ECB decision is due at about 6:15am PT." }
+  ],
+  "newsBlocks": [
+    "All USD pairs blocked until US GDP and PCE are out at 5:30am PT",
+    "EUR/USD blocked until the ECB decision at about 6:15am PT",
+    "BoJ rate decision timing is unconfirmed, so treat USD/JPY with caution"
+  ],
+  "watchFor": [
+    "AUD/USD retest of 0.7031 from below after 5:30am PT, with a bearish engulfing or pin bar",
+    "A close and M5 structure break beyond any range edge after the 5:30am data, then a retest",
+    "EUR/USD break of 1.1125 or 1.1170 after the ECB, then a retest"
+  ],
+  "review": null
+}
