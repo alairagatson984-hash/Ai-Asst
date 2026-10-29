@@ -188,5 +188,16 @@
     "A close and M5 structure break beyond any range edge after the 5:30am data, then a retest",
     "EUR/USD break of 1.1125 or 1.1170 after the ECB, then a retest"
   ],
-  "review": null
+  "review": {
+    "writtenAt": "2026-10-29T14:18:03-07:00",
+    "planVsOutcome": [],
+    "mistakes": [
+      "None found. No setups were published, which matches the rules: no pair had a confirmed break and retest at 6:00am PT, and the USD and ECB news blocks applied. This review covers price action only, not actual fills, and I could not find reliable intraday price data for today after the plan was written."
+    ],
+    "lessons": [
+      "I could not verify whether AUD/USD retested 0.70309 from below, whether USD/JPY closed above 158.07, or whether EUR/USD broke its 1.1125-1.1170 range after the ECB, so I can't say whether standing aside was right. If the Journal tab or chart history shows any of these, the retest quality (engulfing or pin bar) and the R:R to the next S/R should be checked against the A/B/C rules.",
+      "Tomorrow: re-check AUD/USD 0.7031 (broken support), USD/JPY 158.07 / 158.345, and EUR/USD range edges for a post-news break and retest. USD/JPY's TP is only ~27 pips away, so 1:2 needs a tight SL."
+    ],
+    "gradingAudit": "No A/B grades were issued. The watchlist items stayed at C (AUD/USD had a break with follow-through but no retest or trigger; the rest had no close beyond a level). I found no evidence in available data to regrade any of them, and I did not guess."
+  }
 }
