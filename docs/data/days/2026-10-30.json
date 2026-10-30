@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-30",
+  "updatedAt": "2026-10-30T05:00:00-07:00",
+  "verdict": { "headline": "No trade today", "reason": "User called a no-trade day." },
+  "calendar": [
+    { "time": "01:55", "currency": "EUR", "event": "Unemployment Change (Oct)", "impact": "high" },
+    { "time": "03:30", "currency": "EUR", "event": "GDP Growth Rate YoY (Q3)", "impact": "high" },
+    { "time": "05:30", "currency": "USD", "event": "Employment Cost Index (Q3)", "impact": "high" }
+  ],
+  "levels": [],
+  "setups": [],
+  "watchlist": [],
+  "newsBlocks": [],
+  "watchFor": [],
+  "review": null
+}
