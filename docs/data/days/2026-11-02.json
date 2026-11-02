@@ -1,0 +1,22 @@
+{
+  "date": "2026-11-02",
+  "updatedAt": "2026-11-02T05:00:00-08:00",
+  "verdict": {
+    "headline": "No trade today",
+    "reason": "User called a no-trade day."
+  },
+  "calendar": [
+    {
+      "time": "07:00",
+      "currency": "USD",
+      "event": "ISM Manufacturing PMI (Oct)",
+      "impact": "high"
+    }
+  ],
+  "levels": [],
+  "setups": [],
+  "watchlist": [],
+  "newsBlocks": [],
+  "watchFor": [],
+  "review": null
+}
