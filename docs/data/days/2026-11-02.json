@@ -18,5 +18,16 @@
   "watchlist": [],
   "newsBlocks": [],
   "watchFor": [],
-  "review": null
+  "review": {
+    "writtenAt": "2026-11-02T14:17:00-08:00",
+    "planVsOutcome": [],
+    "mistakes": [
+      "None. No setups were planned, so there was nothing to execute. This review covers price action only, not actual fills."
+    ],
+    "lessons": [
+      "The plan had no levels and no watchlist, so there is nothing to check a later break and retest against. Record a few key H1/M15 levels even on a called no-trade day so the review can judge whether standing aside was right.",
+      "USD ISM Manufacturing PMI (red folder) was due at 07:00 PT, inside the window. Next time, note which pairs resumed clean structure after that release."
+    ],
+    "gradingAudit": "No grades to audit. I could not find web price data for the 6:00am-2:00pm PT window today, so I can't say whether any pair broke and retested by the rules (and what grade it would have earned) or whether standing aside was the right call. I haven't guessed."
+  }
 }
