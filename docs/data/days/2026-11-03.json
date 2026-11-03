@@ -147,5 +147,11 @@
     "USD/CAD: a fresh pullback to 1.3975 that holds with a candle trigger, or a full-bodied M5 close above 1.4000 followed by a retest. TP would be the next S/R above.",
     "AUD/USD short: wait for a pullback to 0.6969 that rejects with an engulfing or bearish pin bar. A close back above 0.6969 downgrades it to C."
   ],
-  "review": null
+  "review": {
+    "writtenAt": "2026-11-03T14:20:00-08:00",
+    "planVsOutcome": [],
+    "mistakes": "None identifiable. No setups were issued, so there was nothing to execute wrongly. This review covers price action only, not actual fills (OANDA is unreachable from this sandbox).",
+    "lessons": "I could not retrieve intraday M5/M15 price data for after the plan (08:50 PT) from the web, so I can't say whether USD/JPY retested 158.35, whether AUD/USD retested 0.6969 from below, or whether any pair requalified after JOLTS. I'm not guessing. Watch tomorrow: USD/JPY 158.35 (confirmed break, retest was still pending, 4 of 5 checks) and AUD/USD 0.6969 / 0.6990 (the range is only ~21 pips, so R:R to the next S/R is the limiting check).",
+    "gradingAudit": "Could not be verified against post-plan price data. At plan time the grades were consistent with RULES.md: USD/JPY 158.35 had 4 of 5 checks but no retest or candle trigger, so C/watchlist; USD/CAD 1.3975 completed its retest before the 6:00am PT window, so it is not enterable; AUD/USD 0.699 failed its break and is downgraded to C. If the user's Journal shows a JPY retest with a trigger, that would have been a B."
+  }
 }
