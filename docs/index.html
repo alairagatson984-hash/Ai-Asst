@@ -253,6 +253,7 @@
       <div id="plan-notices"></div>
       <div id="verdict"></div>
       <div class="cards" id="cards"></div>
+      <div class="panel" id="active-panel" hidden><h2>Active trades <span>taken outside the plan's grades</span></h2><div id="active"></div></div>
       <div class="panel"><h2>Watchlist <span>C grade, not a trade yet</span></h2><div id="watchlist"></div></div>
       <div class="panel" id="watchfor-panel"><h2>What to watch for</h2><div id="watchfor"></div></div>
     </section>
@@ -641,6 +642,9 @@
     $("verdict").innerHTML = '<div class="verdict' + (trades.length ? "" : " none") + '"><div class="meta"><span class="pill ' + (trades.length ? "good" : "") + '">' + count + "</span></div><h2>" + esc(v.headline || count) + "</h2>" + (v.reason ? "<p>" + esc(v.reason) + "</p>" : "") + "</div>";
     $("cards").innerHTML = trades.map(d => cardHTML(d, day, false)).join("") + dropped.map(d => cardHTML(d, day, true)).join("");
     $("watchlist").innerHTML = (day.watchlist || []).map(w => '<div class="watch-row"><b>' + esc(pairName(w.pair)) + '</b><span class="mono">' + esc(fx(w.pair, w.level)) + '</span><span class="why muted">' + esc(w.missing) + "</span></div>").join("") || '<p class="muted" style="margin:0">Nothing on the watchlist.</p>';
+    const ot = day.openTrades || [];
+    $("active-panel").hidden = !ot.length;
+    $("active").innerHTML = ot.map(t => '<div class="watch-row"><b>' + esc(pairName(t.pair)) + ' <span class="pill ' + (t.status === "closed" ? "" : "good") + '">' + esc(t.status === "closed" ? "closed" : "active") + '</span></b><span class="mono">' + esc(t.direction) + " " + esc(Number(t.units).toLocaleString()) + '</span><span class="why muted">Entry ' + esc(fx(t.pair, t.entry)) + " · SL " + esc(fx(t.pair, t.sl)) + " · TP " + esc(fx(t.pair, t.tp)) + (t.note ? " · " + esc(t.note) : "") + "</span></div>").join("");
     const wf = (day.newsBlocks || []).concat(day.watchFor || []);
     $("watchfor-panel").hidden = !wf.length;
     $("watchfor").innerHTML = '<ul class="plain">' + wf.map(x => "<li>" + esc(x) + "</li>").join("") + "</ul>";
