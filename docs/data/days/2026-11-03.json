@@ -1,9 +1,9 @@
 {
   "date": "2026-11-03",
-  "updatedAt": "2026-11-03T06:35:00-08:00",
+  "updatedAt": "2026-11-03T06:40:00-08:00",
   "verdict": {
     "headline": "No trade today",
-    "reason": "AUD/USD broke above 0.6990 at ~5:00am PT but closed straight back inside, so the break failed (C). GBP/USD wicked above 1.3429 around 6:00am PT but no body closed beyond it, and it's mid-range now. US JOLTS is due at 7:00am PT. EUR/GBP is not one of the 7 majors, so it's not graded."
+    "reason": "AUD/USD broke above 0.6990 at ~5:00am PT but closed straight back inside, so the break failed (C). GBP/USD and EUR/USD only wicked at their levels with no body close beyond, and both are mid-range. US JOLTS is due at 7:00am PT. EUR/GBP is not one of the 7 majors, so it's not graded."
   },
   "calendar": [
     {
@@ -47,6 +47,20 @@
       "price": 1.3403,
       "tf": "M15",
       "label": "Support (marked); held on several tests overnight"
+    },
+    {
+      "id": "eu-1",
+      "pair": "EUR_USD",
+      "price": 1.1206,
+      "tf": "M15",
+      "label": "Resistance (marked); wicked above at ~11pm PT, bodies closed below"
+    },
+    {
+      "id": "eu-2",
+      "pair": "EUR_USD",
+      "price": 1.1176,
+      "tf": "M15",
+      "label": "Support (marked); held on the ~3am and ~4am PT tests"
     }
   ],
   "setups": [],
@@ -70,16 +84,27 @@
       "pair": "GBP_USD",
       "level": 1.3403,
       "missing": "No close beyond the level yet. Price held it on several tests and is mid-range."
+    },
+    {
+      "pair": "EUR_USD",
+      "level": 1.1206,
+      "missing": "No candle body closed above the level (wick-only rejection, so no break). No break-and-retest, and USD news is still pending."
+    },
+    {
+      "pair": "EUR_USD",
+      "level": 1.1176,
+      "missing": "No close beyond the level yet. Price held it on two tests and is mid-range."
     }
   ],
   "newsBlocks": [
-    "USD JOLTS at 7:00am PT blocks new AUD/USD and GBP/USD entries until it is released."
+    "USD JOLTS at 7:00am PT blocks new AUD/USD, GBP/USD and EUR/USD entries until it is released."
   ],
   "watchFor": [
     "AUD/USD: a full-bodied M5 close above 0.6990 with follow-through, then a retest that holds with an engulfing or pin bar (long). TP would need to give at least 1:2 to the next S/R.",
     "AUD/USD: a full-bodied M5 close below 0.6969 with follow-through, an M5 structure break and a retest from below (short). The range is only ~21 pips, so check the R:R to the next S/R.",
     "After JOLTS, a setup can requalify if the break and retest still hold by the rules.",
-    "GBP/USD: a full-bodied M5 close above 1.3429 (or below 1.3403) with follow-through, an M5 structure break, then a retest that holds with an engulfing or pin bar. The range is ~26 pips, so check the R:R to the next S/R."
+    "GBP/USD: a full-bodied M5 close above 1.3429 (or below 1.3403) with follow-through, an M5 structure break, then a retest that holds with an engulfing or pin bar. The range is ~26 pips, so check the R:R to the next S/R.",
+    "EUR/USD: a full-bodied M5 close above 1.1206 (or below 1.1176) with follow-through, an M5 structure break, then a retest that holds with an engulfing or pin bar. The range is ~30 pips, so check the R:R to the next S/R."
   ],
   "review": null
 }
