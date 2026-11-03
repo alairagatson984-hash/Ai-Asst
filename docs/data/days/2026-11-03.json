@@ -106,27 +106,5 @@
     "GBP/USD: a full-bodied M5 close above 1.3429 (or below 1.3403) with follow-through, an M5 structure break, then a retest that holds with an engulfing or pin bar. The range is ~26 pips, so check the R:R to the next S/R.",
     "EUR/USD: a full-bodied M5 close above 1.1206 (or below 1.1176) with follow-through, an M5 structure break, then a retest that holds with an engulfing or pin bar. The range is ~30 pips, so check the R:R to the next S/R."
   ],
-  "review": null,
-  "openTrades": [
-    {
-      "pair": "GBP_USD",
-      "direction": "short",
-      "units": 1250000,
-      "entry": 1.34288,
-      "sl": 1.34319,
-      "tp": 1.34031,
-      "status": "active",
-      "note": "Fade of 1.3429 resistance, off-plan (not an A/B setup)"
-    },
-    {
-      "pair": "EUR_USD",
-      "direction": "long",
-      "units": 100000,
-      "entry": 1.11763,
-      "sl": 1.11743,
-      "tp": 1.12043,
-      "status": "active",
-      "note": "Bounce at 1.1176 support, off-plan (not an A/B setup)"
-    }
-  ]
+  "review": null
 }
