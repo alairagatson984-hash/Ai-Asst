@@ -55,5 +55,16 @@
     "USD/CAD: a rejection candle at 1.3978 plus an M5 break lower",
     "USD/CAD: a close back above 1.3978 would invalidate the short idea"
   ],
-  "review": null
+  "review": {
+    "writtenAt": "2026-11-04T14:16:58-08:00",
+    "planVsOutcome": [],
+    "mistakes": [
+      "None. No setups were issued, so there were no entries or stops to execute. Price data was not available to this review (no OANDA access, and web search and data endpoints returned nothing for Nov 4), so this covers the plan only, not actual fills or price action."
+    ],
+    "lessons": [
+      "I could not confirm whether USD/CAD later rejected 1.3978 with a pin bar or engulfing candle plus an M5 break. Check the Journal tab or the chart for that retest, and grade it A, B or C by the rules.",
+      "Standing aside looks consistent with the rules at plan time: no candle trigger and the 1.3957 target was about 20 pips away, under 1:2. Tomorrow, watch 1.3978 (a rejection short) and 1.3999 (resistance) on USD/CAD."
+    ],
+    "gradingAudit": "The C grade on the USD/CAD watchlist item was reasonable given the plan-time evidence (no candle trigger, R:R under 1:2). I could not verify later price action, so I can't say whether it should have been regraded."
+  }
 }
