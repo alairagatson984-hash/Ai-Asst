@@ -1,9 +1,9 @@
 {
   "date": "2026-11-04",
-  "updatedAt": "2026-11-04T05:30:00-08:00",
+  "updatedAt": "2026-11-04T09:10:00-08:00",
   "verdict": {
     "headline": "No trade today",
-    "reason": "User called a no-trade day."
+    "reason": "User called a no-trade day. The USD/CAD chart sent at 9:03am has no A or B setup: no candle trigger at a retest, and the nearest target gives less than 1:2."
   },
   "calendar": [
     {
@@ -19,10 +19,41 @@
       "impact": "high"
     }
   ],
-  "levels": [],
+  "levels": [
+    {
+      "id": "uc-1",
+      "pair": "USD_CAD",
+      "price": 1.3999,
+      "tf": "M15",
+      "label": "M15 resistance"
+    },
+    {
+      "id": "uc-2",
+      "pair": "USD_CAD",
+      "price": 1.3978,
+      "tf": "M15",
+      "label": "M15 support, broken and now resistance"
+    },
+    {
+      "id": "uc-3",
+      "pair": "USD_CAD",
+      "price": 1.3957,
+      "tf": "M15",
+      "label": "M15 support"
+    }
+  ],
   "setups": [],
-  "watchlist": [],
+  "watchlist": [
+    {
+      "pair": "USD_CAD",
+      "level": 1.3978,
+      "missing": "Price is at 1.3973 and rising back toward 1.3978, which broke down on Nov 3. A short needs a rejection candle (pin bar or engulfing) on the retest and an M5 structure break, and neither is visible. The next support is 1.3957, only about 20 pips away, so R:R would be under 1:2 once the stop is placed."
+    }
+  ],
   "newsBlocks": [],
-  "watchFor": [],
+  "watchFor": [
+    "USD/CAD: a rejection candle at 1.3978 plus an M5 break lower",
+    "USD/CAD: a close back above 1.3978 would invalidate the short idea"
+  ],
   "review": null
 }
