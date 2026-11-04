@@ -1,0 +1,28 @@
+{
+  "date": "2026-11-04",
+  "updatedAt": "2026-11-04T05:30:00-08:00",
+  "verdict": {
+    "headline": "No trade today",
+    "reason": "User called a no-trade day."
+  },
+  "calendar": [
+    {
+      "time": "05:15",
+      "currency": "USD",
+      "event": "ADP Non-Farm Employment Change",
+      "impact": "high"
+    },
+    {
+      "time": "07:00",
+      "currency": "USD",
+      "event": "ISM Services PMI",
+      "impact": "high"
+    }
+  ],
+  "levels": [],
+  "setups": [],
+  "watchlist": [],
+  "newsBlocks": [],
+  "watchFor": [],
+  "review": null
+}
