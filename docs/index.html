@@ -403,6 +403,8 @@
   const digitsOf = p => p.endsWith("JPY") ? 3 : 5;
   const fx = (p, v) => v == null || isNaN(v) ? "—" : Number(v).toFixed(digitsOf(p));
   const pairName = p => p.replace("_", "/");
+  // Day files are written by hand-off sessions; accept a single sentence where a list is expected.
+  const asList = v => Array.isArray(v) ? v : v == null || v === "" ? [] : [v];
   const money = (v, cur) => v == null || isNaN(v) ? "—" : (v < 0 ? "−" : "") + (!cur || cur === "USD" ? "$" : "") + Math.abs(v).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + (cur && cur !== "USD" ? " " + cur : "");
   const signed = (v, d = 2) => v == null || isNaN(v) ? "—" : (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(d);
   const store = {
@@ -949,8 +951,8 @@
     else {
       const byId = {}; (d.setups || []).forEach(s => byId[s.id] = s);
       html += '<div class="panel review-block"><h3>Plan vs outcome</h3><div class="scroll"><table class="cal"><thead><tr><th>Setup</th><th>What happened</th><th>R</th></tr></thead><tbody>' +
-        (rv.planVsOutcome || []).map(o => { const s = byId[o.setupId]; return "<tr><td><b>" + esc(s ? pairName(s.pair) + " " + s.direction : o.setupId) + "</b></td><td>" + esc(o.result) + '</td><td class="mono ' + (o.r > 0 ? "up" : o.r < 0 ? "down" : "muted") + '">' + (o.r == null ? "—" : signed(o.r, 1)) + "</td></tr>"; }).join("") + "</tbody></table></div></div>" +
-        '<div class="grid-even"><div class="panel review-block"><h3>Mistakes</h3><ul class="plain">' + (rv.mistakes || []).map(x => "<li>" + esc(x) + "</li>").join("") + '</ul></div><div class="panel review-block"><h3>Lessons</h3><ul class="plain">' + (rv.lessons || []).map(x => "<li>" + esc(x) + "</li>").join("") + "</ul></div></div>" +
+        asList(rv.planVsOutcome).map(o => { const s = byId[o.setupId]; return "<tr><td><b>" + esc(s ? pairName(s.pair) + " " + s.direction : o.setupId) + "</b></td><td>" + esc(o.result) + '</td><td class="mono ' + (o.r > 0 ? "up" : o.r < 0 ? "down" : "muted") + '">' + (o.r == null ? "—" : signed(o.r, 1)) + "</td></tr>"; }).join("") + "</tbody></table></div></div>" +
+        '<div class="grid-even"><div class="panel review-block"><h3>Mistakes</h3><ul class="plain">' + asList(rv.mistakes).map(x => "<li>" + esc(x) + "</li>").join("") + '</ul></div><div class="panel review-block"><h3>Lessons</h3><ul class="plain">' + asList(rv.lessons).map(x => "<li>" + esc(x) + "</li>").join("") + "</ul></div></div>" +
         '<div class="panel review-block"><h3>Grading audit</h3><p style="margin:0">' + esc(rv.gradingAudit || "") + "</p></div>";
     }
     $("review").innerHTML = html;
@@ -1024,11 +1026,11 @@
   }
   window.addEventListener("hashchange", route);
 
+  // Each section renders on its own, so one bad day file can't take down the page or the OANDA connection.
   function renderAll() {
-    renderPlan();
-    renderTiles(); renderStrength(); renderLevelEditor(); drawLines();
-    renderCalc(); renderJournal(); renderAnalytics(); renderPatterns();
-    renderReviewSelect(); renderReview();
+    for (const fn of [renderPlan, renderTiles, renderStrength, renderLevelEditor, drawLines, renderCalc, renderJournal, renderAnalytics, renderPatterns, renderReviewSelect, renderReview]) {
+      try { fn(); } catch (e) { console.error(fn.name + " failed:", e); }
+    }
   }
 
   // ================= clocks + loops =================

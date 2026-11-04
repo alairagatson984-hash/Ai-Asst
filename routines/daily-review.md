@@ -9,8 +9,9 @@ Setups expire at 2:00pm PT. This review is written afterwards, without input fro
 3. Fill `review`:
    - `writtenAt`: the current time in PT.
    - `planVsOutcome`: one entry per setup: `{ "setupId", "result" (plain sentence), "r" (number or null) }`.
-   - `mistakes`: rule breaks or execution problems. "None" is fine.
-   - `lessons`: one or two takeaways tied to a pattern or check.
+   - `mistakes`: a **list** of strings: rule breaks or execution problems. `["None"]` is fine.
+   - `lessons`: a **list** of strings: one or two takeaways tied to a pattern or check.
+   - `planVsOutcome`, `mistakes` and `lessons` must be JSON lists (`[...]`), never a single string. Only `gradingAudit` is a plain string.
    - `gradingAudit`: did the A/B/C grades hold up? Name anything that should have been graded differently, and why.
 4. Validate the JSON, commit as `Review for YYYY-MM-DD`, and push to `main`.
 
