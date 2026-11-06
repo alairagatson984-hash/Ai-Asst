@@ -1,0 +1,25 @@
+{
+  "date": "2026-11-06",
+  "updatedAt": "2026-11-06T05:20:00-08:00",
+  "verdict": { "headline": "No trade today", "reason": "GBP/JPY is stuck between the two marked levels with no fresh break and retest. The support break overnight closed back inside, so it is downgraded to C. NFP and Canadian jobs data land at 5:30am PT." },
+  "calendar": [
+    { "time": "05:30", "currency": "USD", "event": "Non-Farm Payrolls", "impact": "high" },
+    { "time": "05:30", "currency": "CAD", "event": "Employment Change", "impact": "high" }
+  ],
+  "levels": [
+    { "id": "gj-1", "pair": "GBP_JPY", "price": 212.30, "tf": "M15", "label": "M15 resistance (retested from below)" },
+    { "id": "gj-2", "pair": "GBP_JPY", "price": 211.73, "tf": "M15", "label": "M15 support (broke, then closed back above)" }
+  ],
+  "setups": [],
+  "watchlist": [
+    { "pair": "GBP_JPY", "level": 211.73, "missing": "Break below failed: price closed back above support overnight. Needs a new close below, displacement, M5 structure break, retest and a candle trigger." },
+    { "pair": "GBP_JPY", "level": 212.30, "missing": "Price is about 33 pips under resistance, still in the middle of the range. A rejection there would need a candle trigger, and a break above would need a close, follow-through and a retest." }
+  ],
+  "newsBlocks": ["USD NFP and CAD employment at 5:30am PT: no new entries on USD or CAD pairs before the release."],
+  "watchFor": [
+    "A clean M15 close below 211.73 with a strong candle, then a retest that rejects from below (short, needs 1:2).",
+    "A close above 212.30 with follow-through, then a retest that holds as support (long, needs 1:2).",
+    "Only the GBP/JPY chart was sent, so other pairs were not graded."
+  ],
+  "review": null
+}
