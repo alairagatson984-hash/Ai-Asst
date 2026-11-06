@@ -1,9 +1,9 @@
 {
   "date": "2026-11-06",
-  "updatedAt": "2026-11-06T06:05:00-08:00",
+  "updatedAt": "2026-11-06T07:05:00-08:00",
   "verdict": {
     "headline": "No trade yet",
-    "reason": "No pair has a retest holding yet. USD/CAD broke up on the news but hasn't retested and RSI is overbought, and GBP/USD broke down without a retest. GBP/JPY and USD/JPY are inside their ranges."
+    "reason": "No pair has a retest holding yet. USD/CAD broke up on the news without a retest and with RSI overbought, and GBP/USD broke down without a retest. GBP/JPY (support held at 211.37) and USD/JPY are inside their ranges."
   },
   "calendar": [
     {
@@ -23,16 +23,16 @@
     {
       "id": "gj-1",
       "pair": "GBP_JPY",
-      "price": 212.3,
+      "price": 212.28,
       "tf": "M15",
-      "label": "M15 resistance (retested from below)"
+      "label": "Resistance (re-marked 6:59am)"
     },
     {
       "id": "gj-2",
       "pair": "GBP_JPY",
-      "price": 211.73,
+      "price": 211.37,
       "tf": "M15",
-      "label": "M15 support (broke, then closed back above)"
+      "label": "Support (re-marked 6:59am, M5 chart)"
     },
     {
       "id": "gu-1",
@@ -80,16 +80,6 @@
   "setups": [],
   "watchlist": [
     {
-      "pair": "GBP_JPY",
-      "level": 211.73,
-      "missing": "Break below failed: price closed back above support overnight. Needs a new close below, displacement, M5 structure break, retest and a candle trigger. Indicators: price is tangled in the EMAs and RSI is about 49, so there is no trend agreement."
-    },
-    {
-      "pair": "GBP_JPY",
-      "level": 212.3,
-      "missing": "Price is about 33 pips under resistance, still in the middle of the range. A rejection there would need a candle trigger, and a break above would need a close, follow-through and a retest. Indicators: price is tangled in the EMAs and RSI is about 49, so there is no trend agreement."
-    },
-    {
       "pair": "GBP_USD",
       "level": 1.3382,
       "missing": "Short watch. Price is below support after the NFP spike (long wick to about 1.3361), but there is only one candle of follow-through, no retest yet and no engulfing or pin-bar trigger. Needs the retest of about 1.3382 to reject from below. If SL sits 2-3 pips above the retest swing, the TP must be at least 2R away. Indicators (M5 chart): EMA 20 is below EMA 50 and price is below both, which agrees with a short. RSI is about 30, at the oversold edge, so the EMA + RSI check is borderline. It fails if RSI is below 30 or turns back up at the retest."
@@ -103,6 +93,11 @@
       "pair": "USD_JPY",
       "level": 158.67,
       "missing": "No break yet. Price is about 158.40, between support at 157.78 and resistance at 158.67, after a news spike that wicked to about 158.60 and failed to reach the level. Indicators: EMA 20 is above EMA 50, price is above both and RSI is about 63, so the uptrend agrees with a long, but there is nothing to grade until a level closes beyond. A long needs a close above about 158.67, follow-through, an M5 structure break, a retest that holds and an engulfing or pin bar. The overnight dip under 157.78 closed back above it, so that break failed."
+    },
+    {
+      "pair": "GBP_JPY",
+      "level": 211.37,
+      "missing": "No break yet. On the re-marked M5 chart, price sold off to support at about 211.37 (wick to about 211.34), bounced and is back near 211.56. Support held and nothing has closed beyond it. Indicators: EMA 20 is below EMA 50, price is below both and RSI is about 39, so the downtrend agrees with a short. A short needs an M5 close below about 211.37 with displacement, follow-through, a structure break, a retest that holds from below and an engulfing or pin bar. About 91 pips above, resistance is at about 212.28."
     }
   ],
   "newsBlocks": [
@@ -111,10 +106,9 @@
   "watchFor": [
     "USD/CAD: a pullback to about 1.4082 that holds from above with an M5 bullish engulfing or pin bar, with RSI back under 70.",
     "GBP/USD: a retest of about 1.3382 from below that rejects with an M5 bearish engulfing or pin bar. A close back above 1.3382 downgrades it and it stays C.",
-    "A clean M15 close below 211.73 with a strong candle, then a retest that rejects from below (short, needs 1:2).",
-    "A close above 212.30 with follow-through, then a retest that holds as support (long, needs 1:2).",
     "Only the GBP/JPY chart was sent, so other pairs were not graded.",
-    "USD/JPY: a displacement close above about 158.67 with a holding retest, or a close below 157.78 with a retest from below."
+    "USD/JPY: a displacement close above about 158.67 with a holding retest, or a close below 157.78 with a retest from below.",
+    "GBP/JPY: an M5 close below about 211.37 with displacement, then a retest that holds from below (short, needs 1:2). A close above about 212.28 would be the long side."
   ],
   "review": null
 }
