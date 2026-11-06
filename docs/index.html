@@ -391,7 +391,9 @@
     "AUD_USD","AUD_JPY","AUD_CHF","AUD_CAD","AUD_NZD",
     "NZD_USD","NZD_JPY","NZD_CHF","NZD_CAD",
     "USD_JPY","USD_CHF","USD_CAD","CAD_JPY","CAD_CHF","CHF_JPY"];
-  const CHECKS = [["close", "Close beyond level"], ["displacement", "Displacement"], ["followThrough", "Follow-through"], ["structure", "M5 structure break"], ["retest", "Retest holds"]];
+  const CHECKS = [["close", "Close beyond level"], ["displacement", "Displacement"], ["followThrough", "Follow-through"], ["structure", "M5 structure break"], ["retest", "Retest holds"], ["indicators", "EMA + RSI agree"]];
+  // Older day files have no "indicators" key: they are still graded out of 5.
+  const checkList = (s) => (s.checks && "indicators" in s.checks) ? CHECKS : CHECKS.slice(0, 5);
   const PATTERN_NAMES = { "clean-br": "Clean break & retest", "asian-range": "Asian range B&R", "head-shoulders": "Head & shoulders", "double-top-bottom": "Double top / bottom", "flag-pennant": "Flag / pennant" };
   const TRIGGER_NAMES = { engulfing: "Engulfing", pinbar: "Pin bar / rejection" };
   const DEFAULTS = { risk: 2, limit: 4, rr: 2, buffer: "2-3", atEntry: 3, match: 10, news: 30, start: "06:00", expiry: "14:00" };
@@ -472,10 +474,11 @@
     const tp = T ? T.price : s.tp;
     const sl = s.sl;
     const risk = Math.abs(entry - sl), rr = risk > 0 ? Math.abs(tp - entry) / risk : 0;
-    const ok = CHECKS.filter(([k]) => s.checks && s.checks[k]).length;
+    const list = checkList(s), total = list.length;
+    const ok = list.filter(([k]) => s.checks && s.checks[k]).length;
     const trig = !!(s.trigger && s.trigger.type);
     const failed = !!state.failed[s.id];
-    const grade = failed ? "C" : trig && ok === 5 ? "A" : trig && ok === 4 ? "B" : "C";
+    const grade = failed ? "C" : trig && ok === total ? "A" : trig && ok === total - 1 ? "B" : "C";
     const sane = s.direction === "long" ? (sl < entry && tp > entry) : (sl > entry && tp < entry);
     return { s, entry, sl, tp, rr, ok, trig, grade, failed, sane, rrOK: rr >= S.rr - 1e-9, edited: !!((L && L.edited) || (T && T.edited)) };
   }
@@ -659,7 +662,7 @@
       (why ? '<div class="notice" style="font-size:13px">' + esc(why) + "</div>" : "") +
       '<div class="prices"><div><span class="label">Entry</span><b>' + fx(s.pair, d.entry) + '</b></div><div><span class="label">Stop</span><b>' + fx(s.pair, d.sl) + '</b></div><div><span class="label">Target</span><b>' + fx(s.pair, d.tp) + '</b></div><div><span class="label">R:R</span><b class="' + (d.rrOK ? "" : "down") + '">1:' + d.rr.toFixed(2) + "</b></div></div>" +
       '<div class="sizing"><span>Risk <b>' + (Math.abs(d.entry - d.sl) / pip).toFixed(1) + "</b> pips</span><span>Reward <b>" + (Math.abs(d.tp - d.entry) / pip).toFixed(1) + "</b> pips</span><span>" + S.risk + "% = <b>" + (units ? Math.round(units).toLocaleString("en-US") + " units" : "connect OANDA") + "</b>" + (units ? ' <span class="muted">(' + (units / 100000).toFixed(2) + " lots)</span>" : "") + "</span>" + (d.edited ? '<span class="warn">Level edited</span>' : "") + "</div>" +
-      '<ul class="checks">' + CHECKS.map(([k, label]) => '<li class="' + (s.checks && s.checks[k] ? "ok" : "") + '">' + label + "</li>").join("") + '<li class="' + (d.trig ? "ok" : "") + '">' + esc(d.trig ? TRIGGER_NAMES[s.trigger.type] || s.trigger.type : "Candle trigger") + "</li></ul>" +
+      '<ul class="checks">' + checkList(s).map(([k, label]) => '<li class="' + (s.checks && s.checks[k] ? "ok" : "") + '">' + label + "</li>").join("") + '<li class="' + (d.trig ? "ok" : "") + '">' + esc(d.trig ? TRIGGER_NAMES[s.trigger.type] || s.trigger.type : "Candle trigger") + "</li></ul>" +
       '<div class="tags"><span class="tag">' + esc(PATTERN_NAMES[s.pattern] || s.pattern || "No pattern") + "</span>" + (s.news ? '<span class="tag">News: ' + esc(s.news.status) + "</span>" : "") + "</div>" +
       (s.trigger && s.trigger.note ? '<p class="note">' + esc(s.trigger.note) + "</p>" : "") +
       (s.news && s.news.note ? '<p class="note">' + esc(s.news.note) + "</p>" : "") +
@@ -888,10 +891,10 @@
       rules: ["Level from H1 or M15.", "Break: close beyond, displacement, follow-through.", "M5 structure breaks the same way.", "Enter on the retest with an engulfing or pin bar.", "SL 2–3 pips beyond the retest swing. TP at the next S/R (at least 1:2)."],
       path: [[8, 96], [34, 76], [52, 88], [78, 66], [96, 76], [116, 40], [134, 28], [152, 58], [168, 42], [196, 24], [232, 12]], level: 60, entry: [152, 60], sl: 72, tp: 14 },
     { id: "asian-range", fam: "S/R", name: "Asian range break & retest",
-      rules: ["Mark the Asian high and low (4:00–11:00pm PT).", "Wait for a break of one side that passes the 5 checks.", "Enter on the retest of the broken side with a candle trigger.", "SL beyond the retest swing. TP at the next S/R."],
+      rules: ["Mark the Asian high and low (4:00–11:00pm PT).", "Wait for a break of one side that passes the evidence checks.", "Enter on the retest of the broken side with a candle trigger.", "SL beyond the retest swing. TP at the next S/R."],
       box: [10, 50, 96, 82], path: [[10, 70], [26, 54], [42, 78], [58, 56], [74, 80], [92, 60], [116, 34], [132, 26], [150, 50], [170, 36], [200, 22], [232, 12]], level: 50, entry: [150, 50], sl: 62, tp: 14 },
     { id: "head-shoulders", fam: "Chart · M15/H1", name: "Head & shoulders",
-      rules: ["Left shoulder, higher head, lower right shoulder.", "Neckline break passes the 5 checks.", "Enter on the neckline retest with a candle trigger.", "Inverse version for longs."],
+      rules: ["Left shoulder, higher head, lower right shoulder.", "Neckline break passes the evidence checks.", "Enter on the neckline retest with a candle trigger.", "Inverse version for longs."],
       path: [[8, 96], [30, 58], [50, 76], [80, 26], [108, 76], [132, 56], [152, 76], [172, 98], [194, 78], [214, 100], [232, 110]], level: 76, entry: [194, 76], sl: 64, tp: 110 },
     { id: "double-top-bottom", fam: "Chart · M15/H1", name: "Double top / bottom",
       rules: ["Two failed pushes at the same area.", "Neckline is the swing between them.", "Break and retest of the neckline with a candle trigger.", "Double bottom is the long version."],

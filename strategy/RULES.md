@@ -19,13 +19,17 @@ The rules Claude grades every setup against. If a setup doesn't pass these, the 
 - Chart patterns (H&S, double top/bottom, flags) are read on **M15 and H1**.
 
 ## Entry model: break and retest
-A setup is scored on 5 evidence checks:
+A setup is scored on 6 evidence checks (the 6th was added 2026-11-06):
 
 1. **Close beyond:** a candle body closes beyond the S/R level.
 2. **Displacement:** the break is a strong, full-bodied candle, not a slow drift.
 3. **Follow-through:** the next candle(s) keep going instead of snapping back inside.
 4. **M5 structure break:** price takes out the most recent M5 swing in the break direction.
 5. **Retest holds:** price comes back to the level and rejects it from the other side.
+6. **EMA + RSI agree** (read on M15; EMA 20, EMA 50, RSI 14 with 70/30 levels). Both must hold:
+   - **EMA trend:** the EMA 20 is on the trade side of the EMA 50 (below it for shorts, above it for longs), and price is on the trade side of the EMA 20. This avoids buying into a downtrend or selling into an uptrend. A fresh EMA 20 crossover in the trade direction also passes.
+   - **RSI room:** RSI is not already exhausted against the trade. For a short, RSI is not below 30 (oversold) at the retest. For a long, RSI is not above 70 (overbought). If RSI is turning back out of the zone against the trade, the check fails.
+   - If the indicators aren't visible on the screenshot, mark it `false` and say why.
 
 Plus the **candle trigger** at the retest. One of:
 - **Engulfing** (bullish for longs, bearish for shorts)
@@ -34,9 +38,9 @@ Plus the **candle trigger** at the retest. One of:
 ## Grades
 | Grade | Evidence checks | Candle trigger | Shown as |
 |---|---|---|---|
-| **A** | 5 of 5 | Required | Trade |
-| **B** | 4 of 5 | Required | Trade (lower confidence) |
-| **C** | Anything else (3 or fewer, or no candle trigger) | — | Watchlist only |
+| **A** | 6 of 6 | Required | Trade |
+| **B** | 5 of 6 | Required | Trade (lower confidence) |
+| **C** | Anything else (4 or fewer, or no candle trigger) | — | Watchlist only |
 
 - If a break fails (price closes back through the level) before 2:00pm PT, the setup is **downgraded to C**.
 

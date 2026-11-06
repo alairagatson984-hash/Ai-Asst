@@ -1,6 +1,6 @@
 {
   "date": "2026-11-06",
-  "updatedAt": "2026-11-06T05:45:00-08:00",
+  "updatedAt": "2026-11-06T06:05:00-08:00",
   "verdict": {
     "headline": "No trade yet",
     "reason": "GBP/USD broke below its 1.3382 support on the 5:30am NFP spike, but there is no retest or candle trigger yet, so it is a C on the watchlist. GBP/JPY has no setup. A short can requalify if the retest holds."
@@ -54,17 +54,17 @@
     {
       "pair": "GBP_JPY",
       "level": 211.73,
-      "missing": "Break below failed: price closed back above support overnight. Needs a new close below, displacement, M5 structure break, retest and a candle trigger."
+      "missing": "Break below failed: price closed back above support overnight. Needs a new close below, displacement, M5 structure break, retest and a candle trigger. Indicators: price is tangled in the EMAs and RSI is about 49, so there is no trend agreement."
     },
     {
       "pair": "GBP_JPY",
       "level": 212.3,
-      "missing": "Price is about 33 pips under resistance, still in the middle of the range. A rejection there would need a candle trigger, and a break above would need a close, follow-through and a retest."
+      "missing": "Price is about 33 pips under resistance, still in the middle of the range. A rejection there would need a candle trigger, and a break above would need a close, follow-through and a retest. Indicators: price is tangled in the EMAs and RSI is about 49, so there is no trend agreement."
     },
     {
       "pair": "GBP_USD",
       "level": 1.3382,
-      "missing": "Short watch. Price is below support after the NFP spike (long wick to about 1.3361), but there is only one candle of follow-through, no retest yet and no engulfing or pin-bar trigger. Needs the retest of about 1.3382 to reject from below. If SL sits 2-3 pips above the retest swing, the TP must be at least 2R away."
+      "missing": "Short watch. Price is below support after the NFP spike (long wick to about 1.3361), but there is only one candle of follow-through, no retest yet and no engulfing or pin-bar trigger. Needs the retest of about 1.3382 to reject from below. If SL sits 2-3 pips above the retest swing, the TP must be at least 2R away. Indicators (M5 chart): EMA 20 is below EMA 50 and price is below both, which agrees with a short. RSI is about 30, at the oversold edge, so the EMA + RSI check is borderline. It fails if RSI is below 30 or turns back up at the retest."
     }
   ],
   "newsBlocks": [
