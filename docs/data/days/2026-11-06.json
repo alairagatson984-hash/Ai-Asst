@@ -130,5 +130,16 @@
     "GBP/JPY: an M5 close below about 211.37 with displacement, then a retest that holds from below (short, needs 1:2). A close above about 212.28 would be the long side.",
     "AUD/USD: a displacement close above about 0.6893 and a holding retest, or a rejection candle at 0.6893 for a short."
   ],
-  "review": null
+  "review": {
+    "writtenAt": "2026-11-06T14:16:00-08:00",
+    "planVsOutcome": [],
+    "mistakes": [
+      "None. No setups were published, so there was nothing to break the rules on. This review covers price action only, not actual fills, and a web search found no price data for 2026-11-06 after the plan was written."
+    ],
+    "lessons": [
+      "Standing aside looks right on the plan's own evidence: USD/CAD's break above 1.4127 closed back inside (C), GBP/USD's NFP break below 1.3382 had no retest and no trigger, and the other pairs never closed beyond a level.",
+      "Could not confirm from price data whether GBP/USD retested 1.3382 or GBP/JPY broke 211.37 after the plan. Check the Journal and charts for those two first. GBP/USD's RSI was already about 30, so the EMA + RSI check would likely have failed even if it retested."
+    ],
+    "gradingAudit": "No grades were issued, so there was nothing to audit. The calls on the watchlist (USD/CAD failed break = C, GBP/USD no retest or trigger = C) fit RULES.md. No post-plan price data was found, so I can't say whether any watchlist pair later qualified as A, B or C."
+  }
 }
