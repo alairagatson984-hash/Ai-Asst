@@ -1,9 +1,9 @@
 {
   "date": "2026-11-06",
-  "updatedAt": "2026-11-06T07:05:00-08:00",
+  "updatedAt": "2026-11-06T07:08:00-08:00",
   "verdict": {
     "headline": "No trade yet",
-    "reason": "No pair has a retest holding yet. USD/CAD broke up on the news without a retest and with RSI overbought, and GBP/USD broke down without a retest. GBP/JPY (support held at 211.37) and USD/JPY are inside their ranges."
+    "reason": "No pair has a retest holding yet. USD/CAD broke up on the news without a retest and with RSI overbought, and GBP/USD broke down without a retest. GBP/JPY, USD/JPY and AUD/USD are inside their ranges."
   },
   "calendar": [
     {
@@ -75,6 +75,20 @@
       "price": 157.78,
       "tf": "M15",
       "label": "Support"
+    },
+    {
+      "id": "au-1",
+      "pair": "AUD_USD",
+      "price": 0.6893,
+      "tf": "M15",
+      "label": "Resistance"
+    },
+    {
+      "id": "au-2",
+      "pair": "AUD_USD",
+      "price": 0.68545,
+      "tf": "M15",
+      "label": "Support (held, bounced)"
     }
   ],
   "setups": [],
@@ -98,6 +112,11 @@
       "pair": "GBP_JPY",
       "level": 211.37,
       "missing": "No break yet. On the re-marked M5 chart, price sold off to support at about 211.37 (wick to about 211.34), bounced and is back near 211.56. Support held and nothing has closed beyond it. Indicators: EMA 20 is below EMA 50, price is below both and RSI is about 39, so the downtrend agrees with a short. A short needs an M5 close below about 211.37 with displacement, follow-through, a structure break, a retest that holds from below and an engulfing or pin bar. About 91 pips above, resistance is at about 212.28."
+    },
+    {
+      "pair": "AUD_USD",
+      "level": 0.6893,
+      "missing": "No break yet. Price bounced hard off support at about 0.68545 with several strong green candles and is now at resistance, about 0.6890, with wicks to about 0.6894 and no close above. Indicators: EMA 20 has crossed above EMA 50 and price is above both, but RSI is about 67 and starting to turn down near the 70 line. A long needs an M5 close above about 0.6893 with displacement, follow-through, a structure break, a retest that holds from above and an engulfing or pin bar, with RSI under 70. A rejection here could also be a short at resistance, but that needs a candle trigger and 1:2 back to support (about 38 pips away, so the stop would need to be 19 pips or less)."
     }
   ],
   "newsBlocks": [
@@ -108,7 +127,8 @@
     "GBP/USD: a retest of about 1.3382 from below that rejects with an M5 bearish engulfing or pin bar. A close back above 1.3382 downgrades it and it stays C.",
     "Only the GBP/JPY chart was sent, so other pairs were not graded.",
     "USD/JPY: a displacement close above about 158.67 with a holding retest, or a close below 157.78 with a retest from below.",
-    "GBP/JPY: an M5 close below about 211.37 with displacement, then a retest that holds from below (short, needs 1:2). A close above about 212.28 would be the long side."
+    "GBP/JPY: an M5 close below about 211.37 with displacement, then a retest that holds from below (short, needs 1:2). A close above about 212.28 would be the long side.",
+    "AUD/USD: a displacement close above about 0.6893 and a holding retest, or a rejection candle at 0.6893 for a short."
   ],
   "review": null
 }
