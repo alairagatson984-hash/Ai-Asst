@@ -1,9 +1,9 @@
 {
   "date": "2026-11-06",
-  "updatedAt": "2026-11-06T06:05:00-08:00",
+  "updatedAt": "2026-11-06T06:00:00-08:00",
   "verdict": {
     "headline": "No trade yet",
-    "reason": "GBP/USD broke below its 1.3382 support on the 5:30am NFP spike, but there is no retest or candle trigger yet, so it is a C on the watchlist. GBP/JPY has no setup. A short can requalify if the retest holds."
+    "reason": "USD/CAD broke above its 1.4082 resistance on the 5:30am NFP/CAD jobs spike, but it hasn't retested yet and RSI is overbought, so it is a C on the watchlist. GBP/USD and GBP/JPY have no qualifying setup."
   },
   "calendar": [
     {
@@ -47,6 +47,20 @@
       "price": 1.3382,
       "tf": "M15",
       "label": "Support (broken on NFP)"
+    },
+    {
+      "id": "uc-1",
+      "pair": "USD_CAD",
+      "price": 1.4082,
+      "tf": "M15",
+      "label": "Resistance (broken on NFP)"
+    },
+    {
+      "id": "uc-2",
+      "pair": "USD_CAD",
+      "price": 1.4053,
+      "tf": "M15",
+      "label": "Support"
     }
   ],
   "setups": [],
@@ -65,12 +79,18 @@
       "pair": "GBP_USD",
       "level": 1.3382,
       "missing": "Short watch. Price is below support after the NFP spike (long wick to about 1.3361), but there is only one candle of follow-through, no retest yet and no engulfing or pin-bar trigger. Needs the retest of about 1.3382 to reject from below. If SL sits 2-3 pips above the retest swing, the TP must be at least 2R away. Indicators (M5 chart): EMA 20 is below EMA 50 and price is below both, which agrees with a short. RSI is about 30, at the oversold edge, so the EMA + RSI check is borderline. It fails if RSI is below 30 or turns back up at the retest."
+    },
+    {
+      "pair": "USD_CAD",
+      "level": 1.4082,
+      "missing": "Long watch. Price closed above resistance on a huge NFP/CAD jobs candle (wick to about 1.4113) and kept going, so close, displacement, follow-through and M5 structure all pass. Price is about 13 pips above the level and has not retested it, so there is no retest and no candle trigger. Indicators (M5 chart): EMA 20 is above EMA 50 and price is above both, but RSI is about 72 and turning down from about 78, so EMA + RSI fails. That is 4 of 6. It would need the retest to hold with an engulfing or pin bar, and RSI back under 70 and not turning against the trade. Needs 1:2 to the next S/R above."
     }
   ],
   "newsBlocks": [
-    "USD NFP was released at 5:30am PT. GBP/USD and USD pairs can requalify only if a retest holds after the release."
+    "USD NFP and CAD employment were released at 5:30am PT. USD/CAD, GBP/USD and other USD pairs can requalify only if a retest holds after the release."
   ],
   "watchFor": [
+    "USD/CAD: a pullback to about 1.4082 that holds from above with an M5 bullish engulfing or pin bar, with RSI back under 70.",
     "GBP/USD: a retest of about 1.3382 from below that rejects with an M5 bearish engulfing or pin bar. A close back above 1.3382 downgrades it and it stays C.",
     "A clean M15 close below 211.73 with a strong candle, then a retest that rejects from below (short, needs 1:2).",
     "A close above 212.30 with follow-through, then a retest that holds as support (long, needs 1:2).",
