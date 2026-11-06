@@ -1,22 +1,77 @@
 {
   "date": "2026-11-06",
-  "updatedAt": "2026-11-06T05:20:00-08:00",
-  "verdict": { "headline": "No trade today", "reason": "GBP/JPY is stuck between the two marked levels with no fresh break and retest. The support break overnight closed back inside, so it is downgraded to C. NFP and Canadian jobs data land at 5:30am PT." },
+  "updatedAt": "2026-11-06T05:45:00-08:00",
+  "verdict": {
+    "headline": "No trade yet",
+    "reason": "GBP/USD broke below its 1.3382 support on the 5:30am NFP spike, but there is no retest or candle trigger yet, so it is a C on the watchlist. GBP/JPY has no setup. A short can requalify if the retest holds."
+  },
   "calendar": [
-    { "time": "05:30", "currency": "USD", "event": "Non-Farm Payrolls", "impact": "high" },
-    { "time": "05:30", "currency": "CAD", "event": "Employment Change", "impact": "high" }
+    {
+      "time": "05:30",
+      "currency": "USD",
+      "event": "Non-Farm Payrolls",
+      "impact": "high"
+    },
+    {
+      "time": "05:30",
+      "currency": "CAD",
+      "event": "Employment Change",
+      "impact": "high"
+    }
   ],
   "levels": [
-    { "id": "gj-1", "pair": "GBP_JPY", "price": 212.30, "tf": "M15", "label": "M15 resistance (retested from below)" },
-    { "id": "gj-2", "pair": "GBP_JPY", "price": 211.73, "tf": "M15", "label": "M15 support (broke, then closed back above)" }
+    {
+      "id": "gj-1",
+      "pair": "GBP_JPY",
+      "price": 212.3,
+      "tf": "M15",
+      "label": "M15 resistance (retested from below)"
+    },
+    {
+      "id": "gj-2",
+      "pair": "GBP_JPY",
+      "price": 211.73,
+      "tf": "M15",
+      "label": "M15 support (broke, then closed back above)"
+    },
+    {
+      "id": "gu-1",
+      "pair": "GBP_USD",
+      "price": 1.3404,
+      "tf": "M15",
+      "label": "Resistance"
+    },
+    {
+      "id": "gu-2",
+      "pair": "GBP_USD",
+      "price": 1.3382,
+      "tf": "M15",
+      "label": "Support (broken on NFP)"
+    }
   ],
   "setups": [],
   "watchlist": [
-    { "pair": "GBP_JPY", "level": 211.73, "missing": "Break below failed: price closed back above support overnight. Needs a new close below, displacement, M5 structure break, retest and a candle trigger." },
-    { "pair": "GBP_JPY", "level": 212.30, "missing": "Price is about 33 pips under resistance, still in the middle of the range. A rejection there would need a candle trigger, and a break above would need a close, follow-through and a retest." }
+    {
+      "pair": "GBP_JPY",
+      "level": 211.73,
+      "missing": "Break below failed: price closed back above support overnight. Needs a new close below, displacement, M5 structure break, retest and a candle trigger."
+    },
+    {
+      "pair": "GBP_JPY",
+      "level": 212.3,
+      "missing": "Price is about 33 pips under resistance, still in the middle of the range. A rejection there would need a candle trigger, and a break above would need a close, follow-through and a retest."
+    },
+    {
+      "pair": "GBP_USD",
+      "level": 1.3382,
+      "missing": "Short watch. Price is below support after the NFP spike (long wick to about 1.3361), but there is only one candle of follow-through, no retest yet and no engulfing or pin-bar trigger. Needs the retest of about 1.3382 to reject from below. If SL sits 2-3 pips above the retest swing, the TP must be at least 2R away."
+    }
   ],
-  "newsBlocks": ["USD NFP and CAD employment at 5:30am PT: no new entries on USD or CAD pairs before the release."],
+  "newsBlocks": [
+    "USD NFP was released at 5:30am PT. GBP/USD and USD pairs can requalify only if a retest holds after the release."
+  ],
   "watchFor": [
+    "GBP/USD: a retest of about 1.3382 from below that rejects with an M5 bearish engulfing or pin bar. A close back above 1.3382 downgrades it and it stays C.",
     "A clean M15 close below 211.73 with a strong candle, then a retest that rejects from below (short, needs 1:2).",
     "A close above 212.30 with follow-through, then a retest that holds as support (long, needs 1:2).",
     "Only the GBP/JPY chart was sent, so other pairs were not graded."
