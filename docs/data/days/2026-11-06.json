@@ -1,6 +1,6 @@
 {
   "date": "2026-11-06",
-  "updatedAt": "2026-11-06T07:08:00-08:00",
+  "updatedAt": "2026-11-06T07:45:00-08:00",
   "verdict": {
     "headline": "No trade yet",
     "reason": "No pair has a retest holding yet. USD/CAD broke up on the news without a retest and with RSI overbought, and GBP/USD broke down without a retest. GBP/JPY, USD/JPY and AUD/USD are inside their ranges."
@@ -116,7 +116,7 @@
     {
       "pair": "AUD_USD",
       "level": 0.6893,
-      "missing": "No break yet. Price bounced hard off support at about 0.68545 with several strong green candles and is now at resistance, about 0.6890, with wicks to about 0.6894 and no close above. Indicators: EMA 20 has crossed above EMA 50 and price is above both, but RSI is about 67 and starting to turn down near the 70 line. A long needs an M5 close above about 0.6893 with displacement, follow-through, a structure break, a retest that holds from above and an engulfing or pin bar, with RSI under 70. A rejection here could also be a short at resistance, but that needs a candle trigger and 1:2 back to support (about 38 pips away, so the stop would need to be 19 pips or less)."
+      "missing": "No break. Price was rejected at resistance (about 0.6893, highs to about 0.6894 with no close above) and has fallen back to about 0.6879, into the EMA 20/50 (RSI about 52). The long side has failed for now. A fresh setup needs an M5 close above about 0.6893 with a retest that holds, or a close below support at about 0.68545 with a retest from below, each with an engulfing or pin bar."
     }
   ],
   "newsBlocks": [
