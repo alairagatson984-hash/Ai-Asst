@@ -1,24 +1,91 @@
 {
   "date": "2026-11-09",
-  "updatedAt": "2026-11-09T07:30:00-08:00",
+  "updatedAt": "2026-11-09T07:35:00-08:00",
   "verdict": {
     "headline": "No trade today",
-    "reason": "USD/CAD, GBP/USD and USD/JPY are all trading between their marked levels with no close beyond a level, so there is no break and retest to grade. GBP/USD and USD/JPY are bouncing off support, which is not a setup under the break-and-retest rules."
+    "reason": "USD/CAD, GBP/USD, USD/JPY and EUR/USD are all trading between their marked levels with no close beyond a level, so there is no break and retest to grade. GBP/USD and USD/JPY are bouncing off support, and EUR/USD is pressing resistance without a break."
   },
   "calendar": [],
   "levels": [
-    { "id": "uc-1", "pair": "USD_CAD", "price": 1.4137, "tf": "M15", "label": "Resistance (approx. from chart)" },
-    { "id": "uc-2", "pair": "USD_CAD", "price": 1.4054, "tf": "M15", "label": "Support (approx. from chart)" },
-    { "id": "gu-1", "pair": "GBP_USD", "price": 1.3427, "tf": "M5", "label": "Resistance (approx. from chart)" },
-    { "id": "gu-2", "pair": "GBP_USD", "price": 1.3407, "tf": "M5", "label": "Support (approx. from chart)" },
-    { "id": "uj-1", "pair": "USD_JPY", "price": 158.37, "tf": "M5", "label": "Resistance (approx. from chart)" },
-    { "id": "uj-2", "pair": "USD_JPY", "price": 157.86, "tf": "M5", "label": "Support (approx. from chart)" }
+    {
+      "id": "uc-1",
+      "pair": "USD_CAD",
+      "price": 1.4137,
+      "tf": "M15",
+      "label": "Resistance (approx. from chart)"
+    },
+    {
+      "id": "uc-2",
+      "pair": "USD_CAD",
+      "price": 1.4054,
+      "tf": "M15",
+      "label": "Support (approx. from chart)"
+    },
+    {
+      "id": "gu-1",
+      "pair": "GBP_USD",
+      "price": 1.3427,
+      "tf": "M5",
+      "label": "Resistance (approx. from chart)"
+    },
+    {
+      "id": "gu-2",
+      "pair": "GBP_USD",
+      "price": 1.3407,
+      "tf": "M5",
+      "label": "Support (approx. from chart)"
+    },
+    {
+      "id": "uj-1",
+      "pair": "USD_JPY",
+      "price": 158.37,
+      "tf": "M5",
+      "label": "Resistance (approx. from chart)"
+    },
+    {
+      "id": "uj-2",
+      "pair": "USD_JPY",
+      "price": 157.86,
+      "tf": "M5",
+      "label": "Support (approx. from chart)"
+    },
+    {
+      "id": "eu-1",
+      "pair": "EUR_USD",
+      "price": 1.1202,
+      "tf": "M15",
+      "label": "Resistance (approx. from chart)"
+    },
+    {
+      "id": "eu-2",
+      "pair": "EUR_USD",
+      "price": 1.1134,
+      "tf": "M15",
+      "label": "Support (approx. from chart)"
+    }
   ],
   "setups": [],
   "watchlist": [
-    { "pair": "GBP_USD", "level": 1.3407, "missing": "Price is testing support from above with a small wick below. There is no close below it, no break and no retest yet. A short needs a body close below, M5 structure break and a retest from underneath." },
-    { "pair": "USD_JPY", "level": 157.86, "missing": "Support held and price bounced to 158.16, with RSI near 70. No break of either level. Resistance at 158.37 would need a close above and a retest." },
-    { "pair": "USD_CAD", "level": 1.4054, "missing": "Price is between the levels, near the EMAs after a pullback from resistance. No break. Support would need a close below and a retest." }
+    {
+      "pair": "GBP_USD",
+      "level": 1.3407,
+      "missing": "Price is testing support from above with a small wick below. There is no close below it, no break and no retest yet. A short needs a body close below, M5 structure break and a retest from underneath."
+    },
+    {
+      "pair": "USD_JPY",
+      "level": 157.86,
+      "missing": "Support held and price bounced to 158.16, with RSI near 70. No break of either level. Resistance at 158.37 would need a close above and a retest."
+    },
+    {
+      "pair": "USD_CAD",
+      "level": 1.4054,
+      "missing": "Price is between the levels, near the EMAs after a pullback from resistance. No break. Support would need a close below and a retest."
+    },
+    {
+      "pair": "EUR_USD",
+      "level": 1.1202,
+      "missing": "Price is pressing resistance at 1.11958 and has not closed above it. A long needs a body close above, an M5 structure break and a retest from above with a candle trigger. EMA 20 is above EMA 50 and RSI is 59, so indicators would agree."
+    }
   ],
   "newsBlocks": [
     "Today's red-folder calendar could not be confirmed from the web search. Check Forex Factory before entering anything."
@@ -26,7 +93,8 @@
   "watchFor": [
     "GBP/USD: body close below 1.3407, then a retest from underneath with an engulfing or pin bar.",
     "USD/JPY: body close above 158.37, then a retest from above, with RSI room.",
-    "USD/CAD: body close beyond 1.4137 or 1.4054, then a retest."
+    "USD/CAD: body close beyond 1.4137 or 1.4054, then a retest.",
+    "EUR/USD: body close above 1.1202, then a retest from above with an engulfing or pin bar."
   ],
   "review": null
 }
