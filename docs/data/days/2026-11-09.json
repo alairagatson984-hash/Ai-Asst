@@ -1,6 +1,6 @@
 {
   "date": "2026-11-09",
-  "updatedAt": "2026-11-09T07:35:00-08:00",
+  "updatedAt": "2026-11-09T07:40:00-08:00",
   "verdict": {
     "headline": "No trade today",
     "reason": "USD/CAD, GBP/USD, USD/JPY and EUR/USD are all trading between their marked levels with no close beyond a level, so there is no break and retest to grade. GBP/USD and USD/JPY are bouncing off support, and EUR/USD is pressing resistance without a break."
@@ -62,6 +62,20 @@
       "price": 1.1134,
       "tf": "M15",
       "label": "Support (approx. from chart)"
+    },
+    {
+      "id": "gu-3",
+      "pair": "GBP_USD",
+      "price": 1.3425,
+      "tf": "M15",
+      "label": "Resistance (approx. from chart)"
+    },
+    {
+      "id": "gu-4",
+      "pair": "GBP_USD",
+      "price": 1.3343,
+      "tf": "M15",
+      "label": "Support (approx. from chart)"
     }
   ],
   "setups": [],
@@ -69,7 +83,7 @@
     {
       "pair": "GBP_USD",
       "level": 1.3407,
-      "missing": "Price is testing support from above with a small wick below. There is no close below it, no break and no retest yet. A short needs a body close below, M5 structure break and a retest from underneath."
+      "missing": "Price is testing support from above with a small wick below. There is no close below it, no break and no retest yet. A short needs a body close below, M5 structure break and a retest from underneath. On M15 price is 1.3404, rejected at 1.3425 and falling toward the EMA 50 (1.3367), with the EMA 20 still above it and RSI 43. Next support is about 1.3343."
     },
     {
       "pair": "USD_JPY",
