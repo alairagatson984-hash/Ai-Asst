@@ -1,6 +1,6 @@
 {
   "date": "2026-11-09",
-  "updatedAt": "2026-11-09T07:50:00-08:00",
+  "updatedAt": "2026-11-09T10:50:00-08:00",
   "verdict": {
     "headline": "No trade today",
     "reason": "USD/CAD broke 1.4125 and retested it, but RSI is overbought and the next resistance gives under 1:2, so it stays on the watchlist. GBP/USD, USD/JPY and EUR/USD have no close beyond a marked level, so there is no break and retest to grade."
@@ -104,6 +104,13 @@
       "price": 0.5602,
       "tf": "M5",
       "label": "Support (approx. from chart)"
+    },
+    {
+      "id": "uf-1",
+      "pair": "USD_CHF",
+      "price": 0.8227,
+      "tf": "M5",
+      "label": "Resistance (approx. from chart)"
     }
   ],
   "setups": [],
@@ -132,6 +139,11 @@
       "pair": "NZD_USD",
       "level": 0.5602,
       "missing": "Price dipped to 0.5602 support with RSI at its 30 line, then bounced to 0.5607 with no body close below the level. The EMA 20 has crossed below the EMA 50. A short needs a body close below 0.5602, an M5 structure break and a retest from underneath with a candle trigger. RSI must not be below 30 at the retest."
+    },
+    {
+      "pair": "USD_CHF",
+      "level": 0.8227,
+      "missing": "Price was rejected at 0.8227 resistance and has fallen to 0.8206, below the EMAs (RSI 38). No support level is visible on the screenshot, so there is no level to break and retest. Please mark one."
     }
   ],
   "newsBlocks": [
