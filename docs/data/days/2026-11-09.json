@@ -1,9 +1,9 @@
 {
   "date": "2026-11-09",
-  "updatedAt": "2026-11-09T07:40:00-08:00",
+  "updatedAt": "2026-11-09T07:45:00-08:00",
   "verdict": {
     "headline": "No trade today",
-    "reason": "USD/CAD, GBP/USD, USD/JPY and EUR/USD are all trading between their marked levels with no close beyond a level, so there is no break and retest to grade. GBP/USD and USD/JPY are bouncing off support, and EUR/USD is pressing resistance without a break."
+    "reason": "USD/CAD broke 1.4125 and retested it, but RSI is overbought and the next resistance gives under 1:2, so it stays on the watchlist. GBP/USD, USD/JPY and EUR/USD have no close beyond a marked level, so there is no break and retest to grade."
   },
   "calendar": [],
   "levels": [
@@ -76,10 +76,29 @@
       "price": 1.3343,
       "tf": "M15",
       "label": "Support (approx. from chart)"
+    },
+    {
+      "id": "uc-3",
+      "pair": "USD_CAD",
+      "price": 1.4125,
+      "tf": "M5",
+      "label": "Resistance (broken, approx. from chart)"
+    },
+    {
+      "id": "uc-4",
+      "pair": "USD_CAD",
+      "price": 1.4078,
+      "tf": "M5",
+      "label": "Support (approx. from chart)"
     }
   ],
   "setups": [],
   "watchlist": [
+    {
+      "pair": "USD_CAD",
+      "level": 1.4125,
+      "missing": "Long break of 1.4125 on M5: displacement, follow-through, M5 structure break and a wick retest of the level that held (5 of 6 checks, a pin bar at the retest). It fails on two counts. RSI is 76.6, overbought against a long, so the EMA + RSI check fails. The next S/R, the 1.4137 resistance from the M15 chart, is only about 1:1.7 from a roughly 1.4127 entry with the SL at about 1.4121, under the 1:2 minimum. Price is already at 1.4134, so entering now would be chasing."
+    },
     {
       "pair": "GBP_USD",
       "level": 1.3407,
@@ -91,11 +110,6 @@
       "missing": "Support held and price bounced to 158.16, with RSI near 70. No break of either level. Resistance at 158.37 would need a close above and a retest."
     },
     {
-      "pair": "USD_CAD",
-      "level": 1.4054,
-      "missing": "Price is between the levels, near the EMAs after a pullback from resistance. No break. Support would need a close below and a retest."
-    },
-    {
       "pair": "EUR_USD",
       "level": 1.1202,
       "missing": "Price is pressing resistance at 1.11958 and has not closed above it. A long needs a body close above, an M5 structure break and a retest from above with a candle trigger. EMA 20 is above EMA 50 and RSI is 59, so indicators would agree."
@@ -105,6 +119,7 @@
     "Today's red-folder calendar could not be confirmed from the web search. Check Forex Factory before entering anything."
   ],
   "watchFor": [
+    "USD/CAD: a body close above 1.4137, then a retest from above with a candle trigger, RSI room and at least 1:2 to the next S/R. Otherwise a pullback to 1.4125 that holds with RSI back under 70.",
     "GBP/USD: body close below 1.3407, then a retest from underneath with an engulfing or pin bar.",
     "USD/JPY: body close above 158.37, then a retest from above, with RSI room.",
     "USD/CAD: body close beyond 1.4137 or 1.4054, then a retest.",
