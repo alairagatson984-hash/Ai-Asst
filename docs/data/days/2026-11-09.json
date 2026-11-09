@@ -1,6 +1,6 @@
 {
   "date": "2026-11-09",
-  "updatedAt": "2026-11-09T07:45:00-08:00",
+  "updatedAt": "2026-11-09T07:50:00-08:00",
   "verdict": {
     "headline": "No trade today",
     "reason": "USD/CAD broke 1.4125 and retested it, but RSI is overbought and the next resistance gives under 1:2, so it stays on the watchlist. GBP/USD, USD/JPY and EUR/USD have no close beyond a marked level, so there is no break and retest to grade."
@@ -90,6 +90,20 @@
       "price": 1.4078,
       "tf": "M5",
       "label": "Support (approx. from chart)"
+    },
+    {
+      "id": "nu-1",
+      "pair": "NZD_USD",
+      "price": 0.5622,
+      "tf": "M5",
+      "label": "Resistance (approx. from chart)"
+    },
+    {
+      "id": "nu-2",
+      "pair": "NZD_USD",
+      "price": 0.5602,
+      "tf": "M5",
+      "label": "Support (approx. from chart)"
     }
   ],
   "setups": [],
@@ -113,6 +127,11 @@
       "pair": "EUR_USD",
       "level": 1.1202,
       "missing": "Price is pressing resistance at 1.11958 and has not closed above it. A long needs a body close above, an M5 structure break and a retest from above with a candle trigger. EMA 20 is above EMA 50 and RSI is 59, so indicators would agree."
+    },
+    {
+      "pair": "NZD_USD",
+      "level": 0.5602,
+      "missing": "Price dipped to 0.5602 support with RSI at its 30 line, then bounced to 0.5607 with no body close below the level. The EMA 20 has crossed below the EMA 50. A short needs a body close below 0.5602, an M5 structure break and a retest from underneath with a candle trigger. RSI must not be below 30 at the retest."
     }
   ],
   "newsBlocks": [
@@ -123,7 +142,8 @@
     "GBP/USD: body close below 1.3407, then a retest from underneath with an engulfing or pin bar.",
     "USD/JPY: body close above 158.37, then a retest from above, with RSI room.",
     "USD/CAD: body close beyond 1.4137 or 1.4054, then a retest.",
-    "EUR/USD: body close above 1.1202, then a retest from above with an engulfing or pin bar."
+    "EUR/USD: body close above 1.1202, then a retest from above with an engulfing or pin bar.",
+    "NZD/USD: body close below 0.5602, then a retest from underneath with an engulfing or pin bar and RSI room."
   ],
   "review": null
 }
