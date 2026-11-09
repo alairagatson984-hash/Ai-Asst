@@ -157,5 +157,16 @@
     "EUR/USD: body close above 1.1202, then a retest from above with an engulfing or pin bar.",
     "NZD/USD: body close below 0.5602, then a retest from underneath with an engulfing or pin bar and RSI room."
   ],
-  "review": null
+  "review": {
+    "writtenAt": "2026-11-09T14:20:00-08:00",
+    "planVsOutcome": [],
+    "mistakes": [
+      "None found: no setups were taken. This review covers price action only, not actual OANDA fills, and I could not find intraday price data for today."
+    ],
+    "lessons": [
+      "Web search returned no usable intraday data for today, so I can't say whether any watchlist pair broke and retested after the plan. I haven't guessed. Check M5/M15 charts for USD/CAD (1.4137 body close, or a pullback to 1.4125 with RSI back under 70), GBP/USD (1.3407) and EUR/USD (1.1202).",
+      "Standing aside on USD/CAD looks consistent with the rules: RSI was 76.6 and the room to 1.4137 was about 1:1.7, under the 1:2 minimum. I can't confirm how price moved afterward."
+    ],
+    "gradingAudit": "No setups were graded. USD/CAD stayed C on the watchlist: it passed 5 of 6 checks and had a pin bar, but the failed EMA+RSI check and sub-1:2 R:R kept it out, as the rules require. I couldn't verify post-plan price action, so I can't say whether any grade would have changed."
+  }
 }
