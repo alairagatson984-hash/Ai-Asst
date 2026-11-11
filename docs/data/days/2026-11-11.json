@@ -1,0 +1,44 @@
+{
+  "date": "2026-11-11",
+  "updatedAt": "2026-11-11T05:30:00-08:00",
+  "verdict": {
+    "headline": "No trade today",
+    "reason": "USD/JPY broke above 158.96 cleanly but hasn't retested it yet, RSI is about 71 (overbought for a long) and no resistance above is marked to set a target. NZD/USD slipped under 0.5588 but snapped back above it before dropping again, and AUD/USD is between its levels with no break."
+  },
+  "calendar": [],
+  "levels": [
+    { "id": "au-1", "pair": "AUD_USD", "price": 0.6930, "tf": "M15", "label": "Resistance (approx. from chart)" },
+    { "id": "au-2", "pair": "AUD_USD", "price": 0.6844, "tf": "M15", "label": "Support (approx. from chart)" },
+    { "id": "nu-1", "pair": "NZD_USD", "price": 0.5650, "tf": "M15", "label": "Resistance (approx. from chart)" },
+    { "id": "nu-2", "pair": "NZD_USD", "price": 0.5588, "tf": "M15", "label": "Support (being tested from below, approx. from chart)" },
+    { "id": "uj-1", "pair": "USD_JPY", "price": 158.96, "tf": "M15", "label": "Resistance (broken, approx. from chart)" },
+    { "id": "uj-2", "pair": "USD_JPY", "price": 157.71, "tf": "M15", "label": "Support (approx. from chart)" }
+  ],
+  "setups": [],
+  "watchlist": [
+    {
+      "pair": "USD_JPY",
+      "level": 158.96,
+      "missing": "Long break of 158.96: there's a body close above, a full-bodied displacement candle and follow-through to 159.24, and the EMA 20 is above the EMA 50 with price above both. It's still C for three reasons. There's no retest since the displacement candle (price is extended about 28 pips above the level). RSI is about 71, overbought against a long, so the EMA + RSI check fails. M5 isn't in the screenshot, so the structure break is unconfirmed. Also, no resistance is marked above 158.96, so there's no TP and no R:R to check."
+    },
+    {
+      "pair": "NZD_USD",
+      "level": 0.5588,
+      "missing": "Short break of 0.5588: candles closed below the level, but the break was a slow drift with no displacement, and price closed back above it (to about 0.5595) before slipping to 0.5584. That's a messy break, not a clean break and retest. The EMAs agree (EMA 20 0.5590 below EMA 50 0.5597, price below both), but RSI is 33, close to the 30 line. M5 isn't shown. No support is marked below to use as TP. 2 of 6 checks at best."
+    },
+    {
+      "pair": "AUD_USD",
+      "level": 0.6844,
+      "missing": "Price is 0.6860, between 0.6930 resistance and 0.6844 support, with no break of either. The EMAs and price point down (EMA 20 0.6866 below EMA 50 0.6870) and RSI is 35. A short needs a body close below 0.6844 with displacement, an M5 structure break and a retest from underneath with a candle trigger, with RSI not below 30 at the retest and a marked support below for at least 1:2."
+    }
+  ],
+  "newsBlocks": [
+    "No red-folder events today for the 7 majors (US Veterans Day: bond market closed, thinner USD liquidity). UK Q3 GDP is at 11:00pm PT tonight, after today's 2:00pm PT cutoff."
+  ],
+  "watchFor": [
+    "USD/JPY: a pullback to 158.96 that holds, with a bullish engulfing or pin bar, RSI back under 70 and an M5 structure break. Please mark the next resistance above so there's a TP and a 1:2 check.",
+    "NZD/USD: a strong body close below 0.5588, then a retest from underneath with a bearish engulfing or pin bar and RSI not below 30. Please mark the next support below (around the 0.5545–0.5550 area from Nov 6, if it's a level you trust).",
+    "AUD/USD: a displacement close below 0.6844, then a retest from underneath with a candle trigger and RSI room. Please mark the next support below."
+  ],
+  "review": null
+}
