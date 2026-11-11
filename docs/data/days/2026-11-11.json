@@ -40,5 +40,16 @@
     "NZD/USD: a strong body close below 0.5588, then a retest from underneath with a bearish engulfing or pin bar and RSI not below 30. Please mark the next support below (around the 0.5545–0.5550 area from Nov 6, if it's a level you trust).",
     "AUD/USD: a displacement close below 0.6844, then a retest from underneath with a candle trigger and RSI room. Please mark the next support below."
   ],
-  "review": null
+  "review": {
+    "writtenAt": "2026-11-11T14:20:00-08:00",
+    "planVsOutcome": [],
+    "mistakes": [
+      "None found: no setups were graded or taken. This review covers price action only, not actual OANDA fills, and I couldn't find intraday price data from after the 5:30am PT plan, so I can't check the watchlist pairs against the rules."
+    ],
+    "lessons": [
+      "Standing aside on USD/JPY fits the rules on the evidence at plan time: no retest of 158.96, RSI about 71 (overbought for a long) and no marked resistance for a TP. Published analysis from earlier today also flagged momentum lagging price, with RSI making a lower high near 72 while price made a higher high near 158.95. I couldn't confirm whether price later pulled back to 158.96 and held.",
+      "For tomorrow: on USD/JPY, analysts put resistance around 159.75–159.88, with 160.00 above it. If you trust that zone, mark it as the TP level so a retest of 158.96 can be checked for 1:2. NZD/USD 0.5588 and AUD/USD 0.6844 still need a displacement break and a retest, plus a support marked below each. UK Q3 GDP (11:00pm PT tonight) can move GBP/USD before tomorrow's window."
+    ],
+    "gradingAudit": "No setups were graded. All three watchlist pairs were C, and that looks right: USD/JPY failed the retest and EMA+RSI checks and had no TP, NZD/USD had a messy break with no displacement, and AUD/USD hadn't broken. I couldn't get post-plan intraday data (web search only turned up pre-window articles, and one source site is blocked in this sandbox), so I can't say whether any of them later qualified as A or B."
+  }
 }
