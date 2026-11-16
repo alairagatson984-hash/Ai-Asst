@@ -238,7 +238,7 @@
 <div class="app">
   <nav class="side" aria-label="Dashboard sections">
     <a href="#plan">Today's Plan</a>
-    <a href="#orb">9:30 ORB</a>
+    <a href="#orb">Opening Range</a>
     <a href="#markets">Markets</a>
     <a href="#calculator">Calculator</a>
     <a href="#journal">Journal</a>
@@ -260,21 +260,21 @@
     </section>
 
     <section class="tab" id="tab-orb" hidden>
-      <div class="tab-head"><h1>9:30 Opening Range</h1><p id="orb-sub"></p></div>
+      <div class="tab-head"><h1>Opening Range Breakout</h1><p id="orb-sub"></p></div>
       <div id="orb-notice"></div>
       <div class="cards" id="orb-cards"></div>
       <div class="panel">
-        <h2>Chart <span>M5 candles · Eastern time</span></h2>
+        <h2>Chart <span>M5 candles · Pacific time</span></h2>
         <div class="toolbar"><select id="orb-pair" aria-label="Pair" style="width:auto"></select></div>
         <div class="chart-box" id="orb-chart"></div>
       </div>
       <div class="panel">
         <h2>How it works</h2>
         <ul class="plain">
-          <li>The opening range is the 9:30–9:35am ET M5 candle. It's only set once that candle has closed.</li>
+          <li>The opening range is the US open's first M5 candle: 6:30–6:35am PT (9:30am ET). It's only set once that candle has closed.</li>
           <li><b>BUY</b> when an M5 candle <i>closes</i> above the range high; <b>SELL</b> when one closes below the range low. A wick through the line doesn't count.</li>
-          <li>One signal per pair per day: whichever side breaks first. No new signals after the cutoff in Settings (11:00am ET by default).</li>
-          <li>Entry is the breakout candle's close. Stop and target follow your ORB settings. Everything resets at the next day's 9:30am ET open.</li>
+          <li>One signal per pair per day: whichever side breaks first. No new signals after the cutoff in Settings (11:00am PT by default).</li>
+          <li>Entry is the breakout candle's close. Stop and target follow your ORB settings. Everything resets at the next day's 6:30am PT open. All times here are Pacific.</li>
           <li>Signals only. Nothing is placed on your account.</li>
         </ul>
       </div>
@@ -387,12 +387,12 @@
         </form>
       </div>
       <div class="panel">
-        <h2>9:30 ORB <span>Eastern time</span></h2>
+        <h2>Opening Range Breakout <span>Pacific time · range is the 6:30am PT (9:30am ET) candle</span></h2>
         <form class="form" id="orb-form">
           <div class="field"><label for="s-orbstop">Stop loss at</label><select id="s-orbstop"><option value="opposite">Opposite side of range</option><option value="mid">Middle of range</option><option value="pips">Fixed pips from entry</option></select></div>
           <div class="field"><label for="s-orbpips">Fixed stop (pips)</label><input id="s-orbpips" inputmode="decimal"></div>
           <div class="field"><label for="s-orbtp">Target (× risk)</label><input id="s-orbtp" inputmode="decimal"></div>
-          <div class="field"><label for="s-orbcut">No new signals after (ET)</label><input id="s-orbcut" type="time"></div>
+          <div class="field"><label for="s-orbcut">No new signals after (PT)</label><input id="s-orbcut" type="time"></div>
         </form>
       </div>
       <div class="panel">
@@ -832,7 +832,7 @@
   // The opening range is the 9:30–9:35am ET M5 candle. Everything is recomputed from today's
   // candles (ET date) on every poll, so the strategy resets itself at each day's open.
   const pad2 = n => String(n).padStart(2, "0");
-  const etLabel = t => { const p = et(new Date(t * 1000)); return pad2(p.h) + ":" + pad2(p.mi); };
+  const ptClock = t => fmtHM(pt(new Date(t * 1000)).mins) + " PT";
   const orbTradingDay = () => !["Sat", "Sun"].includes(et(new Date()).wd);
   const orbFor = p => computeOrb(p, state.orbCandles[p] || [], et(new Date()).date);
 
@@ -851,12 +851,12 @@
     const now = Date.now() / 1000;
     const openT = etToUtc(day, 9, 30).getTime() / 1000;
     const [ch, cm] = String(S.orbCut || DEFAULTS.orbCut).split(":").map(Number);
-    const cutT = etToUtc(day, ch, cm || 0).getTime() / 1000;
+    const cutT = ptToUtc(day, ch, cm || 0).getTime() / 1000; // the cutoff is set in Pacific time
     const out = { openT, cutT, range: null, signal: null, outcome: null, status: "", cls: "" };
-    if (now < openT) return Object.assign(out, { status: "Range sets at 9:35am ET", cls: "wait" });
+    if (now < openT) return Object.assign(out, { status: "Range sets at " + ptClock(openT + 300), cls: "wait" });
     const oc = cs.find(c => c.t === openT);
-    if (!oc) return Object.assign(out, now < openT + 600 ? { status: "Waiting for the 9:30 candle", cls: "wait" } : { status: "No 9:30 candle from OANDA" });
-    if (!oc.complete) return Object.assign(out, { status: "9:30 candle forming", cls: "wait" });
+    if (!oc) return Object.assign(out, now < openT + 600 ? { status: "Waiting for the opening candle", cls: "wait" } : { status: "No opening candle from OANDA" });
+    if (!oc.complete) return Object.assign(out, { status: "Opening candle forming", cls: "wait" });
     out.range = { high: oc.h, low: oc.l };
     // First M5 candle to CLOSE outside the range, closing no later than the cutoff. A wick alone never counts.
     for (const c of cs) {
@@ -878,14 +878,14 @@
       break;
     }
     if (out.signal) return Object.assign(out, out.outcome ? { status: out.outcome.text, cls: out.outcome.cls } : { status: out.signal.dir.toUpperCase() + " signal · live", cls: "live" });
-    if (now >= cutT) return Object.assign(out, { status: "No breakout by " + fmtHM(hm(S.orbCut || DEFAULTS.orbCut)) + " ET" });
+    if (now >= cutT) return Object.assign(out, { status: "No breakout by " + fmtHM(hm(S.orbCut || DEFAULTS.orbCut)) + " PT" });
     return Object.assign(out, { status: "Watching for a close outside", cls: "wait" });
   }
 
   function renderOrb() {
-    $("orb-sub").textContent = longDate(et(new Date()).date) + " · " + etLabel(Date.now() / 1000) + " ET";
+    $("orb-sub").textContent = longDate(pt(new Date()).date) + " · " + ptClock(Date.now() / 1000) + " · range from the 6:30am PT candle";
     const live = orbTradingDay() && state.connected;
-    $("orb-notice").innerHTML = !orbTradingDay() ? '<div class="notice info">Forex is closed for the weekend. The opening range resets Monday at 9:30am ET.</div>'
+    $("orb-notice").innerHTML = !orbTradingDay() ? '<div class="notice info">Forex is closed for the weekend. The opening range resets Monday at 6:30am PT.</div>'
       : !state.connected ? '<div class="notice">Connect OANDA in <a href="#setup">Settings</a> to track the opening range.</div>' : "";
     if (!live) { $("orb-cards").innerHTML = ""; return; }
     const riskAmt = state.account ? state.account.balance * S.risk / 100 : null;
@@ -896,7 +896,7 @@
       return '<article class="card"><div class="card-top"><span class="pair">' + pairName(p) + "</span>" +
         (s ? '<span class="dir ' + (s.dir === "buy" ? "long" : "short") + '">' + s.dir + "</span>" : "") +
         '<span class="pill ' + o.cls + '">' + esc(o.status) + "</span></div>" +
-        (r ? '<div class="prices">' + box("Range high", fx(p, r.high)) + box("Range low", fx(p, r.low)) + box("Height", ((r.high - r.low) / pip).toFixed(1) + " pips") + box("Breakout", s ? etLabel(s.t + 300) + " ET" : "—") + "</div>" : "") +
+        (r ? '<div class="prices">' + box("Range high", fx(p, r.high)) + box("Range low", fx(p, r.low)) + box("Height", ((r.high - r.low) / pip).toFixed(1) + " pips") + box("Breakout", s ? ptClock(s.t + 300) : "—") + "</div>" : "") +
         (s ? '<div class="prices">' + box("Entry", fx(p, s.entry)) + box("Stop", fx(p, s.sl)) + box("Target", fx(p, s.tp)) + box("R:R", "1:" + s.rr.toFixed(2)) + "</div>" +
           '<div class="sizing"><span>Risk <b>' + (s.risk / pip).toFixed(1) + "</b> pips</span><span>" + S.risk + "% = <b>" + (units ? Math.round(units).toLocaleString("en-US") + " units" : "—") + "</b>" + (units ? ' <span class="muted">(' + (units / 100000).toFixed(2) + " lots)</span>" : "") + "</span></div>" : "") +
         "</article>";
@@ -914,8 +914,8 @@
       layout: { background: { type: "solid", color: cssVar("--panel") }, textColor: cssVar("--muted"), fontFamily: "JetBrains Mono, monospace" },
       grid: { vertLines: { color: cssVar("--line") }, horzLines: { color: cssVar("--line") } },
       rightPriceScale: { borderColor: cssVar("--line") },
-      timeScale: { borderColor: cssVar("--line"), timeVisible: true, tickMarkFormatter: etLabel },
-      localization: { timeFormatter: t => et(new Date(t * 1000)).date + " " + etLabel(t) + " ET" }
+      timeScale: { borderColor: cssVar("--line"), timeVisible: true, tickMarkFormatter: ptLabel },
+      localization: { timeFormatter: t => pt(new Date(t * 1000)).date + " " + ptLabel(t) + " PT" }
     });
     orbSeries = orbChart.addCandlestickSeries({
       upColor: cssVar("--up"), downColor: cssVar("--down"), borderVisible: false, wickUpColor: cssVar("--up"), wickDownColor: cssVar("--down"),
@@ -948,7 +948,7 @@
     const markers = [];
     if (o.range) {
       line(o.range.high, cssVar("--rose"), 0, "OR high"); line(o.range.low, cssVar("--rose"), 0, "OR low");
-      markers.push({ time: o.openT, position: "aboveBar", color: cssVar("--rose"), shape: "circle", text: "9:30" });
+      markers.push({ time: o.openT, position: "aboveBar", color: cssVar("--rose"), shape: "circle", text: "6:30 open" });
     }
     if (o.signal) {
       const s = o.signal, buy = s.dir === "buy";
