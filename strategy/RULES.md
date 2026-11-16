@@ -9,7 +9,6 @@ The rules Claude grades every setup against. If a setup doesn't pass these, the 
 - **Setup expiry:** every setup expires at **2:00pm PT** (end of the NY day).
 - **Days:** Monday–Friday.
 - **Asian range:** high/low from **4:00pm–11:00pm PT** (the previous evening). Used as a level.
-- **Opening candle range:** high/low of the **6:30–6:35am PT** M5 candle (9:30am ET, the US stock open). Used as a level, with its own rules below.
 
 ## Direction
 - From support/resistance only. No higher-timeframe bias filter.
@@ -51,17 +50,6 @@ Plus the **candle trigger** at the retest. One of:
 - **Minimum R:R is 1:2.** If the next S/R gives less than 1:2, it's not a trade.
 - Opportunities are **ranked by R:R** (highest first).
 - **Management:** set and forget. No moving the SL, no partials.
-
-## Opening candle range breakout
-The high and low of the first M5 candle of the US session, **6:30–6:35am PT** (9:30–9:35am ET), are levels like any other: the entry, grading (6 checks + candle trigger) and stop follow the rules above. On top of that (adapted from the *NQ London Breakout* checklist):
-- **Range:** set once the 6:30am PT candle has closed (6:35am PT).
-- **Breaks count only after that candle closes.** The break must be fresh: an M5 candle closing beyond the high or low, with the previous candle closing inside the range. A wick alone doesn't count.
-- **One trade on this level per pair per day.** Whichever side breaks first is that day's direction, win or lose. The other side is ignored for the rest of the day.
-- **Entry:** the usual break and retest, graded A/B/C as normal.
-- **Stop loss:** 2–3 pips beyond the most recent swing (the retest swing): below it for longs, above it for shorts.
-- **Take profit:** a fixed **2:1** (entry ± 2 × risk) for this pattern, instead of the next S/R.
-- **Expiry:** 2:00pm PT, like every other setup.
-- The range is set at 6:35am PT, after the morning plan. The dashboard's **Today's Plan** shows it live from OANDA, with which side broke first.
 
 ## Risk
 - **2% of the account per trade.** Position size = (balance × 2%) ÷ (SL distance in price × pip value).
