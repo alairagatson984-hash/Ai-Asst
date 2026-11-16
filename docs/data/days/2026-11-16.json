@@ -1,9 +1,9 @@
 {
   "date": "2026-11-16",
-  "updatedAt": "2026-11-16T06:45:00-08:00",
+  "updatedAt": "2026-11-16T06:50:00-08:00",
   "verdict": {
     "headline": "No trade today",
-    "reason": "Still no trade at 6:40am PT. After CAD CPI, USD/CAD broke above 1.4291, pulled back to it, held, and pushed to 1.4303. Price is now 1.4299, stuck in a 4-pip band under 1.4303 resistance, so there's no room to a target. USD/JPY, GBP/USD and USD/CHF are unchanged from the 5:15am plan. No new USD entries until Fed Chair Warsh speaks at 9:00am PT."
+    "reason": "Still no trade at 6:40am PT. After CAD CPI, USD/CAD broke above 1.4291, pulled back to it, held, and pushed to 1.4303. Price is now 1.4299, stuck in a 4-pip band under 1.4303 resistance, so there's no room to a target. USD/CHF is chopping in a 3-pip band between 0.8397 and 0.8400 with flat EMAs, so it has no break. USD/JPY and GBP/USD are unchanged from the 5:15am plan. No new USD entries until Fed Chair Warsh speaks at 9:00am PT."
   },
   "calendar": [
     {
@@ -80,7 +80,21 @@
       "pair": "USD_CHF",
       "price": 0.8409,
       "tf": "M15",
-      "label": "Resistance (approx. from chart)"
+      "label": "Resistance (overnight high, approx. from chart)"
+    },
+    {
+      "id": "uf-3",
+      "pair": "USD_CHF",
+      "price": 0.84,
+      "tf": "M15",
+      "label": "Resistance marked 6:39am (wicks rejected, approx. from chart)"
+    },
+    {
+      "id": "uf-4",
+      "pair": "USD_CHF",
+      "price": 0.8397,
+      "tf": "M15",
+      "label": "Line marked 6:39am; price chopping on it (approx. from chart)"
     },
     {
       "id": "uf-2",
@@ -109,8 +123,8 @@
     },
     {
       "pair": "USD_CHF",
-      "level": 0.8386,
-      "missing": "Price is 0.8392, between 0.8409 resistance and 0.8386 support. The overnight drop stopped at 0.8387 without a body close below the level. The EMA 20 is below the EMA 50 with price below both, and RSI is 42. A short needs a displacement close below 0.8386 and a retest from underneath with a trigger, plus a support marked below for TP."
+      "level": 0.84,
+      "missing": "At 6:39am PT, price is 0.8397, sitting on the 0.8397 line just under 0.8400 resistance, which has rejected wicks twice. The overnight drop through both lines (to about 0.8387) didn't hold, and price has ground back up. There's no fresh break: candles have closed on both sides of 0.8397, the EMA 20 (about 0.8396) and EMA 50 (about 0.8395) are flat and tangled with price, and RSI is 54. A short from the 0.8400 rejection fails the EMA check and has no break-and-retest behind it. A long needs a displacement close above 0.8400 and has only 9 pips to 0.8409. C, and new USD entries are blocked until Warsh at 9:00am PT anyway."
     }
   ],
   "newsBlocks": [
@@ -121,7 +135,7 @@
     "USD/CAD (after 9:00am PT): a fresh pullback to 1.4291–1.4293 that holds, with a bullish engulfing or pin bar. Roughly: entry about 1.4292, SL about 1.4287 (2–3 pips under the swing low), TP 1.4303, which is about 1:2.2. Only if RSI is under 70 and the EMA 20 is still above the EMA 50. Or a displacement body close above 1.4303 and a retest from above. Please mark the next resistance above 1.4303 so there's a target to check.",
     "USD/JPY: a fresh pullback to 159.70 that rejects with a bearish engulfing or pin bar and an M5 structure break, with RSI above 30. TP 159.34 gives 1:2+ if the SL is tight above the retest swing.",
     "GBP/USD: a displacement close through 1.3221 or 1.3183, then a retest with a trigger.",
-    "USD/CHF: a body close below 0.8386 with displacement, then a retest from underneath. Please mark a support below."
+    "USD/CHF (after 9:00am PT): a displacement body close below 0.8397 with the EMA 20 turning under the EMA 50, then a retest from underneath with a bearish engulfing or pin bar. TP 0.8386. Or a strong close above 0.8400 and a retest, but the TP at 0.8409 needs a stop of about 4 pips to make 1:2."
   ],
   "review": null
 }
