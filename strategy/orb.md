@@ -9,7 +9,7 @@ A separate, fully automatic strategy that runs on the dashboard's **Opening Rang
 - **Breakout:** a later M5 candle **closes** above the range high (**BUY**) or below the range low (**SELL**). A wick through the line without a close outside does **not** count.
 - **One signal per pair per day:** whichever side closes outside first. No new signals from candles that close after the cutoff (default **11:00am PT**, set in Pacific time).
 - **Entry:** the breakout candle's close.
-- **Stop loss** (Settings → 9:30 ORB):
+- **Stop loss** (Settings → Opening Range Breakout):
   - *Opposite side of range* (default): BUY stop at the range low, SELL stop at the range high.
   - *Middle of range*.
   - *Fixed pips* from entry.
