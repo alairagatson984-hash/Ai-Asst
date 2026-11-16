@@ -161,13 +161,8 @@
   .rankbar div { text-align: center; padding: 8px 0; border-radius: 6px; font: 600 12px var(--mono); }
   .chart-box { height: 460px; position: relative; }
   @media (max-width: 600px) { .chart-box { height: 340px; } }
-  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
-  .seg button { background: transparent; color: var(--muted); border: 0; border-radius: 0; padding: 6px 12px; font: 500 12px var(--body); }
-  .seg button[aria-pressed="true"] { background: var(--rose); color: var(--on-rose); }
   .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px; }
   .orb-box { position: absolute; z-index: 5; pointer-events: none; background: rgba(233,138,166,.12); border-top: 1px solid var(--rose); border-bottom: 1px solid var(--rose); }
-  .levels-edit { display: grid; gap: 8px; margin-top: 12px; }
-  .lvl-row { display: grid; grid-template-columns: minmax(0, 1fr) 130px auto; gap: 10px; align-items: center; }
 
   input, select {
     background: var(--panel-2); border: 1px solid var(--line); color: var(--fg); border-radius: 8px;
@@ -291,20 +286,6 @@
         <div class="rankbar" id="rankbar"></div>
         <div class="strength" id="strength"></div>
       </div>
-      <div class="panel">
-        <h2>Chart <span>OANDA candles with your levels and today's setups</span></h2>
-        <div class="toolbar">
-          <select id="chart-pair" aria-label="Pair" style="width:auto"></select>
-          <div class="seg" id="chart-tf" role="group" aria-label="Timeframe">
-            <button type="button" data-tf="M5" aria-pressed="false">M5</button>
-            <button type="button" data-tf="M15" aria-pressed="true">M15</button>
-            <button type="button" data-tf="H1" aria-pressed="false">H1</button>
-          </div>
-          <a id="tv-link" href="https://www.tradingview.com/chart/?symbol=OANDA:EURUSD" target="_blank" rel="noopener">Open in TradingView ↗</a>
-        </div>
-        <div class="chart-box" id="chart"></div>
-        <div class="levels-edit" id="levels-edit"></div>
-      </div>
     </section>
 
     <section class="tab" id="tab-calculator" hidden>
@@ -398,11 +379,6 @@
       <div class="panel">
         <h2>Pairs</h2>
         <p class="muted" style="margin:0">EUR/USD · GBP/USD · USD/JPY · USD/CHF · AUD/USD · USD/CAD · NZD/USD</p>
-      </div>
-      <div class="panel">
-        <h2>Level edits</h2>
-        <p class="muted" style="margin:0 0 10px">Levels you adjust on the chart are saved in this browser for that day.</p>
-        <button type="button" class="ghost" id="reset-levels">Reset today's level edits</button>
       </div>
     </section>
   </main>
@@ -751,82 +727,9 @@
     $("strength").innerHTML = ranked.map((c, i) => '<div class="scard"><span class="label">#' + (i + 1) + '</span><span class="cur">' + c + '</span><span class="val ' + (sc[c] >= 0 ? "up" : "down") + '">' + signed(sc[c]) + "%</span></div>").join("");
   }
 
-  // ---------- chart ----------
-  let chart = null, series = null, lines = [], chartPair = "EUR_USD", chartTf = "M15";
+  // ---------- chart helpers (ORB chart) ----------
   const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
   const ptLabel = t => { const p = pt(new Date(t * 1000)); return String(p.h).padStart(2, "0") + ":" + String(p.mi).padStart(2, "0"); };
-  function initChart() {
-    if (chart || !window.LightweightCharts) return;
-    $("chart").innerHTML = "";
-    chart = LightweightCharts.createChart($("chart"), {
-      autoSize: true,
-      layout: { background: { type: "solid", color: cssVar("--panel") }, textColor: cssVar("--muted"), fontFamily: "JetBrains Mono, monospace" },
-      grid: { vertLines: { color: cssVar("--line") }, horzLines: { color: cssVar("--line") } },
-      rightPriceScale: { borderColor: cssVar("--line") },
-      timeScale: { borderColor: cssVar("--line"), timeVisible: true, tickMarkFormatter: ptLabel },
-      localization: { timeFormatter: t => pt(new Date(t * 1000)).date + " " + ptLabel(t) + " PT" }
-    });
-    series = chart.addCandlestickSeries({ upColor: cssVar("--up"), downColor: cssVar("--down"), borderVisible: false, wickUpColor: cssVar("--up"), wickDownColor: cssVar("--down") });
-  }
-  async function loadChart() {
-    if (!state.connected) {
-      if (chart) { chart.remove(); chart = null; series = null; lines = []; }
-      $("chart").innerHTML = '<p class="muted" style="padding:16px;margin:0">Connect OANDA in Settings to load candles.</p>';
-      return;
-    }
-    initChart();
-    if (!chart) return;
-    try {
-      const d = await oanda("/instruments/" + chartPair + "/candles?granularity=" + chartTf + "&price=M&count=250");
-      series.applyOptions({ priceFormat: { type: "price", precision: digitsOf(chartPair), minMove: Math.pow(10, -digitsOf(chartPair)) } });
-      series.setData((d.candles || []).map(c => ({ time: Math.floor(new Date(c.time).getTime() / 1000), open: +c.mid.o, high: +c.mid.h, low: +c.mid.l, close: +c.mid.c })));
-      drawLines();
-    } catch (e) {}
-  }
-  function drawLines() {
-    if (!series) return;
-    lines.forEach(l => series.removePriceLine(l)); lines = [];
-    const day = state.today;
-    if (!day) return;
-    for (const l of Object.values(levelsFor(day))) if (l.pair === chartPair) lines.push(series.createPriceLine({ price: l.price, color: cssVar("--rose"), lineWidth: 1, lineStyle: 2, axisLabelVisible: true, title: l.tf + (l.edited ? " edited" : "") }));
-    for (const s of day.setups || []) {
-      if (s.pair !== chartPair) continue;
-      const d = derive(s, day);
-      lines.push(series.createPriceLine({ price: d.entry, color: cssVar("--fg"), lineWidth: 1, lineStyle: 0, axisLabelVisible: true, title: "Entry " + d.grade }));
-      lines.push(series.createPriceLine({ price: d.sl, color: cssVar("--down"), lineWidth: 1, lineStyle: 1, axisLabelVisible: true, title: "SL" }));
-      lines.push(series.createPriceLine({ price: d.tp, color: cssVar("--up"), lineWidth: 1, lineStyle: 1, axisLabelVisible: true, title: "TP" }));
-    }
-  }
-  function renderLevelEditor() {
-    const day = state.today;
-    if (!day) { $("levels-edit").innerHTML = ""; return; }
-    if ($("levels-edit").contains(document.activeElement)) return; // don't clobber a level being typed
-    const lv = Object.values(levelsFor(day)).filter(l => l.pair === chartPair);
-    $("levels-edit").innerHTML = lv.length ? '<span class="label">Your levels on ' + pairName(chartPair) + " (type to adjust)</span>" + lv.map(l =>
-      '<div class="lvl-row"><span>' + esc(l.label || l.tf) + (l.edited ? ' <span class="warn">· was ' + fx(l.pair, l.orig) + "</span>" : "") + '</span><input data-lvl="' + esc(l.id) + '" value="' + fx(l.pair, l.price) + '" inputmode="decimal" aria-label="' + esc(l.label || l.id) + ' price"><button type="button" class="ghost small" data-reset="' + esc(l.id) + '">Reset</button></div>').join("")
-      : '<span class="muted">No levels on ' + pairName(chartPair) + " today.</span>";
-  }
-  $("levels-edit").addEventListener("change", e => {
-    const id = e.target.getAttribute("data-lvl"), v = parseFloat(e.target.value);
-    if (!id || !state.today || isNaN(v)) return;
-    const ov = levelOverrides(state.today.date); ov[id] = v; store.set("lvl:" + state.today.date, ov);
-    e.target.blur(); renderAll();
-  });
-  $("levels-edit").addEventListener("click", e => {
-    const id = e.target.getAttribute("data-reset");
-    if (!id || !state.today) return;
-    const ov = levelOverrides(state.today.date); delete ov[id]; store.set("lvl:" + state.today.date, ov);
-    renderAll();
-  });
-  $("chart-pair").innerHTML = MAJORS.map(p => '<option value="' + p + '">' + pairName(p) + "</option>").join("");
-  $("chart-pair").addEventListener("change", e => { chartPair = e.target.value; $("tv-link").href = "https://www.tradingview.com/chart/?symbol=OANDA:" + chartPair.replace("_", ""); renderLevelEditor(); loadChart(); });
-  $("chart-tf").addEventListener("click", e => {
-    const tf = e.target.getAttribute("data-tf"); if (!tf) return;
-    chartTf = tf;
-    for (const b of $("chart-tf").querySelectorAll("button")) b.setAttribute("aria-pressed", String(b === e.target));
-    loadChart();
-  });
-
 
   // ================= 9:30 ORB =================
   // The opening range is the 9:30–9:35am ET M5 candle. Everything is recomputed from today's
@@ -1168,7 +1071,6 @@
   $("s-asia").value = "4:00pm – 11:00pm";
   $("s-days").value = "Monday – Friday";
   for (const f of ["risk-form", "sess-form", "orb-form"]) $(f).addEventListener("submit", e => e.preventDefault());
-  $("reset-levels").addEventListener("click", () => { store.del("lvl:" + pt(new Date()).date); renderAll(); });
 
   // ---------- OANDA connect ----------
   $("acct").value = state.acct; $("tok").value = state.tok;
@@ -1190,7 +1092,7 @@
       await Promise.all([safe(pollTrades), safe(pollStrength)]);
       await safe(checkFailedBreaks);
       await safe(pollOrb);
-      renderAll(); if (current === "markets") loadChart(); if (current === "orb") renderOrbChart();
+      renderAll(); if (current === "orb") renderOrbChart();
     } catch (e) {
       state.connected = false;
       connState("Failed", "off", e.status === 401 ? "OANDA rejected the token (401). Check that it's a practice-account token." : e.status ? "OANDA answered " + e.status + ". Check the account ID matches the token." : "Couldn't reach OANDA from this browser.", "down");
@@ -1202,7 +1104,7 @@
     store.del("oanda_tok"); store.del("oanda_acct"); $("tok").value = ""; $("acct").value = "";
     Object.assign(state, { tok: "", acct: "", connected: false, account: null, closed: [], open: [], prices: {}, baseline: {}, spark: {}, failed: {} });
     connState("Not connected", "wait", "Token removed from this browser.");
-    renderAll(); loadChart();
+    renderAll(); renderOrbChart();
   });
   async function safe(fn) {
     try { await fn(); }
@@ -1220,14 +1122,13 @@
       if (a.getAttribute("href") === "#" + current) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
     }
     renderAll();
-    if (current === "markets") loadChart();
     if (current === "orb") renderOrbChart();
   }
   window.addEventListener("hashchange", route);
 
   // Each section renders on its own, so one bad day file can't take down the page or the OANDA connection.
   function renderAll() {
-    for (const fn of [renderPlan, renderOrb, renderTiles, renderStrength, renderLevelEditor, drawLines, renderCalc, renderJournal, renderAnalytics, renderPatterns, renderReviewSelect, renderReview]) {
+    for (const fn of [renderPlan, renderOrb, renderTiles, renderStrength, renderCalc, renderJournal, renderAnalytics, renderPatterns, renderReviewSelect, renderReview]) {
       try { fn(); } catch (e) { console.error(fn.name + " failed:", e); }
     }
   }
@@ -1251,7 +1152,7 @@
     if (state.acct && state.tok) await connect();
     setInterval(async () => { if (!state.connected) return; await safe(pollPrices); renderPlan(); if (current === "markets") { renderTiles(); renderStrength(); } }, 2000);
     setInterval(async () => { if (!state.connected) return; await safe(pollAccount); await safe(pollTrades); renderAll(); }, 30000);
-    setInterval(async () => { if (!state.connected) return; await safe(pollStrength); await safe(checkFailedBreaks); if (current === "markets") loadChart(); renderAll(); }, 60000);
+    setInterval(async () => { if (!state.connected) return; await safe(pollStrength); await safe(checkFailedBreaks); renderAll(); }, 60000);
     setInterval(async () => { if (!state.connected) return; await safe(pollOrb); renderOrb(); if (current === "orb") renderOrbChart(); }, 30000);
     setInterval(async () => { await loadData(); renderAll(); }, 5 * 60000);
   }
