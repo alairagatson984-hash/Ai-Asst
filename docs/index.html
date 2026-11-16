@@ -250,6 +250,7 @@
       <div id="plan-notices"></div>
       <div id="verdict"></div>
       <div class="cards" id="cards"></div>
+      <div class="panel" id="london-panel"><h2>London range <span>1:00–6:00am PT · breaks count from 6:30am PT · first side only</span></h2><div class="scroll" id="london"></div></div>
       <div class="panel"><h2>Watchlist <span>C grade, not a trade yet</span></h2><div id="watchlist"></div></div>
       <div class="panel" id="watchfor-panel"><h2>What to watch for</h2><div id="watchfor"></div></div>
     </section>
@@ -402,7 +403,7 @@
   const CHECKS = [["close", "Close beyond level"], ["displacement", "Displacement"], ["followThrough", "Follow-through"], ["structure", "M5 structure break"], ["retest", "Retest holds"], ["indicators", "EMA + RSI agree"]];
   // Older day files have no "indicators" key: they are still graded out of 5.
   const checkList = (s) => (s.checks && "indicators" in s.checks) ? CHECKS : CHECKS.slice(0, 5);
-  const PATTERN_NAMES = { "clean-br": "Clean break & retest", "asian-range": "Asian range B&R", "head-shoulders": "Head & shoulders", "double-top-bottom": "Double top / bottom", "flag-pennant": "Flag / pennant" };
+  const PATTERN_NAMES = { "clean-br": "Clean break & retest", "asian-range": "Asian range B&R", "london-range": "London range B&R", "head-shoulders": "Head & shoulders", "double-top-bottom": "Double top / bottom", "flag-pennant": "Flag / pennant" };
   const TRIGGER_NAMES = { engulfing: "Engulfing", pinbar: "Pin bar / rejection" };
   const DEFAULTS = { risk: 2, limit: 4, rr: 2, buffer: "2-3", atEntry: 3, match: 10, news: 30, start: "06:00", expiry: "14:00", orbStop: "opposite", orbPips: 10, orbTp: 2, orbCut: "11:00" };
 
@@ -741,7 +742,7 @@
 
   async function pollOrb() {
     if (!orbTradingDay()) return;
-    const from = encodeURIComponent(etToUtc(et(new Date()).date, 8, 0).toISOString());
+    const from = encodeURIComponent(etToUtc(et(new Date()).date, 4, 0).toISOString()); // from the London open; also feeds the London range
     await Promise.all(MAJORS.map(async p => {
       try {
         const cs = (await oanda("/instruments/" + p + "/candles?granularity=M5&price=M&from=" + from)).candles || [];
@@ -806,6 +807,48 @@
     }).join("");
   }
 
+  // ---------- London range (break & retest level) ----------
+  // High/low of the 4:00–9:00am ET (1:00–6:00am PT) M5 candles. Only a fresh close beyond it from
+  // 9:30am ET (6:30am PT) counts, and only the first side to break, until setups expire.
+  function computeLondon(cs, day) {
+    const now = Date.now() / 1000, lo = etToUtc(day, 4, 0).getTime() / 1000, le = etToUtc(day, 9, 0).getTime() / 1000;
+    const start = etToUtc(day, 9, 30).getTime() / 1000;
+    const [eh, em] = String(S.expiry || DEFAULTS.expiry).split(":").map(Number);
+    const expT = ptToUtc(day, eh, em || 0).getTime() / 1000;
+    const lc = cs.filter(c => c.t >= lo && c.t < le);
+    if (!lc.length) return { status: now < lo ? "Range starts at 1:00am PT" : "No London candles from OANDA", cls: now < lo ? "wait" : "" };
+    const high = Math.max(...lc.map(c => c.h)), low = Math.min(...lc.map(c => c.l));
+    const out = { high, low, brk: null };
+    if (now < le) return Object.assign(out, { status: "Forming until 6:00am PT", cls: "wait" });
+    let prev = null;
+    for (const c of cs) {
+      if (c.t < start - 300) continue;
+      if (c.t >= start && c.complete && c.t + 300 <= expT && prev) {
+        const inside = prev.c <= high && prev.c >= low;
+        if (inside && c.c > high) { out.brk = { dir: "long", t: c.t }; break; }
+        if (inside && c.c < low) { out.brk = { dir: "short", t: c.t }; break; }
+      }
+      prev = c;
+    }
+    if (out.brk) return Object.assign(out, { status: "Broke " + (out.brk.dir === "long" ? "high" : "low") + " at " + ptClock(out.brk.t + 300) + " → watch for a " + out.brk.dir + " retest", cls: "live" });
+    if (now < start) return Object.assign(out, { status: "Breaks count from 6:30am PT", cls: "wait" });
+    if (now >= expT) return Object.assign(out, { status: "No fresh break by " + fmtHM(hm(S.expiry || DEFAULTS.expiry)) + " PT" });
+    return Object.assign(out, { status: "No fresh break yet", cls: "wait" });
+  }
+  function renderLondon() {
+    const live = orbTradingDay() && state.connected;
+    if (!live) {
+      $("london").innerHTML = '<p class="muted" style="margin:0">' + (orbTradingDay() ? 'Connect OANDA in <a href="#setup">Settings</a> to see the London range.' : "Forex is closed for the weekend.") + "</p>";
+      return;
+    }
+    const day = et(new Date()).date;
+    $("london").innerHTML = '<table class="cal"><thead><tr><th>Pair</th><th>London high</th><th>London low</th><th>Range</th><th>Status</th></tr></thead><tbody>' + MAJORS.map(p => {
+      const l = computeLondon(state.orbCandles[p] || [], day);
+      return "<tr><td><b>" + pairName(p) + '</b></td><td class="mono">' + fx(p, l.high) + '</td><td class="mono">' + fx(p, l.low) + '</td><td class="mono">' + (l.high != null ? ((l.high - l.low) / pipOf(p)).toFixed(1) + " pips" : "—") +
+        '</td><td><span class="pill ' + (l.cls || "") + '">' + esc(l.status) + "</span></td></tr>";
+    }).join("") + "</tbody></table>";
+  }
+
   // ---------- ORB chart: 9:30 marker, shaded range, breakout arrow, entry/SL/TP ----------
   let orbChart = null, orbSeries = null, orbLines = [], orbPair = "EUR_USD", orbFitKey = "", orbLevels = [];
   function initOrbChart() {
@@ -843,7 +886,8 @@
     const o = orbFor(orbPair), d = digitsOf(orbPair);
     orbSeries.applyOptions({ priceFormat: { type: "price", precision: d, minMove: Math.pow(10, -d) } });
     orbLevels = [o.range && o.range.high, o.range && o.range.low, o.signal && o.signal.sl, o.signal && o.signal.tp].filter(v => v != null);
-    orbSeries.setData((state.orbCandles[orbPair] || []).map(c => ({ time: c.t, open: c.o, high: c.h, low: c.l, close: c.c })));
+    const orbFrom = etToUtc(et(new Date()).date, 8, 0).getTime() / 1000;
+    orbSeries.setData((state.orbCandles[orbPair] || []).filter(c => c.t >= orbFrom).map(c => ({ time: c.t, open: c.o, high: c.h, low: c.l, close: c.c })));
     const fitKey = orbPair + et(new Date()).date;
     if (fitKey !== orbFitKey && (state.orbCandles[orbPair] || []).length) { orbChart.timeScale().fitContent(); orbFitKey = fitKey; }
     orbLines.forEach(l => orbSeries.removePriceLine(l)); orbLines = [];
@@ -989,6 +1033,9 @@
     { id: "asian-range", fam: "S/R", name: "Asian range break & retest",
       rules: ["Mark the Asian high and low (4:00–11:00pm PT).", "Wait for a break of one side that passes the evidence checks.", "Enter on the retest of the broken side with a candle trigger.", "SL beyond the retest swing. TP at the next S/R."],
       box: [10, 50, 96, 82], path: [[10, 70], [26, 54], [42, 78], [58, 56], [74, 80], [92, 60], [116, 34], [132, 26], [150, 50], [170, 36], [200, 22], [232, 12]], level: 50, entry: [150, 50], sl: 62, tp: 14 },
+    { id: "london-range", fam: "S/R", name: "London range break & retest",
+      rules: ["Mark the London high and low (1:00–6:00am PT).", "Breaks count only from 6:30am PT, and only a fresh close beyond the level.", "First side to break is the day's only London trade, win or lose.", "Enter on the retest with a candle trigger; SL beyond the most recent swing.", "TP fixed at 2:1."],
+      box: [10, 54, 90, 84], path: [[10, 72], [26, 58], [42, 80], [58, 60], [74, 82], [90, 66], [104, 62], [120, 36], [136, 28], [152, 54], [172, 38], [200, 24], [232, 12]], level: 54, entry: [152, 54], sl: 66, tp: 30 },
     { id: "head-shoulders", fam: "Chart · M15/H1", name: "Head & shoulders",
       rules: ["Left shoulder, higher head, lower right shoulder.", "Neckline break passes the evidence checks.", "Enter on the neckline retest with a candle trigger.", "Inverse version for longs."],
       path: [[8, 96], [30, 58], [50, 76], [80, 26], [108, 76], [132, 56], [152, 76], [172, 98], [194, 78], [214, 100], [232, 110]], level: 76, entry: [194, 76], sl: 64, tp: 110 },
@@ -1128,7 +1175,7 @@
 
   // Each section renders on its own, so one bad day file can't take down the page or the OANDA connection.
   function renderAll() {
-    for (const fn of [renderPlan, renderOrb, renderTiles, renderStrength, renderCalc, renderJournal, renderAnalytics, renderPatterns, renderReviewSelect, renderReview]) {
+    for (const fn of [renderPlan, renderLondon, renderOrb, renderTiles, renderStrength, renderCalc, renderJournal, renderAnalytics, renderPatterns, renderReviewSelect, renderReview]) {
       try { fn(); } catch (e) { console.error(fn.name + " failed:", e); }
     }
   }
@@ -1153,7 +1200,7 @@
     setInterval(async () => { if (!state.connected) return; await safe(pollPrices); renderPlan(); if (current === "markets") { renderTiles(); renderStrength(); } }, 2000);
     setInterval(async () => { if (!state.connected) return; await safe(pollAccount); await safe(pollTrades); renderAll(); }, 30000);
     setInterval(async () => { if (!state.connected) return; await safe(pollStrength); await safe(checkFailedBreaks); renderAll(); }, 60000);
-    setInterval(async () => { if (!state.connected) return; await safe(pollOrb); renderOrb(); if (current === "orb") renderOrbChart(); }, 30000);
+    setInterval(async () => { if (!state.connected) return; await safe(pollOrb); renderOrb(); renderLondon(); if (current === "orb") renderOrbChart(); }, 30000);
     setInterval(async () => { await loadData(); renderAll(); }, 5 * 60000);
   }
   boot();

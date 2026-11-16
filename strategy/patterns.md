@@ -1,6 +1,6 @@
 # Pattern Library
 
-The 7 patterns Claude looks for. All of them are traded the same way: wait for the break, confirm it with the evidence checks in [RULES.md](RULES.md), then enter on the retest with a candle trigger. Grading, SL, TP and risk always follow RULES.md.
+The 8 patterns Claude looks for. All of them are traded the same way: wait for the break, confirm it with the evidence checks in [RULES.md](RULES.md), then enter on the retest with a candle trigger. Grading, SL, TP and risk always follow RULES.md.
 
 ## S/R patterns
 
@@ -17,21 +17,28 @@ The 7 patterns Claude looks for. All of them are traded the same way: wait for t
 - **Entry / SL / TP:** same as the clean break and retest.
 - **Note:** the range forms while the user is asleep, so it's used as a level, not traded at the break.
 
+### 3. London range break and retest
+- **Level:** the London session high or low (1:00–6:00am PT, 4:00–9:00am ET).
+- **Setup:** after 6:30am PT, a fresh M5 close beyond the London high or low (an earlier break doesn't count). Only the first side to break counts that day.
+- **Entry:** on the retest of the broken London level, with a candle trigger.
+- **SL:** 2–3 pips beyond the most recent swing. **TP:** fixed 2:1.
+- **Full rules:** see "London range breakout" in [RULES.md](RULES.md).
+
 ## Chart patterns (read on M15 and H1)
 
-### 3. Head and shoulders / inverse head and shoulders
+### 4. Head and shoulders / inverse head and shoulders
 - **Level:** the neckline.
 - **Setup:** a completed H&S (bearish) or inverse H&S (bullish). The neckline break is confirmed by the evidence checks.
 - **Entry:** on the neckline retest with a candle trigger.
 - **SL:** 2–3 pips beyond the retest swing. **TP:** next S/R (must give at least 1:2).
 
-### 4. Double top / double bottom
+### 5. Double top / double bottom
 - **Level:** the neckline (the low between two tops, or the high between two bottoms).
 - **Setup:** two failed tests of the same area, then a neckline break.
 - **Entry:** on the neckline retest with a candle trigger.
 - **SL / TP:** as above.
 
-### 5. Flag / pennant
+### 6. Flag / pennant
 - **Level:** the flag or pennant boundary in the direction of the prior impulse.
 - **Setup:** a strong impulse, a tight pullback channel (flag) or a small triangle (pennant), then a break in the impulse direction.
 - **Entry:** on the retest of the broken boundary with a candle trigger.
@@ -39,11 +46,11 @@ The 7 patterns Claude looks for. All of them are traded the same way: wait for t
 
 ## Candlestick triggers (at the retest)
 
-### 6. Engulfing
+### 7. Engulfing
 - **Long:** a bullish candle whose body fully covers the previous bearish candle's body, at the retest of broken resistance (now support).
 - **Short:** the mirror image at the retest of broken support (now resistance).
 
-### 7. Pin bar / rejection wick
+### 8. Pin bar / rejection wick
 - **Long:** a long lower wick into the retested level, with the body closing back above it.
 - **Short:** a long upper wick into the level, with the body closing back below it.
 - A clear rejection wick counts even if it's not a textbook pin bar.
