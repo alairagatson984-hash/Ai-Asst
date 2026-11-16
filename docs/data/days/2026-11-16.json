@@ -1,36 +1,105 @@
 {
   "date": "2026-11-16",
-  "updatedAt": "2026-11-16T05:15:00-08:00",
+  "updatedAt": "2026-11-16T06:45:00-08:00",
   "verdict": {
     "headline": "No trade today",
-    "reason": "None of the four pairs has a fresh break-and-retest that gives 1:2. USD/CAD's retest of 1.4279 has already played out, and price is now at 1.4291 resistance with no room to a TP. USD/JPY broke 159.70 and retested it, but price is already 17 pips lower. GBP/USD and USD/CHF are between their levels. CAD CPI and US Empire State are both at 5:30am PT."
+    "reason": "Still no trade at 6:40am PT. After CAD CPI, USD/CAD broke above 1.4291, pulled back to it, held, and pushed to 1.4303. Price is now 1.4299, stuck in a 4-pip band under 1.4303 resistance, so there's no room to a target. USD/JPY, GBP/USD and USD/CHF are unchanged from the 5:15am plan. No new USD entries until Fed Chair Warsh speaks at 9:00am PT."
   },
   "calendar": [
-    { "time": "05:30", "currency": "CAD", "event": "CPI (Oct), incl. trimmed-mean / median / common", "impact": "high" },
-    { "time": "05:30", "currency": "USD", "event": "Empire State Manufacturing Index (Nov)", "impact": "high" },
-    { "time": "09:00", "currency": "USD", "event": "Fed Chair Warsh speaks", "impact": "high" }
+    {
+      "time": "05:30",
+      "currency": "CAD",
+      "event": "CPI (Oct), incl. trimmed-mean / median / common",
+      "impact": "high"
+    },
+    {
+      "time": "05:30",
+      "currency": "USD",
+      "event": "Empire State Manufacturing Index (Nov)",
+      "impact": "high"
+    },
+    {
+      "time": "09:00",
+      "currency": "USD",
+      "event": "Fed Chair Warsh speaks",
+      "impact": "high"
+    }
   ],
   "levels": [
-    { "id": "gu-1", "pair": "GBP_USD", "price": 1.3221, "tf": "M15", "label": "Resistance (approx. from chart)" },
-    { "id": "gu-2", "pair": "GBP_USD", "price": 1.3183, "tf": "M15", "label": "Support (approx. from chart)" },
-    { "id": "uc-1", "pair": "USD_CAD", "price": 1.4291, "tf": "M15", "label": "Resistance (being tested, approx. from chart)" },
-    { "id": "uc-2", "pair": "USD_CAD", "price": 1.4279, "tf": "M15", "label": "Former resistance, now support (broken and retested, approx. from chart)" },
-    { "id": "uc-3", "pair": "USD_CAD", "price": 1.4272, "tf": "M15", "label": "Lower line (approx. from chart)" },
-    { "id": "uj-1", "pair": "USD_JPY", "price": 159.70, "tf": "M15", "label": "Former support, now resistance (broken and retested, approx. from chart)" },
-    { "id": "uj-2", "pair": "USD_JPY", "price": 159.34, "tf": "M15", "label": "Support (approx. from chart)" },
-    { "id": "uf-1", "pair": "USD_CHF", "price": 0.8409, "tf": "M15", "label": "Resistance (approx. from chart)" },
-    { "id": "uf-2", "pair": "USD_CHF", "price": 0.8386, "tf": "M15", "label": "Support (approx. from chart)" }
+    {
+      "id": "gu-1",
+      "pair": "GBP_USD",
+      "price": 1.3221,
+      "tf": "M15",
+      "label": "Resistance (approx. from chart)"
+    },
+    {
+      "id": "gu-2",
+      "pair": "GBP_USD",
+      "price": 1.3183,
+      "tf": "M15",
+      "label": "Support (approx. from chart)"
+    },
+    {
+      "id": "uc-1",
+      "pair": "USD_CAD",
+      "price": 1.4303,
+      "tf": "M15",
+      "label": "Resistance (rejected twice, approx. from chart)"
+    },
+    {
+      "id": "uc-4",
+      "pair": "USD_CAD",
+      "price": 1.4299,
+      "tf": "M15",
+      "label": "Line marked 6:38am; price chopping around it (approx. from chart)"
+    },
+    {
+      "id": "uc-2",
+      "pair": "USD_CAD",
+      "price": 1.4291,
+      "tf": "M15",
+      "label": "Former resistance, now support (broken on CPI and retested, approx. from chart)"
+    },
+    {
+      "id": "uj-1",
+      "pair": "USD_JPY",
+      "price": 159.7,
+      "tf": "M15",
+      "label": "Former support, now resistance (broken and retested, approx. from chart)"
+    },
+    {
+      "id": "uj-2",
+      "pair": "USD_JPY",
+      "price": 159.34,
+      "tf": "M15",
+      "label": "Support (approx. from chart)"
+    },
+    {
+      "id": "uf-1",
+      "pair": "USD_CHF",
+      "price": 0.8409,
+      "tf": "M15",
+      "label": "Resistance (approx. from chart)"
+    },
+    {
+      "id": "uf-2",
+      "pair": "USD_CHF",
+      "price": 0.8386,
+      "tf": "M15",
+      "label": "Support (approx. from chart)"
+    }
   ],
   "setups": [],
   "watchlist": [
     {
       "pair": "USD_CAD",
-      "level": 1.4279,
-      "missing": "Long break of 1.4279: there's a body close above, a displacement run to 1.4291, follow-through, and an M5 structure break. Dips back to about 1.4280 held, with a strong bullish candle off the last one. The EMA 20 (1.4286) is above the EMA 50 (1.4284) with price above both, and RSI is 57 (read on M5, not M15). It still fails R:R. Entry about 1.4281, SL 2–3 pips under the retest swing (about 1.4275), TP at 1.4291 resistance: about 10 pips of reward for 6 of risk, which is under 1:2. Price is already back at 1.4289, so the entry has gone. CAD CPI at 5:30am PT also blocks it."
+      "level": 1.4291,
+      "missing": "Long break of 1.4291: the 5:30am CPI candle closed well above it with displacement, and price followed through to about 1.4305 and broke M5 structure. It then pulled back to about 1.4290–1.4293 and held, with bullish candles back up. The EMA 20 (1.4295) is above the EMA 50 (1.4290) with price above both, and RSI is 58 (read on M5). That retest has already played out, though. Price is 1.4299, only 4 pips under 1.4303 resistance, which has rejected twice (wicks to about 1.4306 and 1.4304). Buying here can't reach 1:2. Bodies have closed both sides of 1.4299, so that line isn't a clean break either. New USD entries are blocked until Warsh at 9:00am PT."
     },
     {
       "pair": "USD_JPY",
-      "level": 159.70,
+      "level": 159.7,
       "missing": "Short break of 159.70: there's a close below, follow-through, and a retest to about 159.72 that was rejected with a strong bearish candle. The EMA 20 is below the EMA 50 with price below both, and RSI is 47 (room for a short). M5 isn't in the screenshot, so the structure break is unconfirmed (5/6). The retest entry (about 159.68) has already played out, and price is now 159.51. Selling here with the SL above the retest swing (about 159.76) and TP at 159.34 is under 1:1. US data at 5:30am PT and Warsh at 9:00am PT block it."
     },
     {
@@ -45,11 +114,11 @@
     }
   ],
   "newsBlocks": [
-    "5:30am PT CAD CPI and US Empire State: USD/CAD is blocked until both are out. All USD pairs are blocked until 5:30am PT.",
-    "9:00am PT Fed Chair Warsh speaks: no new entries on USD pairs going into it. After it, a setup can requalify only if the break-and-retest still holds."
+    "Released: 5:30am PT CAD CPI and US Empire State. USD/CAD broke above 1.4291 on the release. That pair isn't blocked by them any more, but every setup still has to pass the rules.",
+    "9:00am PT Fed Chair Warsh speaks: no new entries on any USD pair (all 7 majors) before it. After it, a setup can requalify only if the break-and-retest still holds."
   ],
   "watchFor": [
-    "USD/CAD: after CPI, a displacement close above 1.4291, then a retest from above with a bullish engulfing or pin bar. Please mark the next resistance above 1.4291 so there's a TP and a 1:2 check. Or a pullback to 1.4279 that holds, if a higher TP is marked.",
+    "USD/CAD (after 9:00am PT): a fresh pullback to 1.4291–1.4293 that holds, with a bullish engulfing or pin bar. Roughly: entry about 1.4292, SL about 1.4287 (2–3 pips under the swing low), TP 1.4303, which is about 1:2.2. Only if RSI is under 70 and the EMA 20 is still above the EMA 50. Or a displacement body close above 1.4303 and a retest from above. Please mark the next resistance above 1.4303 so there's a target to check.",
     "USD/JPY: a fresh pullback to 159.70 that rejects with a bearish engulfing or pin bar and an M5 structure break, with RSI above 30. TP 159.34 gives 1:2+ if the SL is tight above the retest swing.",
     "GBP/USD: a displacement close through 1.3221 or 1.3183, then a retest with a trigger.",
     "USD/CHF: a body close below 0.8386 with displacement, then a retest from underneath. Please mark a support below."
