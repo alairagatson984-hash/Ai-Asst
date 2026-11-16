@@ -5,7 +5,8 @@ TruLux Analytics: a personal London/NY-overlap forex dashboard. Claude updates i
 **Live site:** https://alairagatson984-hash.github.io/Ai-Asst/
 
 ## Tabs
-- **Today's Plan**: verdict, A/B setup cards with live status and 2% position sizes, C watchlist, red-folder events.
+- **Today's Plan**: verdict, A/B setup cards with live status and 2% position sizes, C watchlist.
+- **9:30 ORB**: automatic opening range breakout on the 7 majors. The 9:30am ET M5 candle sets the range, the first close outside it is the signal, with entry, stop, 2R target and a chart.
 - **Markets**: live majors, 28-pair currency strength since the Asian open, an OANDA chart with your editable levels, the economic calendar.
 - **Calculator**: units and lots at your risk %, R:R check, room left before the daily limit.
 - **Journal / Analytics**: your OANDA practice trades, auto-matched to the plan, with stats by grade, pattern, pair and discipline.
@@ -17,6 +18,7 @@ TruLux Analytics: a personal London/NY-overlap forex dashboard. Claude updates i
 - `docs/`: the site (GitHub Pages serves `main` from `/docs`).
 - `docs/data/days/`: one JSON file per trading day, written by Claude. `docs/data/index.json` lists them.
 - `strategy/RULES.md`, `strategy/patterns.md`: the rules every setup is graded against.
+- `strategy/orb.md`: the 9:30 opening range breakout rules.
 - `routines/`: the morning-build and daily-review checklists Claude follows.
 - `reference/`: the design references.
 
