@@ -17,12 +17,12 @@ The 8 patterns Claude looks for. All of them are traded the same way: wait for t
 - **Entry / SL / TP:** same as the clean break and retest.
 - **Note:** the range forms while the user is asleep, so it's used as a level, not traded at the break.
 
-### 3. London range break and retest
-- **Level:** the London session high or low (1:00–6:00am PT, 4:00–9:00am ET).
-- **Setup:** after 6:30am PT, a fresh M5 close beyond the London high or low (an earlier break doesn't count). Only the first side to break counts that day.
-- **Entry:** on the retest of the broken London level, with a candle trigger.
+### 3. Opening candle break and retest
+- **Level:** the high or low of the 6:30–6:35am PT M5 candle (9:30am ET, US open).
+- **Setup:** after that candle closes, a fresh M5 close beyond its high or low. Only the first side to break counts that day.
+- **Entry:** on the retest of the broken level, with a candle trigger.
 - **SL:** 2–3 pips beyond the most recent swing. **TP:** fixed 2:1.
-- **Full rules:** see "London range breakout" in [RULES.md](RULES.md).
+- **Full rules:** see "Opening candle range breakout" in [RULES.md](RULES.md).
 
 ## Chart patterns (read on M15 and H1)
 

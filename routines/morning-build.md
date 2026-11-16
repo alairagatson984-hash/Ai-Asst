@@ -5,7 +5,7 @@ Follow this when the user sends their marked TradingView screenshot (~5:00am PT)
 1. **Read the rules.** Open `strategy/RULES.md` and `strategy/patterns.md`. Grade only against them.
 2. **Calendar.** Search the web for today's high-impact (red-folder) events for USD, EUR, GBP, JPY, CHF, AUD, CAD and NZD. Convert times to PT. Only high impact.
 3. **Read the screenshot.** List every S/R level the user marked, with its pair, price and timeframe (H1/M15). Note the Asian range (4:00–11:00pm PT) high/low if relevant.
-3a. **London range.** The London high/low (1:00–6:00am PT) is still forming when the plan is built. If the chart shows it, add the high and low so far as levels (label them "London high (so far)" / "London low (so far)"). Setups on them use the pattern `london-range`, follow the London rules in RULES.md (breaks count only from 6:30am PT, first side only, TP fixed at 2:1), and say in `notes` that the final range is on the dashboard after 6:00am PT.
+3a. **Opening candle range.** The 6:30am PT candle's high/low isn't set until 6:35am PT, after the plan is built, so don't mark it. The dashboard shows it live. If the user later asks for a setup on it, use the pattern `open-range` and follow the opening candle rules in RULES.md (fresh break, first side only, TP fixed at 2:1).
 4. **Look for setups.** For each pair, check whether a level has been broken and is being retested. Score the 6 checks honestly (close beyond, displacement, follow-through, M5 structure break, retest holds, EMA + RSI agree) and whether there's an engulfing or pin-bar trigger. If the screenshot can't show a check, mark it `false` and say why in `notes`.
 5. **Price it.**
    - Entry: the retest.
@@ -29,7 +29,7 @@ Never commit screenshots, account IDs, balances or tokens. The repo is public.
   "levels": [{ "id": "eu-1", "pair": "EUR_USD", "price": 1.123, "tf": "H1", "label": "H1 support (broken)" }],
   "setups": [{
     "id": "s1", "pair": "EUR_USD", "direction": "short",
-    "pattern": "clean-br | asian-range | london-range | head-shoulders | double-top-bottom | flag-pennant",
+    "pattern": "clean-br | asian-range | open-range | head-shoulders | double-top-bottom | flag-pennant",
     "levelId": "eu-1", "tpLevelId": "eu-2",
     "entry": 1.1228, "sl": 1.1243, "tp": 1.119,
     "checks": { "close": true, "displacement": true, "followThrough": true, "structure": true, "retest": true, "indicators": true },
