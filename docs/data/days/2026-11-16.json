@@ -137,5 +137,17 @@
     "GBP/USD: a displacement close through 1.3221 or 1.3183, then a retest with a trigger.",
     "USD/CHF (after 9:00am PT): a displacement body close below 0.8397 with the EMA 20 turning under the EMA 50, then a retest from underneath with a bearish engulfing or pin bar. TP 0.8386. Or a strong close above 0.8400 and a retest, but the TP at 0.8409 needs a stop of about 4 pips to make 1:2."
   ],
-  "review": null
+  "review": {
+    "writtenAt": "2026-11-16T14:20:00-08:00",
+    "planVsOutcome": [],
+    "mistakes": [
+      "None found: no setups were graded or taken, and no entries were made before the 9:00am PT Warsh block. This review covers price action only, not actual OANDA fills. I could only find end-of-day closes and one daily range from same-day market recaps, with no intraday candles, so I can't check whether any watchlist pair broke and retested by the rules after the plan."
+    ],
+    "lessons": [
+      "Standing aside looks right. Warsh spoke mostly about AI and gave no hint on rates, so the dollar barely moved after 9:00am PT. Recaps put closes at about USD/CAD 1.4300 (+0.2%), USD/CHF 0.8403 (+0.1%) and USD/JPY 159.48 (-0.2%). USD/CAD ended right under 1.4303 resistance and USD/CHF ended between 0.8400 and 0.8409, which is where they were at plan time. That suggests neither pair made a clean displacement break with room to a 1:2 target, but I can't confirm it without intraday data.",
+      "USD/JPY's reported day range was 159.35–159.89. The low stopped about at 159.34 support, so the short from 159.70 would have needed a very tight stop to reach 1:2. The 159.89 high is above the 159.70 retest swing, but I can't tell if it came before or after the plan. If it came after, the short break failed (C).",
+      "For tomorrow: USD/CAD is pressing 1.4303, its highest since April 2025. Please mark the next resistance above it so a break can be checked for 1:2. USD/JPY is still capped near 159.90–160.00 with intervention risk. Treat 159.34 as the floor and 159.70 as the line to watch."
+    ],
+    "gradingAudit": "No setups were graded. All four watchlist pairs were C, and that holds up on the evidence at plan time: USD/CAD and USD/JPY had retests that had already played out with under 1:2 to target, GBP/USD hadn't broken, and USD/CHF was chopping with flat EMAs. Every USD pair was also blocked until 9:00am PT. The closing prices I found suggest none of them later became a clear A or B, but without intraday candles (fxstreet.com is blocked in this sandbox, and the search results only had closes and a range) I can't rule out a late break and retest."
+  }
 }
