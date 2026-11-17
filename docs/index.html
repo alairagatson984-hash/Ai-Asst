@@ -22,6 +22,8 @@
     --up: #3fcf8e;
     --down: #ef5a6f;
     --warn: #f0b44c;
+    --t2-pink: #c43d78;
+    --t2-purple: #a77bf3;
     --display: "Cormorant Garamond", "Times New Roman", serif;
     --body: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
     --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
@@ -162,7 +164,7 @@
   .chart-box { height: 460px; position: relative; }
   @media (max-width: 600px) { .chart-box { height: 340px; } }
   .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px; }
-  .orb-box.r2 { background: rgba(233,138,166,.24); border-color: var(--rose); border-width: 2px 0; }
+  .orb-box.r2 { background: rgba(196,61,120,.22); border-color: var(--t2-pink); border-width: 2px 0; }
   .trade2 { display: grid; gap: 8px; margin: 0 -10px; padding: 10px 10px 10px 7px; border-radius: 8px; border-left: 3px solid var(--rose); background: rgba(233,138,166,.10); }
   .trade2 > .label { color: var(--rose); font-weight: 600; }
   .orb-box { position: absolute; z-index: 5; pointer-events: none; background: rgba(233,138,166,.12); border-top: 1px solid var(--rose); border-bottom: 1px solid var(--rose); }
@@ -899,17 +901,17 @@
     }
     for (const t of o.trades) {
       if (t.n === 2) {
-        line(t.range.high, cssVar("--rose"), 0, "R2 high"); line(t.range.low, cssVar("--rose"), 0, "R2 low");
-        markers.push({ time: t.range.from, position: "aboveBar", color: cssVar("--rose"), shape: "circle", text: "New range" });
+        line(t.range.high, cssVar("--t2-pink"), 0, "R2 high"); line(t.range.low, cssVar("--t2-pink"), 0, "R2 low");
+        markers.push({ time: t.range.from, position: "aboveBar", color: cssVar("--t2-pink"), shape: "circle", text: "New range" });
       }
       if (!t.signal) continue;
       const s = t.signal, buy = s.dir === "buy";
-      const col = t.n === 2 ? cssVar("--rose") : buy ? cssVar("--up") : cssVar("--down");
+      const col = t.n === 2 ? cssVar("--t2-purple") : buy ? cssVar("--up") : cssVar("--down");
       markers.push({ time: s.t, position: buy ? "belowBar" : "aboveBar", color: col, shape: buy ? "arrowUp" : "arrowDown", text: (buy ? "BUY " : "SELL ") + t.n });
     }
     // Entry, stop and target of the most recent trade.
     if (last) {
-      const s = last.signal, pink = last.n === 2 ? cssVar("--rose") : null;
+      const s = last.signal, pink = last.n === 2 ? cssVar("--t2-purple") : null; // trade 2 levels in purple
       line(s.entry, pink || cssVar("--fg"), 2, "Entry " + last.n); line(s.sl, pink || cssVar("--down"), 1, "SL " + last.n); line(s.tp, pink || cssVar("--up"), 1, "TP " + last.n);
     }
     orbSeries.setMarkers(markers.sort((a, b) => a.time - b.time));
