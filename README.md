@@ -9,10 +9,10 @@ TruLux Analytics: a personal London/NY-overlap forex dashboard. Claude updates i
 - **Opening Range**: automatic opening range breakout on the 7 majors. The 6:30am PT (9:30am ET) M5 candle sets the range, the first close outside it is the signal, with entry, stop, 2R target and a chart.
 - **Markets**: live majors and 28-pair currency strength since the Asian open.
 - **Calculator**: units and lots at your risk %, R:R check, room left before the daily limit.
-- **Journal / Analytics**: your OANDA practice trades, auto-matched to the plan, with stats by grade, pattern, pair and discipline.
+- **Journal / Analytics**: your OANDA live trades, auto-matched to the plan, with stats by grade, pattern, pair and discipline.
 - **Patterns**: the 7-pattern playbook with your stats.
 - **Daily Review**: Claude's write-up after setups expire.
-- **Settings**: OANDA practice token (saved in your browser only), risk rules, session times.
+- **Settings**: OANDA live account token (saved in your browser only; the dashboard only reads the account), risk rules, session times.
 
 ## Files
 - `docs/`: the site (GitHub Pages serves `main` from `/docs`).

@@ -276,7 +276,7 @@
     </section>
 
     <section class="tab" id="tab-markets" hidden>
-      <div class="tab-head"><h1>Markets</h1><p>Live from your OANDA practice feed</p></div>
+      <div class="tab-head"><h1>Markets</h1><p>Live from your OANDA account</p></div>
       <div class="panel">
         <h2>Majors <span>change since the Asian open, 4:00pm PT</span></h2>
         <div class="tiles" id="tiles"></div>
@@ -306,7 +306,7 @@
     </section>
 
     <section class="tab" id="tab-journal" hidden>
-      <div class="tab-head"><h1>Journal</h1><p>OANDA demo trades, matched to your plans</p></div>
+      <div class="tab-head"><h1>Journal</h1><p>Your OANDA live trades, matched to your plans</p></div>
       <div id="journal-notice"></div>
       <div class="panel"><div class="scroll"><table class="data" id="journal-table"></table></div></div>
     </section>
@@ -337,14 +337,14 @@
     <section class="tab" id="tab-setup" hidden>
       <div class="tab-head"><h1>Settings</h1><p>Saved only in this browser</p></div>
       <div class="panel">
-        <h2>OANDA practice account <span id="conn-state" class="pill wait">Not connected</span></h2>
+        <h2>OANDA live account <span id="conn-state" class="pill wait">Not connected</span></h2>
         <form class="form" id="conn-form">
-          <div class="field"><label for="acct">Account ID</label><input id="acct" autocomplete="off" placeholder="101-001-1234567-001"></div>
-          <div class="field"><label for="tok">Practice API token</label><input id="tok" type="password" autocomplete="off" placeholder="Paste your demo token"></div>
+          <div class="field"><label for="acct">Account ID</label><input id="acct" autocomplete="off" placeholder="001-001-1234567-001"></div>
+          <div class="field"><label for="tok">Live API token</label><input id="tok" type="password" autocomplete="off" placeholder="Paste your live token"></div>
           <button type="submit">Connect</button>
           <button type="button" class="ghost" id="forget">Forget token</button>
         </form>
-        <p class="muted" id="conn-msg" style="margin:12px 0 0">Your token stays in this browser and is only sent to OANDA. Use a practice-account token.</p>
+        <p class="muted" id="conn-msg" style="margin:12px 0 0">This is your real-money account. The dashboard only reads it and never places orders. Your token is saved in this browser only and sent only to OANDA. Use "Forget token" on any shared computer.</p>
       </div>
       <div class="panel">
         <h2>Risk rules <span>defaults from strategy/RULES.md</span></h2>
@@ -391,7 +391,7 @@
   "use strict";
 
   // ================= constants =================
-  const API = "https://api-fxpractice.oanda.com/v3";
+  const API = "https://api-fxtrade.oanda.com/v3"; // live (real-money) account; read-only use, the page never places orders
   const MAJORS = ["EUR_USD", "GBP_USD", "USD_JPY", "USD_CHF", "AUD_USD", "USD_CAD", "NZD_USD"];
   const CURRENCIES = ["USD", "EUR", "GBP", "JPY", "CHF", "AUD", "CAD", "NZD"];
   const ALL28 = ["EUR_USD","EUR_GBP","EUR_JPY","EUR_CHF","EUR_AUD","EUR_CAD","EUR_NZD",
@@ -1082,13 +1082,13 @@
   }
   async function connect() {
     state.acct = $("acct").value.trim(); state.tok = $("tok").value.trim();
-    if (!state.acct || !state.tok) { connState("Not connected", "wait", "Enter both your practice account ID and token."); return; }
+    if (!state.acct || !state.tok) { connState("Not connected", "wait", "Enter both your live account ID and token."); return; }
     store.set("oanda_acct", state.acct); store.set("oanda_tok", state.tok);
     connState("Connecting", "wait", "Calling OANDA…");
     try {
       await Promise.all([pollAccount(), pollPrices()]);
       state.connected = true;
-      connState("Live", "live", "Connected to your " + state.account.currency + " practice account.", "up");
+      connState("Connected", "live", "Connected to your " + state.account.currency + " live account.", "up");
       renderAll();
       await Promise.all([safe(pollTrades), safe(pollStrength)]);
       await safe(checkFailedBreaks);
@@ -1096,7 +1096,7 @@
       renderAll(); if (current === "orb") renderOrbChart();
     } catch (e) {
       state.connected = false;
-      connState("Failed", "off", e.status === 401 ? "OANDA rejected the token (401). Check that it's a practice-account token." : e.status ? "OANDA answered " + e.status + ". Check the account ID matches the token." : "Couldn't reach OANDA from this browser.", "down");
+      connState("Failed", "off", e.status === 401 ? "OANDA rejected the token (401). Check that it's a token from your live account (a demo token won't work here)." : e.status ? "OANDA answered " + e.status + ". Check the account ID matches the token." : "Couldn't reach OANDA from this browser.", "down");
       renderAll();
     }
   }
