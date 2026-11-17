@@ -162,6 +162,9 @@
   .chart-box { height: 460px; position: relative; }
   @media (max-width: 600px) { .chart-box { height: 340px; } }
   .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px; }
+  .orb-box.r2 { background: rgba(233,138,166,.24); border-color: var(--rose); border-width: 2px 0; }
+  .trade2 { display: grid; gap: 8px; margin: 0 -10px; padding: 10px 10px 10px 7px; border-radius: 8px; border-left: 3px solid var(--rose); background: rgba(233,138,166,.10); }
+  .trade2 > .label { color: var(--rose); font-weight: 600; }
   .orb-box { position: absolute; z-index: 5; pointer-events: none; background: rgba(233,138,166,.12); border-top: 1px solid var(--rose); border-bottom: 1px solid var(--rose); }
 
   input, select {
@@ -831,9 +834,10 @@
         const s = t.signal, units = s && riskAmt ? unitsFor(p, s.entry, s.sl, riskAmt) : null;
         const head = '<div class="label">Trade ' + t.n + (t.n === 2 ? " · new range " + fx(p, t.range.low) + "–" + fx(p, t.range.high) + " (" + ((t.range.high - t.range.low) / pip).toFixed(1) + " pips)" : "") +
           (s ? " · " + s.dir.toUpperCase() + " at " + ptClock(s.t + 300) + " · " + (t.outcome ? t.outcome.text : "live") : " · waiting for a close outside") + "</div>";
-        if (!s) return head;
-        return head + '<div class="prices">' + box("Entry", fx(p, s.entry)) + box("Stop", fx(p, s.sl)) + box("Target", fx(p, s.tp)) + box("R:R", "1:" + s.rr.toFixed(2)) + "</div>" +
+        const body = !s ? head : head + '<div class="prices">' + box("Entry", fx(p, s.entry)) + box("Stop", fx(p, s.sl)) + box("Target", fx(p, s.tp)) + box("R:R", "1:" + s.rr.toFixed(2)) + "</div>" +
           '<div class="sizing"><span>Risk <b>' + (s.risk / pip).toFixed(1) + "</b> pips</span><span>" + S.risk + "% = <b>" + (units ? Math.round(units).toLocaleString("en-US") + " units" : "—") + "</b>" + (units ? ' <span class="muted">(' + (units / 100000).toFixed(2) + " lots)</span>" : "") + "</span></div>";
+        // Trade 2 is highlighted in pink so it stands apart from trade 1.
+        return t.n === 2 ? '<div class="trade2">' + body + "</div>" : body;
       };
       return '<article class="card"><div class="card-top"><span class="pair">' + pairName(p) + "</span>" +
         (last ? '<span class="dir ' + (last.signal.dir === "buy" ? "long" : "short") + '">' + last.signal.dir + "</span>" : "") +
@@ -849,7 +853,7 @@
   function initOrbChart() {
     if (orbChart || !window.LightweightCharts) return;
     const el = $("orb-chart");
-    el.innerHTML = '<div class="orb-box" id="orb-box" hidden></div><div class="orb-box" id="orb-box2" hidden></div>';
+    el.innerHTML = '<div class="orb-box" id="orb-box" hidden></div><div class="orb-box r2" id="orb-box2" hidden></div>';
     orbChart = LightweightCharts.createChart(el, {
       autoSize: true,
       layout: { background: { type: "solid", color: cssVar("--panel") }, textColor: cssVar("--muted"), fontFamily: "JetBrains Mono, monospace" },
@@ -895,15 +899,19 @@
     }
     for (const t of o.trades) {
       if (t.n === 2) {
-        line(t.range.high, cssVar("--rose-deep"), 0, "R2 high"); line(t.range.low, cssVar("--rose-deep"), 0, "R2 low");
-        markers.push({ time: t.range.from, position: "aboveBar", color: cssVar("--rose-deep"), shape: "circle", text: "New range" });
+        line(t.range.high, cssVar("--rose"), 0, "R2 high"); line(t.range.low, cssVar("--rose"), 0, "R2 low");
+        markers.push({ time: t.range.from, position: "aboveBar", color: cssVar("--rose"), shape: "circle", text: "New range" });
       }
       if (!t.signal) continue;
       const s = t.signal, buy = s.dir === "buy";
-      markers.push({ time: s.t, position: buy ? "belowBar" : "aboveBar", color: buy ? cssVar("--up") : cssVar("--down"), shape: buy ? "arrowUp" : "arrowDown", text: (buy ? "BUY " : "SELL ") + t.n });
+      const col = t.n === 2 ? cssVar("--rose") : buy ? cssVar("--up") : cssVar("--down");
+      markers.push({ time: s.t, position: buy ? "belowBar" : "aboveBar", color: col, shape: buy ? "arrowUp" : "arrowDown", text: (buy ? "BUY " : "SELL ") + t.n });
     }
     // Entry, stop and target of the most recent trade.
-    if (last) { const s = last.signal; line(s.entry, cssVar("--fg"), 2, "Entry " + last.n); line(s.sl, cssVar("--down"), 1, "SL " + last.n); line(s.tp, cssVar("--up"), 1, "TP " + last.n); }
+    if (last) {
+      const s = last.signal, pink = last.n === 2 ? cssVar("--rose") : null;
+      line(s.entry, pink || cssVar("--fg"), 2, "Entry " + last.n); line(s.sl, pink || cssVar("--down"), 1, "SL " + last.n); line(s.tp, pink || cssVar("--up"), 1, "TP " + last.n);
+    }
     orbSeries.setMarkers(markers.sort((a, b) => a.time - b.time));
     requestAnimationFrame(drawOrbBox);
   }
