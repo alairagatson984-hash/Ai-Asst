@@ -268,7 +268,8 @@
         <ul class="plain">
           <li>The opening range is the US open's first M5 candle: 6:30–6:35am PT (9:30am ET). It's only set once that candle has closed.</li>
           <li><b>BUY</b> when an M5 candle <i>closes</i> above the range high; <b>SELL</b> when one closes below the range low. A wick through the line doesn't count.</li>
-          <li>One signal per pair per day: whichever side breaks first. No new signals after the cutoff in Settings (11:00am PT by default).</li>
+          <li><b>Trade 1:</b> whichever side breaks first, by the cutoff in Settings (11:00am PT by default).</li>
+          <li><b>Trade 2:</b> only after trade 1 has hit its stop or target. The next 3 M5 candles (set in Settings) form a new range, and the first close outside it, either side, is trade 2, until setups expire (2:00pm PT). Never more than two trades a day.</li>
           <li>Entry is the breakout candle's close. Stop and target follow your ORB settings. Everything resets at the next day's 6:30am PT open. All times here are Pacific.</li>
           <li>Signals only. Nothing is placed on your account.</li>
         </ul>
@@ -373,7 +374,8 @@
           <div class="field"><label for="s-orbstop">Stop loss at</label><select id="s-orbstop"><option value="opposite">Opposite side of range</option><option value="mid">Middle of range</option><option value="pips">Fixed pips from entry</option></select></div>
           <div class="field"><label for="s-orbpips">Fixed stop (pips)</label><input id="s-orbpips" inputmode="decimal"></div>
           <div class="field"><label for="s-orbtp">Target (× risk)</label><input id="s-orbtp" inputmode="decimal"></div>
-          <div class="field"><label for="s-orbcut">No new signals after (PT)</label><input id="s-orbcut" type="time"></div>
+          <div class="field"><label for="s-orbcut">Trade 1: no signals after (PT)</label><input id="s-orbcut" type="time"></div>
+          <div class="field"><label for="s-orbre">Trade 2: new range (M5 candles)</label><input id="s-orbre" inputmode="numeric"></div>
         </form>
       </div>
       <div class="panel">
@@ -404,7 +406,7 @@
   const checkList = (s) => (s.checks && "indicators" in s.checks) ? CHECKS : CHECKS.slice(0, 5);
   const PATTERN_NAMES = { "clean-br": "Clean break & retest", "asian-range": "Asian range B&R", "london-range": "London range B&R", "open-range": "6:30 candle B&R", "head-shoulders": "Head & shoulders", "double-top-bottom": "Double top / bottom", "flag-pennant": "Flag / pennant" };
   const TRIGGER_NAMES = { engulfing: "Engulfing", pinbar: "Pin bar / rejection" };
-  const DEFAULTS = { risk: 2, limit: 4, rr: 2, buffer: "2-3", atEntry: 3, match: 10, news: 30, start: "06:00", expiry: "14:00", orbStop: "opposite", orbPips: 10, orbTp: 2, orbCut: "11:00" };
+  const DEFAULTS = { risk: 2, limit: 4, rr: 2, buffer: "2-3", atEntry: 3, match: 10, news: 30, start: "06:00", expiry: "14:00", orbStop: "opposite", orbPips: 10, orbTp: 2, orbCut: "11:00", orbReN: 3 };
 
   // ================= helpers =================
   const $ = id => document.getElementById(id);
@@ -750,39 +752,68 @@
     }));
   }
 
+  // One ORB trade: the first complete M5 candle starting at/after startT (and closing by cutT) that
+  // CLOSES outside the range, plus what happened next. A wick alone never counts.
+  function orbTrade(pair, cs, range, startT, cutT) {
+    for (const c of cs) {
+      if (c.t < startT || !c.complete || c.t + 300 > cutT) continue;
+      const dir = c.c > range.high ? "buy" : c.c < range.low ? "sell" : null;
+      if (!dir) continue;
+      const sign = dir === "buy" ? 1 : -1, entry = c.c, mult = +S.orbTp || DEFAULTS.orbTp;
+      const sl = S.orbStop === "mid" ? (range.high + range.low) / 2
+        : S.orbStop === "pips" ? entry - sign * (+S.orbPips || DEFAULTS.orbPips) * pipOf(pair)
+        : (dir === "buy" ? range.low : range.high);
+      const risk = Math.abs(entry - sl);
+      const signal = { dir, t: c.t, entry, sl, tp: entry + sign * mult * risk, risk, rr: mult };
+      let outcome = null;
+      // Whichever of stop or target is touched first (both in one candle counts as the stop).
+      for (const n of cs) {
+        if (n.t <= c.t) continue;
+        if (dir === "buy" ? n.l <= sl : n.h >= sl) { outcome = { text: "Stop hit −1R", cls: "bad", t: n.t }; break; }
+        if (dir === "buy" ? n.h >= signal.tp : n.l <= signal.tp) { outcome = { text: "Target hit +" + mult + "R", cls: "good", t: n.t }; break; }
+      }
+      return { signal, outcome };
+    }
+    return null;
+  }
+
+  // Up to two trades a day. Trade 1: the 6:30am PT candle's range, breakout by the ORB cutoff.
+  // Trade 2: only after trade 1 has closed. The next N M5 candles form a new range, and the first
+  // close outside it, before setups expire, is trade 2. It can never reuse trade 1's breakout.
   function computeOrb(pair, cs, day) {
     const now = Date.now() / 1000;
     const openT = etToUtc(day, 9, 30).getTime() / 1000;
     const [ch, cm] = String(S.orbCut || DEFAULTS.orbCut).split(":").map(Number);
     const cutT = ptToUtc(day, ch, cm || 0).getTime() / 1000; // the cutoff is set in Pacific time
-    const out = { openT, cutT, range: null, signal: null, outcome: null, status: "", cls: "" };
+    const [eh, em] = String(S.expiry || DEFAULTS.expiry).split(":").map(Number);
+    const expT = ptToUtc(day, eh, em || 0).getTime() / 1000;
+    const out = { openT, cutT, expT, range: null, trades: [], status: "", cls: "" };
     if (now < openT) return Object.assign(out, { status: "Range sets at " + ptClock(openT + 300), cls: "wait" });
     const oc = cs.find(c => c.t === openT);
     if (!oc) return Object.assign(out, now < openT + 600 ? { status: "Waiting for the opening candle", cls: "wait" } : { status: "No opening candle from OANDA" });
     if (!oc.complete) return Object.assign(out, { status: "Opening candle forming", cls: "wait" });
-    out.range = { high: oc.h, low: oc.l };
-    // First M5 candle to CLOSE outside the range, closing no later than the cutoff. A wick alone never counts.
-    for (const c of cs) {
-      if (c.t < openT + 300 || !c.complete || c.t + 300 > cutT) continue;
-      const dir = c.c > oc.h ? "buy" : c.c < oc.l ? "sell" : null;
-      if (!dir) continue;
-      const sign = dir === "buy" ? 1 : -1, entry = c.c, mult = +S.orbTp || DEFAULTS.orbTp;
-      const sl = S.orbStop === "mid" ? (oc.h + oc.l) / 2
-        : S.orbStop === "pips" ? entry - sign * (+S.orbPips || DEFAULTS.orbPips) * pipOf(pair)
-        : (dir === "buy" ? oc.l : oc.h);
-      const risk = Math.abs(entry - sl);
-      out.signal = { dir, t: c.t, entry, sl, tp: entry + sign * mult * risk, risk, rr: mult };
-      // What happened next: whichever of stop or target is touched first (both in one candle counts as the stop).
-      for (const n of cs) {
-        if (n.t <= c.t) continue;
-        if (dir === "buy" ? n.l <= sl : n.h >= sl) { out.outcome = { text: "Stop hit −1R", cls: "bad" }; break; }
-        if (dir === "buy" ? n.h >= out.signal.tp : n.l <= out.signal.tp) { out.outcome = { text: "Target hit +" + mult + "R", cls: "good" }; break; }
-      }
-      break;
+    out.range = { high: oc.h, low: oc.l, from: openT };
+    const t1 = orbTrade(pair, cs, out.range, openT + 300, cutT);
+    if (!t1) {
+      if (now >= cutT) return Object.assign(out, { status: "No breakout by " + fmtHM(hm(S.orbCut || DEFAULTS.orbCut)) + " PT" });
+      return Object.assign(out, { status: "Watching for a close outside", cls: "wait" });
     }
-    if (out.signal) return Object.assign(out, out.outcome ? { status: out.outcome.text, cls: out.outcome.cls } : { status: out.signal.dir.toUpperCase() + " signal · live", cls: "live" });
-    if (now >= cutT) return Object.assign(out, { status: "No breakout by " + fmtHM(hm(S.orbCut || DEFAULTS.orbCut)) + " PT" });
-    return Object.assign(out, { status: "Watching for a close outside", cls: "wait" });
+    out.trades.push(Object.assign({ n: 1, range: out.range }, t1));
+    if (!t1.outcome) return Object.assign(out, { status: "Trade 1 " + t1.signal.dir.toUpperCase() + " · live", cls: "live" });
+    const done1 = "Trade 1 " + t1.outcome.text.replace("hit ", "");
+    const N = Math.max(1, Math.round(+S.orbReN || DEFAULTS.orbReN));
+    const rc = cs.filter(c => c.t > t1.outcome.t).slice(0, N);
+    const ready = rc.length === N && rc.every(c => c.complete) && rc[N - 1].t + 300 <= expT;
+    if (!ready) {
+      if (now >= expT || (rc.length && rc[rc.length - 1].t + 300 > expT)) return Object.assign(out, { status: done1 + " · no second trade by " + fmtHM(hm(S.expiry || DEFAULTS.expiry)) + " PT", cls: t1.outcome.cls });
+      return Object.assign(out, { status: done1 + " · building new range (" + rc.filter(c => c.complete).length + "/" + N + ")", cls: "wait" });
+    }
+    const r2 = { high: Math.max(...rc.map(c => c.h)), low: Math.min(...rc.map(c => c.l)), from: rc[0].t };
+    const t2 = orbTrade(pair, cs, r2, rc[N - 1].t + 300, expT);
+    out.trades.push(Object.assign({ n: 2, range: r2 }, t2 || { signal: null, outcome: null }));
+    if (!t2) return Object.assign(out, now >= expT ? { status: done1 + " · no second breakout by " + fmtHM(hm(S.expiry || DEFAULTS.expiry)) + " PT", cls: t1.outcome.cls } : { status: done1 + " · watching the new range", cls: "wait" });
+    if (!t2.outcome) return Object.assign(out, { status: "Trade 2 " + t2.signal.dir.toUpperCase() + " · live", cls: "live" });
+    return Object.assign(out, { status: done1 + " · Trade 2 " + t2.outcome.text.replace("hit ", "") + " · done for today", cls: t2.outcome.cls });
   }
 
   function renderOrb() {
@@ -794,14 +825,21 @@
     const riskAmt = state.account ? state.account.balance * S.risk / 100 : null;
     const box = (l, v) => '<div><span class="label">' + l + "</span><b>" + v + "</b></div>";
     $("orb-cards").innerHTML = MAJORS.map(p => {
-      const o = orbFor(p), pip = pipOf(p), r = o.range, s = o.signal;
-      const units = s && riskAmt ? unitsFor(p, s.entry, s.sl, riskAmt) : null;
+      const o = orbFor(p), pip = pipOf(p), r = o.range;
+      const last = o.trades.filter(t => t.signal).slice(-1)[0];
+      const tradeHTML = t => {
+        const s = t.signal, units = s && riskAmt ? unitsFor(p, s.entry, s.sl, riskAmt) : null;
+        const head = '<div class="label">Trade ' + t.n + (t.n === 2 ? " · new range " + fx(p, t.range.low) + "–" + fx(p, t.range.high) + " (" + ((t.range.high - t.range.low) / pip).toFixed(1) + " pips)" : "") +
+          (s ? " · " + s.dir.toUpperCase() + " at " + ptClock(s.t + 300) + " · " + (t.outcome ? t.outcome.text : "live") : " · waiting for a close outside") + "</div>";
+        if (!s) return head;
+        return head + '<div class="prices">' + box("Entry", fx(p, s.entry)) + box("Stop", fx(p, s.sl)) + box("Target", fx(p, s.tp)) + box("R:R", "1:" + s.rr.toFixed(2)) + "</div>" +
+          '<div class="sizing"><span>Risk <b>' + (s.risk / pip).toFixed(1) + "</b> pips</span><span>" + S.risk + "% = <b>" + (units ? Math.round(units).toLocaleString("en-US") + " units" : "—") + "</b>" + (units ? ' <span class="muted">(' + (units / 100000).toFixed(2) + " lots)</span>" : "") + "</span></div>";
+      };
       return '<article class="card"><div class="card-top"><span class="pair">' + pairName(p) + "</span>" +
-        (s ? '<span class="dir ' + (s.dir === "buy" ? "long" : "short") + '">' + s.dir + "</span>" : "") +
+        (last ? '<span class="dir ' + (last.signal.dir === "buy" ? "long" : "short") + '">' + last.signal.dir + "</span>" : "") +
         '<span class="pill ' + o.cls + '">' + esc(o.status) + "</span></div>" +
-        (r ? '<div class="prices">' + box("Range high", fx(p, r.high)) + box("Range low", fx(p, r.low)) + box("Height", ((r.high - r.low) / pip).toFixed(1) + " pips") + box("Breakout", s ? ptClock(s.t + 300) : "—") + "</div>" : "") +
-        (s ? '<div class="prices">' + box("Entry", fx(p, s.entry)) + box("Stop", fx(p, s.sl)) + box("Target", fx(p, s.tp)) + box("R:R", "1:" + s.rr.toFixed(2)) + "</div>" +
-          '<div class="sizing"><span>Risk <b>' + (s.risk / pip).toFixed(1) + "</b> pips</span><span>" + S.risk + "% = <b>" + (units ? Math.round(units).toLocaleString("en-US") + " units" : "—") + "</b>" + (units ? ' <span class="muted">(' + (units / 100000).toFixed(2) + " lots)</span>" : "") + "</span></div>" : "") +
+        (r ? '<div class="prices">' + box("Range high", fx(p, r.high)) + box("Range low", fx(p, r.low)) + box("Height", ((r.high - r.low) / pip).toFixed(1) + " pips") + box("Trades", o.trades.filter(t => t.signal).length + " of 2") + "</div>" : "") +
+        o.trades.map(tradeHTML).join("") +
         "</article>";
     }).join("");
   }
@@ -811,7 +849,7 @@
   function initOrbChart() {
     if (orbChart || !window.LightweightCharts) return;
     const el = $("orb-chart");
-    el.innerHTML = '<div class="orb-box" id="orb-box" hidden></div>';
+    el.innerHTML = '<div class="orb-box" id="orb-box" hidden></div><div class="orb-box" id="orb-box2" hidden></div>';
     orbChart = LightweightCharts.createChart(el, {
       autoSize: true,
       layout: { background: { type: "solid", color: cssVar("--panel") }, textColor: cssVar("--muted"), fontFamily: "JetBrains Mono, monospace" },
@@ -842,7 +880,8 @@
     if (!orbChart) { $("orb-chart").innerHTML = '<p class="muted" style="padding:16px;margin:0">The chart library didn\'t load. Refresh the page to try again.</p>'; return; }
     const o = orbFor(orbPair), d = digitsOf(orbPair);
     orbSeries.applyOptions({ priceFormat: { type: "price", precision: d, minMove: Math.pow(10, -d) } });
-    orbLevels = [o.range && o.range.high, o.range && o.range.low, o.signal && o.signal.sl, o.signal && o.signal.tp].filter(v => v != null);
+    const last = o.trades.filter(t => t.signal).slice(-1)[0];
+    orbLevels = [o.range && o.range.high, o.range && o.range.low].concat(...o.trades.map(t => [t.range.high, t.range.low]), last ? [last.signal.sl, last.signal.tp] : []).filter(v => v != null);
     const orbFrom = etToUtc(et(new Date()).date, 8, 0).getTime() / 1000;
     orbSeries.setData((state.orbCandles[orbPair] || []).filter(c => c.t >= orbFrom).map(c => ({ time: c.t, open: c.o, high: c.h, low: c.l, close: c.c })));
     const fitKey = orbPair + et(new Date()).date;
@@ -854,25 +893,39 @@
       line(o.range.high, cssVar("--rose"), 0, "OR high"); line(o.range.low, cssVar("--rose"), 0, "OR low");
       markers.push({ time: o.openT, position: "aboveBar", color: cssVar("--rose"), shape: "circle", text: "6:30 open" });
     }
-    if (o.signal) {
-      const s = o.signal, buy = s.dir === "buy";
-      line(s.entry, cssVar("--fg"), 2, "Entry"); line(s.sl, cssVar("--down"), 1, "SL"); line(s.tp, cssVar("--up"), 1, "TP");
-      markers.push({ time: s.t, position: buy ? "belowBar" : "aboveBar", color: buy ? cssVar("--up") : cssVar("--down"), shape: buy ? "arrowUp" : "arrowDown", text: buy ? "BUY" : "SELL" });
+    for (const t of o.trades) {
+      if (t.n === 2) {
+        line(t.range.high, cssVar("--rose-deep"), 0, "R2 high"); line(t.range.low, cssVar("--rose-deep"), 0, "R2 low");
+        markers.push({ time: t.range.from, position: "aboveBar", color: cssVar("--rose-deep"), shape: "circle", text: "New range" });
+      }
+      if (!t.signal) continue;
+      const s = t.signal, buy = s.dir === "buy";
+      markers.push({ time: s.t, position: buy ? "belowBar" : "aboveBar", color: buy ? cssVar("--up") : cssVar("--down"), shape: buy ? "arrowUp" : "arrowDown", text: (buy ? "BUY " : "SELL ") + t.n });
     }
-    orbSeries.setMarkers(markers);
+    // Entry, stop and target of the most recent trade.
+    if (last) { const s = last.signal; line(s.entry, cssVar("--fg"), 2, "Entry " + last.n); line(s.sl, cssVar("--down"), 1, "SL " + last.n); line(s.tp, cssVar("--up"), 1, "TP " + last.n); }
+    orbSeries.setMarkers(markers.sort((a, b) => a.time - b.time));
     requestAnimationFrame(drawOrbBox);
   }
-  // Shades the opening range from the 9:30 candle to the right edge of the chart.
+  // Shades the opening range from the 6:30 candle (up to where trade 1 closed, if there's a new range),
+  // and the second trade's new range from where it starts to the right edge.
   function drawOrbBox() {
-    const box = $("orb-box");
-    if (!box || !orbChart) return;
-    const o = orbFor(orbPair);
-    const x = o.range ? orbChart.timeScale().timeToCoordinate(o.openT) : null;
-    const y1 = o.range ? orbSeries.priceToCoordinate(o.range.high) : null, y2 = o.range ? orbSeries.priceToCoordinate(o.range.low) : null;
-    if (x == null || y1 == null || y2 == null) { box.hidden = true; return; }
-    const left = Math.max(0, x - 4), right = $("orb-chart").clientWidth - orbChart.priceScale("right").width();
-    box.hidden = false;
-    Object.assign(box.style, { left: left + "px", top: Math.min(y1, y2) + "px", width: Math.max(0, right - left) + "px", height: Math.max(1, Math.abs(y2 - y1)) + "px" });
+    if (!orbChart) return;
+    const o = orbFor(orbPair), t2 = o.trades.find(t => t.n === 2);
+    const right = $("orb-chart").clientWidth - orbChart.priceScale("right").width();
+    const shade = (id, range, toT) => {
+      const box = $(id);
+      if (!box) return;
+      const x = range ? orbChart.timeScale().timeToCoordinate(range.from) : null;
+      const y1 = range ? orbSeries.priceToCoordinate(range.high) : null, y2 = range ? orbSeries.priceToCoordinate(range.low) : null;
+      if (x == null || y1 == null || y2 == null) { box.hidden = true; return; }
+      const xEnd = toT != null ? orbChart.timeScale().timeToCoordinate(toT) : null;
+      const left = Math.max(0, x - 4), end = xEnd != null ? Math.min(right, xEnd) : right;
+      box.hidden = false;
+      Object.assign(box.style, { left: left + "px", top: Math.min(y1, y2) + "px", width: Math.max(0, end - left) + "px", height: Math.max(1, Math.abs(y2 - y1)) + "px" });
+    };
+    shade("orb-box", o.range, t2 ? t2.range.from : null);
+    shade("orb-box2", t2 ? t2.range : null, null);
   }
   $("orb-pair").innerHTML = MAJORS.map(p => '<option value="' + p + '">' + pairName(p) + "</option>").join("");
   $("orb-pair").addEventListener("change", e => { orbPair = e.target.value; renderOrbChart(); });
@@ -1059,7 +1112,7 @@
   }
 
   // ================= settings =================
-  const sFields = { "s-risk": "risk", "s-limit": "limit", "s-rr": "rr", "s-buffer": "buffer", "s-atentry": "atEntry", "s-match": "match", "s-news": "news", "s-start": "start", "s-expiry": "expiry", "s-orbstop": "orbStop", "s-orbpips": "orbPips", "s-orbtp": "orbTp", "s-orbcut": "orbCut" };
+  const sFields = { "s-risk": "risk", "s-limit": "limit", "s-rr": "rr", "s-buffer": "buffer", "s-atentry": "atEntry", "s-match": "match", "s-news": "news", "s-start": "start", "s-expiry": "expiry", "s-orbstop": "orbStop", "s-orbpips": "orbPips", "s-orbtp": "orbTp", "s-orbcut": "orbCut", "s-orbre": "orbReN" };
   for (const [id, k] of Object.entries(sFields)) {
     $(id).value = S[k];
     $(id).addEventListener("change", e => {
