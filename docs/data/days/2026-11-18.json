@@ -1,0 +1,36 @@
+{
+  "date": "2026-11-18",
+  "updatedAt": "2026-11-18T06:40:00-08:00",
+  "verdict": {
+    "headline": "No trade today",
+    "reason": "At 6:33am PT, EUR/USD is 1.0969, chopping inside the 1.0966–1.0970 zone you marked. This morning's rally broke above the zone and reached 1.0976, but there's no candle trigger on the pullback, and the next resistance at about 1.0977 can't give 1:2. New entries on all 7 majors are blocked until the FOMC minutes at 11:00am PT."
+  },
+  "calendar": [
+    { "time": "23:00", "currency": "GBP", "event": "UK CPI (Oct), released 11:00pm PT Nov 17 (7:00am GMT Nov 18)", "impact": "high" },
+    { "time": "11:00", "currency": "USD", "event": "FOMC Meeting Minutes (Oct 27–28 meeting)", "impact": "high" }
+  ],
+  "levels": [
+    { "id": "eu-1", "pair": "EUR_USD", "price": 1.0977, "tf": "M5", "label": "Resistance: session highs at 1.0976–1.0978 (approx. from chart)" },
+    { "id": "eu-2", "pair": "EUR_USD", "price": 1.097, "tf": "M5", "label": "Marked zone top (yellow line; price chopping on it, approx. from chart)" },
+    { "id": "eu-3", "pair": "EUR_USD", "price": 1.0966, "tf": "M5", "label": "Marked zone bottom (yellow line, approx. from chart)" },
+    { "id": "eu-4", "pair": "EUR_USD", "price": 1.0954, "tf": "M5", "label": "Support: overnight spike low (approx. from chart)" }
+  ],
+  "setups": [],
+  "watchlist": [
+    {
+      "pair": "EUR_USD",
+      "level": 1.097,
+      "missing": "Long break of the 1.0966–1.0970 zone. After the spike low at about 1.0954, strong green M5 candles closed above the zone (close beyond, displacement), followed through to about 1.0976, and took out the prior M5 swing high (structure). Price is now back in the zone at 1.0969 and holding (retest), but the candles are small and two-sided. There's no bullish engulfing or pin bar, so there's no trigger. The indicator check also fails: the chart shows EMA 9 and EMA 20, not the EMA 20/50 pair the rules need, and RSI is 52. That's 4/6 with no trigger. Pricing it doesn't work either: entry about 1.0969 with the SL at about 1.0962 (2–3 pips under the retest swing) and TP at about 1.0977 resistance is about 8 pips for 7 pips of risk, roughly 1:1. The zone has also been crossed both ways several times since last night, so it's a range rather than a clean level. C, and blocked by the FOMC minutes at 11:00am PT."
+    }
+  ],
+  "newsBlocks": [
+    "Released: UK CPI (Oct) at 11:00pm PT last night. GBP/USD isn't blocked by it any more, but every setup still has to pass the rules.",
+    "11:00am PT FOMC minutes: no new entries on any USD pair (all 7 majors) before the release. After it, a setup can requalify only if the break-and-retest still holds."
+  ],
+  "watchFor": [
+    "EUR/USD (after 11:00am PT): a displacement body close above 1.0977 resistance, then a retest from above with a bullish engulfing or pin bar, the EMA 20 above the EMA 50 and RSI under 70. Please mark the next resistance above 1.0977 so there's a target to check for 1:2.",
+    "EUR/USD (after 11:00am PT): a displacement close below 1.0966, then a retest from underneath with a bearish engulfing or pin bar. TP 1.0954 needs an SL of about 4 pips to make 1:2, so only with a very tight retest swing.",
+    "Add the EMA 50 to the M15 chart so the EMA + RSI check can be scored. The screenshot shows EMA 9 and EMA 20 only."
+  ],
+  "review": null
+}
