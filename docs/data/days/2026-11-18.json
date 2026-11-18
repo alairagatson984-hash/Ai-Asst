@@ -66,5 +66,17 @@
     "EUR/USD (after 11:00am PT): a displacement close below 1.0966, then a retest from underneath with a bearish engulfing or pin bar. TP 1.0954 needs an SL of about 4 pips to make 1:2, so only with a very tight retest swing.",
     "Please mark the next H1/M15 resistance above 1.0977. Without a higher target, a long from this zone can't reach 1:2."
   ],
-  "review": null
+  "review": {
+    "writtenAt": "2026-11-18T14:20:00-08:00",
+    "planVsOutcome": [],
+    "mistakes": [
+      "None found. No setups were graded or taken, and nothing was entered before the 11:00am PT FOMC block. This review is based on price action only, not actual OANDA fills. The only price data I could find was a few same-day news snippets, with no intraday candles. xtb.com, tradingnews.com and tradingeconomics.com are blocked in this sandbox, so I can't give the exact sequence of moves after the plan."
+    ],
+    "lessons": [
+      "Standing aside looks right. The minutes were hawkish (almost all officials see more hikes, and a couple raised 50bp for December), but news reports say the market had mostly priced that in. EUR/USD dipped from about 1.0980 to 1.0972 on the release, couldn't get past 1.0980, and drifted back toward 1.0960. The intraday low was reported at 1.0968, the lowest since May 2025.",
+      "The long idea above 1.0977: the reported 1.0980 high only just clears 1.0977, and price then sold off back through the 1.0966–1.0970 zone. If that was a body close above 1.0977, it was a failed break (C), not a trade. The short idea below 1.0966: price reached about 1.0960–1.0968, but I found no report of it reaching 1.0954 support. A short from a retest of 1.0966 would have needed a stop of about 4 pips to make 1:2, and I can't confirm a clean retest with a trigger. With data this thin, I can't grade either one more precisely.",
+      "For tomorrow: EUR/USD is at 2026 lows, about 1.0960–1.0970, with December hike odds reported above 95%. Watch 1.0954 (the overnight spike low) as the next support, and treat the 1.0966–1.0970 zone as resistance now. Please mark the H1/M15 support below 1.0954 so a short break can be checked for 1:2."
+    ],
+    "gradingAudit": "No setups were graded. The EUR/USD watchlist C holds up: there was no candle trigger at the retest, R:R to 1.0977 was about 1:1, and the zone had been crossed both ways several times. Every USD pair was also blocked until 11:00am PT. The reports I found describe a small, mostly priced-in dip after the minutes and no clean breakout, so nothing points to a missed A or B. Without intraday candles I can't rule out a short break and retest of 1.0966 between 11:00am and 2:00pm PT."
+  }
 }
