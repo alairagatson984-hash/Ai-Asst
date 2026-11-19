@@ -653,7 +653,7 @@
     if (!day) {
       state.today = null;
       const last = state.index[state.index.length - 1];
-      if (["Mon", "Tue", "Wed", "Thu", "Fri"].includes(n.wd)) notices.push('<div class="notice">No plan for today yet. Send Claude your marked chart at about 5:00am PT and the plan lands here by 5:45.' + (last ? ' Latest plan: <a href="#review">' + esc(longDate(last)) + "</a>." : "") + "</div>");
+      if (["Mon", "Tue", "Wed", "Thu", "Fri"].includes(n.wd)) notices.push('<div class="notice">Today&#39;s calendar is not posted yet. It lands here at about 5:00am PT. For a full plan, send Claude a marked chart any time.' + (last ? ' Latest plan: <a href="#review">' + esc(longDate(last)) + "</a>." : "") + "</div>");
       $("plan-date").textContent = longDate(n.date);
       $("plan-notices").innerHTML = notices.join("");
       $("verdict").innerHTML = ""; $("cards").innerHTML = "";

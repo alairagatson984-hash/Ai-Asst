@@ -1,6 +1,8 @@
-# Morning Build (Mon–Fri, plan ready by 5:45am PT)
+# Morning Build
 
-Follow this when the user sends their marked TradingView screenshot (~5:00am PT).
+**The scheduled morning task (Mon–Fri, 4:55am PT) is calendar-only.** It posts the day's red-folder events and news blocks to the day file and does not ask for a chart. Its instructions live in the scheduled task itself.
+
+Follow the steps below only when the user sends a marked TradingView screenshot themselves and asks for a full plan.
 
 1. **Read the rules.** Open `strategy/RULES.md` and `strategy/patterns.md`. Grade only against them.
 2. **Calendar.** Search the web for today's high-impact (red-folder) events for USD, EUR, GBP, JPY, CHF, AUD, CAD and NZD. Convert times to PT. Only high impact.
