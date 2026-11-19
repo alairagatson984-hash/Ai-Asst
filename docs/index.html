@@ -326,7 +326,6 @@
         <textarea id="copy-fallback" readonly hidden rows="8" style="width:100%;margin-top:12px;font:12px var(--mono);background:var(--panel-2);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:10px"></textarea>
       </div>
       <div class="panel" id="orb-exec-panel"><h2>Opening Range execution <span>all your trades from the last 30 days; ones from an ORB signal are graded A/B/C</span></h2><div class="scroll" id="orb-exec"></div></div>
-      <div class="panel"><div class="scroll"><table class="data" id="journal-table"></table></div></div>
     </section>
 
     <section class="tab" id="tab-analytics" hidden>
@@ -1136,23 +1135,9 @@
 
   // ================= RENDER: journal =================
   function renderJournal() {
-    if (!state.connected) { $("journal-notice").innerHTML = '<div class="notice">Connect OANDA in <a href="#setup">Settings</a> to load your trades.</div>'; $("journal-table").innerHTML = ""; return; }
-    $("journal-notice").innerHTML = "";
-    const rows = state.closed.concat(state.open).map(tradeInfo).sort((a, b) => b.open - a.open);
-    if (!rows.length) { $("journal-table").innerHTML = '<tbody><tr><td class="muted">No trades on this account yet. They show up here as soon as you place them.</td></tr></tbody>'; return; }
-    const cur = state.account && state.account.currency;
-    $("journal-table").innerHTML = "<thead><tr><th>Opened (PT)</th><th>Pair</th><th>Side</th><th>Grade</th><th>Pattern</th><th>Plan entry</th><th>Fill</th><th>Slip</th><th>Exit</th><th>Result</th><th>R</th><th>P/L</th><th>Plan</th><th>ORB</th><th>Flags</th></tr></thead><tbody>" +
-      rows.map(x => {
-        const p = pt(x.open);
-        const res = x.isOpen ? '<span class="chip be">Open</span>' : x.pl > 0 ? '<span class="chip won">Won</span>' : x.pl < 0 ? '<span class="chip lost">Lost</span>' : '<span class="chip be">BE</span>';
-        const ox = orbExec(x.raw), orb = !ox || ox.none ? "—" : ox.pending ? "…" : '<span class="chip on" title="' + esc(ox.issues.join("; ") || "Followed the signal") + '">T' + ox.n + " · " + ox.grade + "</span>";
-        const orbHit = ox && !ox.none && !ox.pending;
-        const plan = !x.match && orbHit ? '<span class="chip on">ORB</span>' : x.match ? (x.onPlan ? '<span class="chip on">On plan</span>' : '<span class="chip offp">' + (x.match.grade === "C" ? "C grade" : "Below 1:" + S.rr) + "</span>") : '<span class="chip offp">Unplanned</span>';
-        const flags = [x.slMoved ? "SL moved" : "", x.manualExit && !x.isOpen ? "Manual exit" : ""].filter(Boolean).join(", ");
-        return '<tr><td class="mono">' + p.date.slice(5) + " " + fmtHM(p.mins) + "</td><td><b>" + pairName(x.pair) + '</b></td><td><span class="dir ' + x.dir + '">' + x.dir + "</span></td><td>" + (x.match ? x.match.grade : "—") + "</td><td>" + esc(x.match ? PATTERN_NAMES[x.match.s.pattern] || x.match.s.pattern : "—") + "</td>" +
-          '<td class="num mono">' + (x.match ? fx(x.pair, x.match.entry) : "—") + '</td><td class="num mono">' + fx(x.pair, x.entry) + '</td><td class="num mono ' + (x.slip > 0.5 ? "warn" : "") + '">' + (x.slip == null ? "—" : signed(x.slip, 1)) + '</td><td class="num mono">' + (x.exit == null ? "—" : fx(x.pair, x.exit)) + "</td><td>" + res + '</td><td class="num mono">' + (x.r == null ? "—" : signed(x.r, 2)) + '</td><td class="num mono ' + (x.pl > 0 ? "up" : x.pl < 0 ? "down" : "") + '">' + (x.isOpen ? "—" : money(x.pl, cur)) + "</td><td>" + plan + "</td><td>" + orb + '</td><td class="muted">' + esc(flags || "—") + "</td></tr>";
-      }).join("") + "</tbody>";
+    $("journal-notice").innerHTML = state.connected ? "" : '<div class="notice">Connect OANDA in <a href="#setup">Settings</a> to load your trades.</div>';
   }
+
 
   // ================= RENDER: analytics =================
   function group(rows, keyFn) { const g = {}; for (const x of rows) { const k = keyFn(x); if (k != null) (g[k] = g[k] || []).push(x); } return g; }
