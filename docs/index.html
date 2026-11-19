@@ -1249,6 +1249,8 @@
     if (cur && state.index.includes(cur)) sel.value = cur;
   }
   $("rv-date").addEventListener("change", renderReview);
+  // "Late entry: No. …" / "Repeat: …" → bold label, then the text.
+  const labelLi = x => { const m = /^([^:]{2,40}):\s*(.*)$/.exec(String(x)); return "<li>" + (m ? "<b>" + esc(m[1]) + ":</b> " + esc(m[2]) : esc(x)) + "</li>"; };
   function renderReview() {
     const d = state.days[$("rv-date").value];
     if (!d) { $("review").innerHTML = '<div class="notice">No days yet.</div>'; return; }
@@ -1258,9 +1260,9 @@
     if (!rv) html += '<div class="notice">Claude writes this review at about 2:15pm PT, after setups expire.</div>';
     else {
       const byId = {}; (d.setups || []).forEach(s => byId[s.id] = s);
-      html += '<div class="panel review-block"><h3>Plan vs outcome</h3><div class="scroll"><table class="cal"><thead><tr><th>Setup</th><th>What happened</th><th>R</th></tr></thead><tbody>' +
-        asList(rv.planVsOutcome).map(o => { const s = byId[o.setupId]; return "<tr><td><b>" + esc(s ? pairName(s.pair) + " " + s.direction : o.setupId) + "</b></td><td>" + esc(o.result) + '</td><td class="mono ' + (o.r > 0 ? "up" : o.r < 0 ? "down" : "muted") + '">' + (o.r == null ? "—" : signed(o.r, 1)) + "</td></tr>"; }).join("") + "</tbody></table></div></div>" +
-        '<div class="grid-even"><div class="panel review-block"><h3>Mistakes</h3><ul class="plain">' + asList(rv.mistakes).map(x => "<li>" + esc(x) + "</li>").join("") + '</ul></div><div class="panel review-block"><h3>Lessons</h3><ul class="plain">' + asList(rv.lessons).map(x => "<li>" + esc(x) + "</li>").join("") + "</ul></div></div>" +
+      html += (asList(rv.planVsOutcome).length ? "" : '<div class="panel review-block"><h3>Plan vs outcome</h3><p class="muted" style="margin:0">No plan setups this day.</p></div><div hidden>') + '<div class="panel review-block"><h3>Plan vs outcome</h3><div class="scroll"><table class="cal"><thead><tr><th>Setup</th><th>What happened</th><th>R</th></tr></thead><tbody>' +
+        asList(rv.planVsOutcome).map(o => { const s = byId[o.setupId]; return "<tr><td><b>" + esc(s ? pairName(s.pair) + " " + s.direction : o.setupId) + "</b></td><td>" + esc(o.result) + '</td><td class="mono ' + (o.r > 0 ? "up" : o.r < 0 ? "down" : "muted") + '">' + (o.r == null ? "—" : signed(o.r, 1)) + "</td></tr>"; }).join("") + "</tbody></table></div></div>" + (asList(rv.planVsOutcome).length ? "" : "</div>") +
+        '<div class="grid-even"><div class="panel review-block"><h3>Mistakes</h3><ul class="plain">' + asList(rv.mistakes).map(labelLi).join("") + '</ul></div><div class="panel review-block"><h3>Lessons</h3><ul class="plain">' + asList(rv.lessons).map(labelLi).join("") + "</ul></div></div>" +
         '<div class="panel review-block"><h3>Grading audit</h3><p style="margin:0">' + esc(rv.gradingAudit || "") + "</p></div>";
       // Trades you took, added when you send them from the Journal.
       const took = asList(rv.trades);
