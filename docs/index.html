@@ -191,8 +191,6 @@
   .out { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
   .out div { background: var(--panel-2); border-radius: 8px; padding: 10px 12px; display: grid; gap: 2px; }
   .out b { font: 500 20px var(--mono); font-variant-numeric: tabular-nums; }
-  #calc-warn { display: grid; gap: 8px; margin-top: 12px; }
-  #calc-warn:empty { display: none; }
 
   .scroll { overflow-x: auto; }
   table.data { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 900px; }
@@ -246,7 +244,6 @@
     <a href="#plan">Today's Plan</a>
     <a href="#orb">Opening Range</a>
     <a href="#markets">Markets</a>
-    <a href="#calculator">Calculator</a>
     <a href="#journal">Journal</a>
     <a href="#analytics">Analytics</a>
     <a href="#patterns">Patterns</a>
@@ -297,23 +294,6 @@
         <h2>Currency strength <span>average move across 28 pairs since the Asian open</span></h2>
         <div class="rankbar" id="rankbar"></div>
         <div class="strength" id="strength"></div>
-      </div>
-    </section>
-
-    <section class="tab" id="tab-calculator" hidden>
-      <div class="tab-head"><h1>Position Size</h1><p id="calc-sub"></p></div>
-      <div class="panel">
-        <form class="form" id="calc-form">
-          <div class="field"><label for="c-pair">Pair</label><select id="c-pair"></select></div>
-          <div class="field"><label for="c-entry">Entry</label><input id="c-entry" inputmode="decimal" placeholder="1.12280"></div>
-          <div class="field"><label for="c-sl">Stop loss</label><input id="c-sl" inputmode="decimal" placeholder="1.12430"></div>
-          <div class="field"><label for="c-tp">Take profit (optional)</label><input id="c-tp" inputmode="decimal" placeholder="1.11900"></div>
-          <div class="field"><label for="c-bal">Balance</label><input id="c-bal" inputmode="decimal" placeholder="From OANDA"></div>
-        </form>
-      </div>
-      <div class="panel">
-        <div class="out" id="calc-out"></div>
-        <div id="calc-warn"></div>
       </div>
     </section>
 
@@ -1104,35 +1084,6 @@
   $("orb-pair").innerHTML = MAJORS.map(p => '<option value="' + p + '">' + pairName(p) + "</option>").join("");
   $("orb-pair").addEventListener("change", e => { orbPair = e.target.value; renderOrbChart(); });
 
-  // ================= RENDER: calculator =================
-  $("c-pair").innerHTML = MAJORS.map(p => '<option value="' + p + '">' + pairName(p) + "</option>").join("");
-  $("calc-form").addEventListener("input", renderCalc);
-  $("calc-form").addEventListener("submit", e => e.preventDefault());
-  function renderCalc() {
-    const pair = $("c-pair").value, entry = parseFloat($("c-entry").value), sl = parseFloat($("c-sl").value), tp = parseFloat($("c-tp").value);
-    const bal = parseFloat($("c-bal").value) || (state.account ? state.account.balance : NaN);
-    const cur = state.account && state.account.currency;
-    $("c-bal").placeholder = state.account ? state.account.balance.toFixed(2) + " (OANDA)" : "Enter balance";
-    $("calc-sub").textContent = "Risking " + S.risk + "% per trade · daily limit −" + S.limit + "%";
-    const pip = pipOf(pair), risk = bal * S.risk / 100;
-    const units = unitsFor(pair, entry, sl, risk);
-    const slp = Math.abs(entry - sl) / pip;
-    const rr = !isNaN(tp) && slp ? Math.abs(tp - entry) / Math.abs(entry - sl) : null;
-    const dl = dailyState();
-    const box = (l, v, cls) => '<div><span class="label">' + l + '</span><b class="' + (cls || "") + '">' + v + "</b></div>";
-    $("calc-out").innerHTML =
-      box("Units", units ? Math.round(units).toLocaleString("en-US") : "—") + box("Lots", units ? (units / 100000).toFixed(2) : "—") +
-      box("Risk", isNaN(risk) ? "—" : money(risk, cur)) + box("Stop distance", slp ? slp.toFixed(1) + " pips" : "—") +
-      box("R:R", rr ? "1:" + rr.toFixed(2) : "—", rr && rr < S.rr ? "down" : "") +
-      box("Room before limit", dl ? money(dl.room, cur) : "—", dl && !isNaN(risk) && dl.room < risk ? "down" : "");
-    const warn = [];
-    if (rr && rr < S.rr) warn.push("R:R is below 1:" + S.rr + ". By your rules this is not a trade.");
-    if (dl && dl.locked) warn.push("Daily loss limit already hit. No new trades today.");
-    else if (dl && !isNaN(risk) && risk > dl.room) warn.push("If this stops out you'll go past the −" + S.limit + "% daily limit.");
-    if (cur && cur !== "USD") warn.push("Your account isn't in USD, so units are approximate.");
-    $("calc-warn").innerHTML = warn.map(w => '<div class="notice bad">' + esc(w) + "</div>").join("");
-  }
-
   // ================= RENDER: journal =================
   function renderJournal() {
     $("journal-notice").innerHTML = state.connected ? "" : '<div class="notice">Connect OANDA in <a href="#setup">Settings</a> to load your trades.</div>';
@@ -1335,7 +1286,7 @@
   }
 
   // ================= routing =================
-  const TABS = ["plan", "orb", "markets", "calculator", "journal", "analytics", "patterns", "review", "setup"];
+  const TABS = ["plan", "orb", "markets", "journal", "analytics", "patterns", "review", "setup"];
   let current = "plan";
   function route() {
     const h = (location.hash || "#plan").slice(1);
@@ -1351,7 +1302,7 @@
 
   // Each section renders on its own, so one bad day file can't take down the page or the OANDA connection.
   function renderAll() {
-    for (const fn of [renderPlan, renderOrb, renderOrbExec, renderCopyDays, renderTiles, renderStrength, renderCalc, renderJournal, renderAnalytics, renderPatterns, renderReviewSelect, renderReview]) {
+    for (const fn of [renderPlan, renderOrb, renderOrbExec, renderCopyDays, renderTiles, renderStrength, renderJournal, renderAnalytics, renderPatterns, renderReviewSelect, renderReview]) {
       try { fn(); } catch (e) { console.error(fn.name + " failed:", e); }
     }
   }
