@@ -50,5 +50,97 @@
   "watchFor": [
     "Calendar only today. No chart was sent, so no levels or setups were graded."
   ],
-  "review": null
+  "review": {
+    "writtenAt": "2026-11-19T15:52:00-08:00",
+    "planVsOutcome": [],
+    "trades": [
+      {
+        "time": "6:40am PT",
+        "trade": "GBP/USD SELL",
+        "source": "Opening Range T1",
+        "grade": "C",
+        "r": 2.67,
+        "note": "Right direction and the signal hit its +2R target, but it ran with no stop and was closed by hand."
+      },
+      {
+        "time": "6:42am PT",
+        "trade": "EUR/USD SELL",
+        "source": "Opening Range T1",
+        "grade": "C",
+        "r": 1.64,
+        "note": "Reached the target, but the entry was 2.4 pips worse than the signal and the stop was moved 3.7 pips off the signal's stop."
+      },
+      {
+        "time": "6:42am PT",
+        "trade": "USD/CHF BUY",
+        "source": "Opening Range T1",
+        "grade": "A",
+        "r": 1.83,
+        "note": "Followed the signal and left it alone to the target."
+      },
+      {
+        "time": "7:27am PT",
+        "trade": "NZD/USD SELL",
+        "source": "Opening Range T2",
+        "grade": "B",
+        "r": 1.12,
+        "note": "Good entry at the signal, but closed by hand before the target."
+      },
+      {
+        "time": "7:28am PT",
+        "trade": "NZD/USD SELL",
+        "source": "Opening Range T2",
+        "grade": "C",
+        "r": -0.17,
+        "note": "A second entry on the same signal with no stop, closed by hand."
+      },
+      {
+        "time": "7:36am PT",
+        "trade": "AUD/USD SELL",
+        "source": "Opening Range T2",
+        "grade": "A",
+        "r": null,
+        "note": "Followed the signal; still open, so no result yet."
+      },
+      {
+        "time": "7:38am PT",
+        "trade": "USD/CHF SELL",
+        "source": "Opening Range T2",
+        "grade": "B",
+        "r": -0.4,
+        "note": "Entered 1.4 pips better than the signal; closed by hand before the stop, which the signal later hit."
+      },
+      {
+        "time": "7:45am PT",
+        "trade": "EUR/USD BUY",
+        "source": "Opening Range T2",
+        "grade": "A",
+        "r": -1.02,
+        "note": "Followed the signal and took the planned stop; a clean loss."
+      },
+      {
+        "time": "8:11am PT",
+        "trade": "USD/CAD SELL",
+        "source": "Opening Range T2",
+        "grade": "B",
+        "r": -1.69,
+        "note": "Entered 6.6 pips late against the signal, so the stop cost 1.69R instead of 1R."
+      }
+    ],
+    "mistakes": [
+      "No plan levels or setups today (calendar only), so this review covers the user's Opening Range trades and price action, not OANDA fills.",
+      "Two trades had no stop loss (GBP/USD T1 and the second NZD/USD T2). That breaks the set-and-forget rule, even though GBP/USD finished well.",
+      "Four trades were closed by hand instead of at the stop or target (GBP/USD, both NZD/USD, USD/CHF T2).",
+      "Slippage: EUR/USD T1 filled 2.4 pips worse and USD/CAD T2 filled 6.6 pips worse than the signal. The USD/CAD loss grew to −1.69R because of it.",
+      "EUR/USD T1 stop was placed 3.7 pips from the signal's stop.",
+      "NZD/USD T2 was entered twice on the same signal, doubling the risk on one idea.",
+      "Closed losses add up to −3.28R. At 2% per R that is past the −4% daily loss limit; close times aren't in the block, so it can't be told whether any trade was opened after the limit was hit."
+    ],
+    "lessons": [
+      "Repeat: Take the T1 signals at the signal price with the signal's stop and target. USD/CHF T1 (+1.83R) was textbook, and the EUR/USD T2 loss was a clean −1R as planned.",
+      "Improve tomorrow: Every trade gets the signal's stop before it is placed, one entry per signal, and no entries more than a pip or two away from the signal price. Skip a signal rather than chase it.",
+      "Most profit: T1 paid best. Six of seven T1 signals hit +2R (only USD/JPY stopped), and the T1 trades taken made +6.14R. The T2 trades closed so far lost −2.16R, and four T2 signals stopped out. Taking only T1 (adding the missed AUD/USD, USD/CAD and NZD/USD T1 targets, +2R each) and skipping T2 would have made far more."
+    ],
+    "gradingAudit": "No plan setups to audit today. Execution: 3 A, 3 B, 3 C across 9 trades, 8 closed, net +3.98R. The C trades made +4.14R, but only because GBP/USD ran without a stop. The grades are right to mark them as the weakest execution."
+  }
 }
