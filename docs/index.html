@@ -325,7 +325,7 @@
         <div class="toolbar" style="margin:0"><select id="copy-day" aria-label="Day" style="width:auto"></select><button type="button" id="copy-review">Copy trades for review</button><span id="copy-msg" class="muted"></span></div>
         <textarea id="copy-fallback" readonly hidden rows="8" style="width:100%;margin-top:12px;font:12px var(--mono);background:var(--panel-2);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:10px"></textarea>
       </div>
-      <div class="panel" id="orb-exec-panel"><h2>Opening Range execution <span>your trades matched to the ORB signal they came from, graded A/B/C</span></h2><div class="scroll" id="orb-exec"></div></div>
+      <div class="panel" id="orb-exec-panel"><h2>Opening Range execution <span>all your trades from the last 30 days; ones from an ORB signal are graded A/B/C</span></h2><div class="scroll" id="orb-exec"></div></div>
       <div class="panel"><div class="scroll"><table class="data" id="journal-table"></table></div></div>
     </section>
 
@@ -897,30 +897,34 @@
   let execPage = 0; const EXEC_PER_PAGE = 15;
   function renderOrbExec() {
     if (!state.connected) { $("orb-exec-panel").hidden = true; return; }
-    const rows = state.closed.concat(state.open).map(t => ({ t, x: orbExec(t) })).filter(r => r.x && !r.x.none).sort((a, b) => new Date(b.t.openTime) - new Date(a.t.openTime));
     $("orb-exec-panel").hidden = false;
-    const graded = rows.filter(r => !r.x.pending);
-    if (!graded.length) {
-      $("orb-exec").innerHTML = '<p class="muted" style="margin:0">' + (rows.length ? "Loading candles to grade your trades…" : "None of your trades from the last 30 days match an Opening Range signal yet.") + "</p>";
-      return;
-    }
+    // Every trade from the last 30 days, newest first. ORB trades are graded; the rest are listed as not from a signal.
+    const since = Date.now() - 30 * 864e5;
+    const all = state.closed.concat(state.open).filter(t => new Date(t.openTime).getTime() >= since)
+      .map(t => ({ t, x: orbExec(t) })).sort((a, b) => new Date(b.t.openTime) - new Date(a.t.openTime));
+    if (!all.length) { $("orb-exec").innerHTML = '<p class="muted" style="margin:0">No trades in the last 30 days.</p>'; return; }
+    const graded = all.filter(r => r.x && r.x.signal);
     const closed = graded.filter(r => r.x.r != null), wins = closed.filter(r => r.x.r > 0).length;
     const avgR = closed.length ? closed.reduce((a, r) => a + r.x.r, 0) / closed.length : null;
     const count = g => graded.filter(r => r.x.grade === g).length;
     const chip = g => '<span class="chip ' + (g === "A" ? "won" : g === "B" ? "on" : "lost") + '">' + g + "</span>";
+    const loading = all.some(r => r.x && r.x.pending);
     // 15 trades per page, newest first; the page stays put across the 30-second refresh.
-    const pages = Math.ceil(graded.length / EXEC_PER_PAGE);
+    const pages = Math.ceil(all.length / EXEC_PER_PAGE);
     execPage = Math.min(execPage, pages - 1);
-    const from = execPage * EXEC_PER_PAGE, page = graded.slice(from, from + EXEC_PER_PAGE);
+    const from = execPage * EXEC_PER_PAGE, page = all.slice(from, from + EXEC_PER_PAGE);
     $("orb-exec").innerHTML =
-      '<div class="exec-sum"><span>ORB trades <b>' + graded.length + '</b></span><span>A / B / C <b>' + count("A") + " / " + count("B") + " / " + count("C") + '</b></span><span>Win rate <b>' + (closed.length ? (wins / closed.length * 100).toFixed(0) + "%" : "—") + '</b></span><span>Avg R <b>' + (avgR == null ? "—" : signed(avgR, 2)) + "</b></span></div>" +
+      '<div class="exec-sum"><span>Trades <b>' + all.length + '</b></span><span>From ORB <b>' + graded.length + '</b></span><span>ORB A / B / C <b>' + count("A") + " / " + count("B") + " / " + count("C") + '</b></span><span>ORB win rate <b>' + (closed.length ? (wins / closed.length * 100).toFixed(0) + "%" : "—") + '</b></span><span>ORB avg R <b>' + (avgR == null ? "—" : signed(avgR, 2)) + "</b></span>" + (loading ? '<span class="muted">Loading candles to grade some trades…</span>' : "") + "</div>" +
       '<table class="cal compact"><thead><tr><th>Opened (PT)</th><th>Pair</th><th>Trade</th><th>Grade</th><th>R</th><th>What happened</th></tr></thead><tbody>' +
       page.map(({ t, x }) => {
-        const p = pt(new Date(t.openTime));
-        return '<tr><td class="mono">' + p.date.slice(5) + " " + fmtHM(p.mins) + "</td><td><b>" + pairName(t.instrument) + "</b></td><td>T" + x.n + " " + x.signal.dir.toUpperCase() + "</td><td>" + chip(x.grade) +
+        const p = pt(new Date(t.openTime)), side = parseFloat(t.initialUnits) > 0 ? "BUY" : "SELL";
+        if (x && x.signal) return '<tr><td class="mono">' + p.date.slice(5) + " " + fmtHM(p.mins) + "</td><td><b>" + pairName(t.instrument) + "</b></td><td>T" + x.n + " " + x.signal.dir.toUpperCase() + "</td><td>" + chip(x.grade) +
           '</td><td class="mono ' + (x.r > 0 ? "up" : x.r < 0 ? "down" : "muted") + '">' + (x.r == null ? "open" : signed(x.r, 2)) + "</td><td>" + esc(x.issues.length ? x.issues.join(" · ") : "Followed the signal") + "</td></tr>";
+        const ti = tradeInfo(t);
+        const why = x && x.pending ? "Grading…" : ti.match ? "From plan setup " + ti.match.s.id + " (grade " + ti.match.grade + "), not an Opening Range signal" : "Not from an Opening Range signal";
+        return '<tr><td class="mono">' + p.date.slice(5) + " " + fmtHM(p.mins) + "</td><td><b>" + pairName(t.instrument) + "</b></td><td>" + side + '</td><td class="muted">—</td><td class="mono ' + (ti.r > 0 ? "up" : ti.r < 0 ? "down" : "muted") + '">' + (ti.isOpen ? "open" : ti.r == null ? "—" : signed(ti.r, 2)) + '</td><td class="muted">' + esc(why) + "</td></tr>";
       }).join("") + "</tbody></table>" +
-      (pages > 1 ? '<div class="pager"><span class="muted">' + (page.length === 1 ? "Trade " + (from + 1) : "Trades " + (from + 1) + "–" + (from + page.length)) + " of " + graded.length + " · page " + (execPage + 1) + " of " + pages + '</span><span style="display:flex;gap:8px"><button type="button" class="ghost small" data-exec-page="-1"' + (execPage === 0 ? " disabled" : "") + '>← Newer</button><button type="button" class="ghost small" data-exec-page="1"' + (execPage >= pages - 1 ? " disabled" : "") + ">Older →</button></span></div>" : "");
+      (pages > 1 ? '<div class="pager"><span class="muted">' + (page.length === 1 ? "Trade " + (from + 1) : "Trades " + (from + 1) + "–" + (from + page.length)) + " of " + all.length + " · page " + (execPage + 1) + " of " + pages + '</span><span style="display:flex;gap:8px"><button type="button" class="ghost small" data-exec-page="-1"' + (execPage === 0 ? " disabled" : "") + '>← Newer</button><button type="button" class="ghost small" data-exec-page="1"' + (execPage >= pages - 1 ? " disabled" : "") + ">Older →</button></span></div>" : "");
   }
   $("orb-exec").addEventListener("click", e => {
     const step = +e.target.getAttribute("data-exec-page");
