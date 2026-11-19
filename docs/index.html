@@ -164,6 +164,11 @@
   .chart-box { height: 460px; position: relative; }
   @media (max-width: 600px) { .chart-box { height: 340px; } }
   .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px; }
+  .cal.compact td, .cal.compact th { padding: 5px 6px; font-size: 12px; }
+  .cal.compact td.mono { white-space: nowrap; }
+  .pager { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin-top: 10px; font-size: 12px; }
+  .exec-sum { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0 0 8px; font-size: 13px; }
+  .exec-sum b { font-family: var(--mono); font-weight: 500; }
   .orb-box.r2 { background: rgba(196,61,120,.22); border-color: var(--t2-pink); border-width: 2px 0; }
   .trade2 { display: grid; gap: 8px; margin: 0 -10px; padding: 10px 10px 10px 7px; border-radius: 8px; border-left: 3px solid var(--rose); background: rgba(233,138,166,.10); }
   .trade2 > .label { color: var(--rose); font-weight: 600; }
@@ -179,6 +184,7 @@
   button.ghost { background: transparent; color: var(--muted); border: 1px solid var(--line); }
   button.small { padding: 5px 10px; font-size: 12px; }
   button:hover { filter: brightness(1.08); }
+  button:disabled { opacity: .4; cursor: default; filter: none; }
   .form { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); align-items: end; }
   .field { display: grid; gap: 4px; min-width: 0; }
   .field label { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
@@ -888,6 +894,7 @@
     return { n: best.tr.n, signal: s, grade, issues, slip, late, r, day };
   }
 
+  let execPage = 0; const EXEC_PER_PAGE = 15;
   function renderOrbExec() {
     if (!state.connected) { $("orb-exec-panel").hidden = true; return; }
     const rows = state.closed.concat(state.open).map(t => ({ t, x: orbExec(t) })).filter(r => r.x && !r.x.none).sort((a, b) => new Date(b.t.openTime) - new Date(a.t.openTime));
@@ -901,15 +908,26 @@
     const avgR = closed.length ? closed.reduce((a, r) => a + r.x.r, 0) / closed.length : null;
     const count = g => graded.filter(r => r.x.grade === g).length;
     const chip = g => '<span class="chip ' + (g === "A" ? "won" : g === "B" ? "on" : "lost") + '">' + g + "</span>";
+    // 15 trades per page, newest first; the page stays put across the 30-second refresh.
+    const pages = Math.ceil(graded.length / EXEC_PER_PAGE);
+    execPage = Math.min(execPage, pages - 1);
+    const from = execPage * EXEC_PER_PAGE, page = graded.slice(from, from + EXEC_PER_PAGE);
     $("orb-exec").innerHTML =
-      '<div class="kpis" style="margin-bottom:12px"><div><span class="label">ORB trades</span><b>' + graded.length + '</b></div><div><span class="label">Grades A / B / C</span><b>' + count("A") + " / " + count("B") + " / " + count("C") + '</b></div><div><span class="label">Win rate</span><b>' + (closed.length ? (wins / closed.length * 100).toFixed(0) + "%" : "—") + '</b></div><div><span class="label">Avg R</span><b>' + (avgR == null ? "—" : signed(avgR, 2)) + "</b></div></div>" +
-      '<table class="cal"><thead><tr><th>Opened (PT)</th><th>Pair</th><th>Trade</th><th>Grade</th><th>R</th><th>What happened</th></tr></thead><tbody>' +
-      graded.map(({ t, x }) => {
+      '<div class="exec-sum"><span>ORB trades <b>' + graded.length + '</b></span><span>A / B / C <b>' + count("A") + " / " + count("B") + " / " + count("C") + '</b></span><span>Win rate <b>' + (closed.length ? (wins / closed.length * 100).toFixed(0) + "%" : "—") + '</b></span><span>Avg R <b>' + (avgR == null ? "—" : signed(avgR, 2)) + "</b></span></div>" +
+      '<table class="cal compact"><thead><tr><th>Opened (PT)</th><th>Pair</th><th>Trade</th><th>Grade</th><th>R</th><th>What happened</th></tr></thead><tbody>' +
+      page.map(({ t, x }) => {
         const p = pt(new Date(t.openTime));
         return '<tr><td class="mono">' + p.date.slice(5) + " " + fmtHM(p.mins) + "</td><td><b>" + pairName(t.instrument) + "</b></td><td>T" + x.n + " " + x.signal.dir.toUpperCase() + "</td><td>" + chip(x.grade) +
           '</td><td class="mono ' + (x.r > 0 ? "up" : x.r < 0 ? "down" : "muted") + '">' + (x.r == null ? "open" : signed(x.r, 2)) + "</td><td>" + esc(x.issues.length ? x.issues.join(" · ") : "Followed the signal") + "</td></tr>";
-      }).join("") + "</tbody></table>";
+      }).join("") + "</tbody></table>" +
+      (pages > 1 ? '<div class="pager"><span class="muted">' + (page.length === 1 ? "Trade " + (from + 1) : "Trades " + (from + 1) + "–" + (from + page.length)) + " of " + graded.length + " · page " + (execPage + 1) + " of " + pages + '</span><span style="display:flex;gap:8px"><button type="button" class="ghost small" data-exec-page="-1"' + (execPage === 0 ? " disabled" : "") + '>← Newer</button><button type="button" class="ghost small" data-exec-page="1"' + (execPage >= pages - 1 ? " disabled" : "") + ">Older →</button></span></div>" : "");
   }
+  $("orb-exec").addEventListener("click", e => {
+    const step = +e.target.getAttribute("data-exec-page");
+    if (!step) return;
+    execPage = Math.max(0, execPage + step);
+    renderOrbExec();
+  });
 
   // ---------- "Copy trades for review" ----------
   // Plain text for Claude's daily review: R and pips only, no dollar amounts, balances or units (the review is public).
