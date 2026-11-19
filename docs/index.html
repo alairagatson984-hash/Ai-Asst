@@ -913,7 +913,7 @@
     execPage = Math.min(execPage, pages - 1);
     const from = execPage * EXEC_PER_PAGE, page = all.slice(from, from + EXEC_PER_PAGE);
     $("orb-exec").innerHTML =
-      '<div class="exec-sum"><span>Trades <b>' + all.length + '</b></span><span>From ORB <b>' + graded.length + '</b></span><span>ORB A / B / C <b>' + count("A") + " / " + count("B") + " / " + count("C") + '</b></span><span>ORB win rate <b>' + (closed.length ? (wins / closed.length * 100).toFixed(0) + "%" : "—") + '</b></span><span>ORB avg R <b>' + (avgR == null ? "—" : signed(avgR, 2)) + "</b></span>" + (loading ? '<span class="muted">Loading candles to grade some trades…</span>' : "") + "</div>" +
+      '<div class="exec-sum"><span>Trades <b>' + all.length + '</b></span><span>From ORB <b>' + graded.length + '</b></span><span>ORB grades ' + chip("A") + " <b>" + count("A") + "</b> " + chip("B") + " <b>" + count("B") + "</b> " + chip("C") + " <b>" + count("C") + '</b></span><span>ORB win rate <b>' + (closed.length ? (wins / closed.length * 100).toFixed(0) + "%" : "—") + '</b></span><span>ORB avg R <b>' + (avgR == null ? "—" : signed(avgR, 2)) + "</b></span>" + (loading ? '<span class="muted">Loading candles to grade some trades…</span>' : "") + "</div>" +
       '<table class="cal compact"><thead><tr><th>Opened (PT)</th><th>Pair</th><th>Trade</th><th>Grade</th><th>R</th><th>What happened</th></tr></thead><tbody>' +
       page.map(({ t, x }) => {
         const p = pt(new Date(t.openTime)), side = parseFloat(t.initialUnits) > 0 ? "BUY" : "SELL";
