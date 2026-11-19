@@ -6,18 +6,46 @@
     "reason": "No chart today, so there are no setups to grade. Today's plan is the calendar only."
   },
   "calendar": [
-    { "time": "16:30", "currency": "AUD", "event": "Employment Change / Unemployment Rate (Oct), released 4:30pm PT Nov 18", "impact": "high" },
-    { "time": "05:30", "currency": "USD", "event": "Initial Jobless Claims", "impact": "high" },
-    { "time": "05:30", "currency": "USD", "event": "Philly Fed Manufacturing Index (Nov)", "impact": "high" },
-    { "time": "—", "currency": "USD", "event": "China–US–Russia summit (no set time, headline risk)", "impact": "high" },
-    { "time": "15:30", "currency": "JPY", "event": "National CPI (Oct), after the 2:00pm PT setup expiry", "impact": "high" }
+    {
+      "time": "16:30",
+      "currency": "AUD",
+      "event": "Employment Change / Unemployment Rate (Oct), already released 4:30pm PT Nov 18",
+      "impact": "high"
+    },
+    {
+      "time": "05:30",
+      "currency": "USD",
+      "event": "Initial Jobless Claims",
+      "impact": "high"
+    },
+    {
+      "time": "05:30",
+      "currency": "USD",
+      "event": "Philly Fed Manufacturing Index (Nov)",
+      "impact": "high"
+    },
+    {
+      "time": "—",
+      "currency": "USD",
+      "event": "Xi–Trump–Putin summit (time unconfirmed, headline risk)",
+      "impact": "high"
+    },
+    {
+      "time": "15:30",
+      "currency": "JPY",
+      "event": "National CPI (Oct), after the 2:00pm PT setup expiry",
+      "impact": "high"
+    }
   ],
   "levels": [],
   "setups": [],
   "watchlist": [],
   "newsBlocks": [
-    "USD pairs (all 7 majors) are blocked until the 5:30am PT claims and Philly Fed releases.",
-    "The China–US–Russia summit has no set time, so USD headlines could hit at any point."
+    "AUD Employment: already out (4:30pm PT Nov 18), so it no longer blocks AUD pairs today.",
+    "Jobless Claims: blocks all USD pairs until the 5:30am PT release.",
+    "Philly Fed: blocks all USD pairs until the 5:30am PT release (same time as claims).",
+    "Xi–Trump–Putin summit: no set time, so USD pairs carry headline risk all session.",
+    "Japan CPI: blocks JPY pairs (USD_JPY, EUR_JPY, GBP_JPY etc.) before 3:30pm PT, which is after the 2:00pm PT setup expiry."
   ],
   "watchFor": [
     "Calendar only today. No chart was sent, so no levels or setups were graded."
