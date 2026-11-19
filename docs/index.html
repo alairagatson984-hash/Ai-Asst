@@ -314,6 +314,7 @@
     <section class="tab" id="tab-journal" hidden>
       <div class="tab-head"><h1>Journal</h1><p>Your OANDA live trades, matched to your plans</p></div>
       <div id="journal-notice"></div>
+      <div class="panel" id="orb-exec-panel"><h2>Opening Range execution <span>your trades matched to the ORB signal they came from, graded A/B/C</span></h2><div class="scroll" id="orb-exec"></div></div>
       <div class="panel"><div class="scroll"><table class="data" id="journal-table"></table></div></div>
     </section>
 
@@ -476,7 +477,7 @@
     connected: false, account: null,
     prices: {}, baseline: {}, spark: {},
     closed: [], open: [], failed: {},
-    orb: {}, orbCandles: {}
+    orb: {}, orbCandles: {}, orbHist: {}
   };
 
   // ================= data files =================
@@ -535,6 +536,7 @@
   async function pollTrades() {
     const [c, o] = await Promise.all([oanda(acctPath() + "/trades?state=CLOSED&count=500"), oanda(acctPath() + "/openTrades")]);
     state.closed = c.trades || []; state.open = o.trades || [];
+    try { await loadOrbHistory(); } catch (e) {}
   }
   async function pollStrength() {
     const from = encodeURIComponent(asianOpen().toISOString());
@@ -592,7 +594,7 @@
     const sign = dir === "long" ? 1 : -1;
     const r = exit != null && sl != null && Math.abs(entry - sl) > 0 ? (exit - entry) * sign / Math.abs(entry - sl) : null;
     return {
-      id: t.id, pair: t.instrument, dir, entry, exit, pl, open, closeT, date, match, r, isOpen: !t.closeTime,
+      id: t.id, raw: t, pair: t.instrument, dir, entry, exit, pl, open, closeT, date, match, r, isOpen: !t.closeTime,
       onPlan: !!match && match.grade !== "C" && match.rrOK,
       slip: match ? (entry - match.entry) * sign / pip : null,
       slMoved: !!match && slOrder != null && Math.abs(slOrder - match.sl) / pip > 1,
@@ -821,6 +823,89 @@
     return Object.assign(out, { status: done1 + " · Trade 2 " + t2.outcome.text.replace("hit ", "") + " · done for today", cls: t2.outcome.cls });
   }
 
+  // ---------- grading your trades against the Opening Range ----------
+  // Past days' M5 candles (8:00am–5:30pm ET) for the pairs you traded, cached in this browser.
+  async function loadOrbHistory() {
+    const today = et(new Date()).date, since = Date.now() - 30 * 864e5, need = new Set();
+    for (const t of state.closed.concat(state.open)) {
+      const open = new Date(t.openTime), day = et(open).date;
+      if (!MAJORS.includes(t.instrument) || day === today || open.getTime() < since) continue;
+      const key = t.instrument + "|" + day;
+      if (state.orbHist[key]) continue;
+      const cached = store.get("orbc:" + key, null);
+      if (cached) { state.orbHist[key] = cached; continue; }
+      need.add(key);
+    }
+    await Promise.all([...need].map(async key => {
+      const [pair, day] = key.split("|");
+      const from = encodeURIComponent(etToUtc(day, 8, 0).toISOString()), to = encodeURIComponent(etToUtc(day, 17, 30).toISOString());
+      try {
+        const cs = ((await oanda("/instruments/" + pair + "/candles?granularity=M5&price=M&from=" + from + "&to=" + to)).candles || [])
+          .map(c => ({ t: Math.floor(new Date(c.time).getTime() / 1000), o: +c.mid.o, h: +c.mid.h, l: +c.mid.l, c: +c.mid.c, complete: c.complete }));
+        state.orbHist[key] = cs;
+        if (cs.length && cs.every(c => c.complete)) store.set("orbc:" + key, cs);
+      } catch (e) {}
+    }));
+  }
+  function orbCandlesFor(pair, day) { return day === et(new Date()).date ? state.orbCandles[pair] : state.orbHist[pair + "|" + day]; }
+
+  // Matches a trade to trade 1 or 2 of that day's Opening Range and grades how closely it followed the signal.
+  // A: followed it (fill within 2 pips, in within 15 min, stop and target at the signal's levels).
+  // B: one minor deviation (slippage, late entry, different target or a manual exit). C: no stop, a moved stop, or several deviations.
+  function orbExec(t) {
+    if (!MAJORS.includes(t.instrument)) return null;
+    const open = new Date(t.openTime), day = et(open).date, cs = orbCandlesFor(t.instrument, day);
+    if (!cs) return { pending: true };
+    const dir = parseFloat(t.initialUnits) > 0 ? "buy" : "sell", sign = dir === "buy" ? 1 : -1;
+    const fill = parseFloat(t.price), pip = pipOf(t.instrument), openS = open.getTime() / 1000;
+    let best = null;
+    for (const tr of computeOrb(t.instrument, cs, day).trades) {
+      const s = tr.signal;
+      if (!s || s.dir !== dir || openS < s.t + 300 - 60) continue;
+      const dist = Math.abs(fill - s.entry) / pip;
+      if (dist <= S.match && (!best || dist < best.dist)) best = { tr, dist };
+    }
+    if (!best) return { none: true };
+    const s = best.tr.signal, issues = [];
+    let stopIssue = false;
+    const slip = (fill - s.entry) * sign / pip, late = Math.round((openS - (s.t + 300)) / 60);
+    if (slip > 2) issues.push("Filled " + slip.toFixed(1) + " pips worse than the signal");
+    if (late > 15) issues.push("Entered " + late + " min after the signal");
+    const slO = t.stopLossOrder && t.stopLossOrder.price != null ? +t.stopLossOrder.price : null;
+    const tpO = t.takeProfitOrder && t.takeProfitOrder.price != null ? +t.takeProfitOrder.price : null;
+    if (slO == null && !t.stopLossOrderID) { issues.push("No stop loss on the trade"); stopIssue = true; }
+    else if (slO != null && Math.abs(slO - s.sl) / pip > 2) { issues.push("Stop " + (Math.abs(slO - s.sl) / pip).toFixed(1) + " pips from the signal's stop"); stopIssue = true; }
+    if (tpO != null && Math.abs(tpO - s.tp) / pip > 2) issues.push("Target " + (Math.abs(tpO - s.tp) / pip).toFixed(1) + " pips from the signal's target");
+    const exit = t.averageClosePrice != null ? +t.averageClosePrice : null;
+    if (exit != null && Math.abs(exit - s.tp) / pip > 2 && Math.abs(exit - s.sl) / pip > 2) issues.push("Closed by hand, not at stop or target");
+    const grade = !issues.length ? "A" : (issues.length === 1 && !stopIssue) ? "B" : "C";
+    const r = exit != null ? (exit - fill) * sign / Math.abs(s.entry - s.sl) : null; // R measured on the signal's risk
+    return { n: best.tr.n, signal: s, grade, issues, slip, late, r, day };
+  }
+
+  function renderOrbExec() {
+    if (!state.connected) { $("orb-exec-panel").hidden = true; return; }
+    const rows = state.closed.concat(state.open).map(t => ({ t, x: orbExec(t) })).filter(r => r.x && !r.x.none).sort((a, b) => new Date(b.t.openTime) - new Date(a.t.openTime));
+    $("orb-exec-panel").hidden = false;
+    const graded = rows.filter(r => !r.x.pending);
+    if (!graded.length) {
+      $("orb-exec").innerHTML = '<p class="muted" style="margin:0">' + (rows.length ? "Loading candles to grade your trades…" : "None of your trades from the last 30 days match an Opening Range signal yet.") + "</p>";
+      return;
+    }
+    const closed = graded.filter(r => r.x.r != null), wins = closed.filter(r => r.x.r > 0).length;
+    const avgR = closed.length ? closed.reduce((a, r) => a + r.x.r, 0) / closed.length : null;
+    const count = g => graded.filter(r => r.x.grade === g).length;
+    const chip = g => '<span class="chip ' + (g === "A" ? "won" : g === "B" ? "on" : "lost") + '">' + g + "</span>";
+    $("orb-exec").innerHTML =
+      '<div class="kpis" style="margin-bottom:12px"><div><span class="label">ORB trades</span><b>' + graded.length + '</b></div><div><span class="label">Grades A / B / C</span><b>' + count("A") + " / " + count("B") + " / " + count("C") + '</b></div><div><span class="label">Win rate</span><b>' + (closed.length ? (wins / closed.length * 100).toFixed(0) + "%" : "—") + '</b></div><div><span class="label">Avg R</span><b>' + (avgR == null ? "—" : signed(avgR, 2)) + "</b></div></div>" +
+      '<table class="cal"><thead><tr><th>Opened (PT)</th><th>Pair</th><th>Trade</th><th>Grade</th><th>R</th><th>What happened</th></tr></thead><tbody>' +
+      graded.map(({ t, x }) => {
+        const p = pt(new Date(t.openTime));
+        return '<tr><td class="mono">' + p.date.slice(5) + " " + fmtHM(p.mins) + "</td><td><b>" + pairName(t.instrument) + "</b></td><td>T" + x.n + " " + x.signal.dir.toUpperCase() + "</td><td>" + chip(x.grade) +
+          '</td><td class="mono ' + (x.r > 0 ? "up" : x.r < 0 ? "down" : "muted") + '">' + (x.r == null ? "open" : signed(x.r, 2)) + "</td><td>" + esc(x.issues.length ? x.issues.join(" · ") : "Followed the signal") + "</td></tr>";
+      }).join("") + "</tbody></table>";
+  }
+
   function renderOrb() {
     $("orb-sub").textContent = longDate(pt(new Date()).date) + " · " + ptClock(Date.now() / 1000) + " · range from the 6:30am PT candle";
     const live = orbTradingDay() && state.connected;
@@ -976,14 +1061,16 @@
     const rows = state.closed.concat(state.open).map(tradeInfo).sort((a, b) => b.open - a.open);
     if (!rows.length) { $("journal-table").innerHTML = '<tbody><tr><td class="muted">No trades on this account yet. They show up here as soon as you place them.</td></tr></tbody>'; return; }
     const cur = state.account && state.account.currency;
-    $("journal-table").innerHTML = "<thead><tr><th>Opened (PT)</th><th>Pair</th><th>Side</th><th>Grade</th><th>Pattern</th><th>Plan entry</th><th>Fill</th><th>Slip</th><th>Exit</th><th>Result</th><th>R</th><th>P/L</th><th>Plan</th><th>Flags</th></tr></thead><tbody>" +
+    $("journal-table").innerHTML = "<thead><tr><th>Opened (PT)</th><th>Pair</th><th>Side</th><th>Grade</th><th>Pattern</th><th>Plan entry</th><th>Fill</th><th>Slip</th><th>Exit</th><th>Result</th><th>R</th><th>P/L</th><th>Plan</th><th>ORB</th><th>Flags</th></tr></thead><tbody>" +
       rows.map(x => {
         const p = pt(x.open);
         const res = x.isOpen ? '<span class="chip be">Open</span>' : x.pl > 0 ? '<span class="chip won">Won</span>' : x.pl < 0 ? '<span class="chip lost">Lost</span>' : '<span class="chip be">BE</span>';
-        const plan = x.match ? (x.onPlan ? '<span class="chip on">On plan</span>' : '<span class="chip offp">' + (x.match.grade === "C" ? "C grade" : "Below 1:" + S.rr) + "</span>") : '<span class="chip offp">Unplanned</span>';
+        const ox = orbExec(x.raw), orb = !ox || ox.none ? "—" : ox.pending ? "…" : '<span class="chip on" title="' + esc(ox.issues.join("; ") || "Followed the signal") + '">T' + ox.n + " · " + ox.grade + "</span>";
+        const orbHit = ox && !ox.none && !ox.pending;
+        const plan = !x.match && orbHit ? '<span class="chip on">ORB</span>' : x.match ? (x.onPlan ? '<span class="chip on">On plan</span>' : '<span class="chip offp">' + (x.match.grade === "C" ? "C grade" : "Below 1:" + S.rr) + "</span>") : '<span class="chip offp">Unplanned</span>';
         const flags = [x.slMoved ? "SL moved" : "", x.manualExit && !x.isOpen ? "Manual exit" : ""].filter(Boolean).join(", ");
         return '<tr><td class="mono">' + p.date.slice(5) + " " + fmtHM(p.mins) + "</td><td><b>" + pairName(x.pair) + '</b></td><td><span class="dir ' + x.dir + '">' + x.dir + "</span></td><td>" + (x.match ? x.match.grade : "—") + "</td><td>" + esc(x.match ? PATTERN_NAMES[x.match.s.pattern] || x.match.s.pattern : "—") + "</td>" +
-          '<td class="num mono">' + (x.match ? fx(x.pair, x.match.entry) : "—") + '</td><td class="num mono">' + fx(x.pair, x.entry) + '</td><td class="num mono ' + (x.slip > 0.5 ? "warn" : "") + '">' + (x.slip == null ? "—" : signed(x.slip, 1)) + '</td><td class="num mono">' + (x.exit == null ? "—" : fx(x.pair, x.exit)) + "</td><td>" + res + '</td><td class="num mono">' + (x.r == null ? "—" : signed(x.r, 2)) + '</td><td class="num mono ' + (x.pl > 0 ? "up" : x.pl < 0 ? "down" : "") + '">' + (x.isOpen ? "—" : money(x.pl, cur)) + "</td><td>" + plan + '</td><td class="muted">' + esc(flags || "—") + "</td></tr>";
+          '<td class="num mono">' + (x.match ? fx(x.pair, x.match.entry) : "—") + '</td><td class="num mono">' + fx(x.pair, x.entry) + '</td><td class="num mono ' + (x.slip > 0.5 ? "warn" : "") + '">' + (x.slip == null ? "—" : signed(x.slip, 1)) + '</td><td class="num mono">' + (x.exit == null ? "—" : fx(x.pair, x.exit)) + "</td><td>" + res + '</td><td class="num mono">' + (x.r == null ? "—" : signed(x.r, 2)) + '</td><td class="num mono ' + (x.pl > 0 ? "up" : x.pl < 0 ? "down" : "") + '">' + (x.isOpen ? "—" : money(x.pl, cur)) + "</td><td>" + plan + "</td><td>" + orb + '</td><td class="muted">' + esc(flags || "—") + "</td></tr>";
       }).join("") + "</tbody>";
   }
 
@@ -1192,7 +1279,7 @@
 
   // Each section renders on its own, so one bad day file can't take down the page or the OANDA connection.
   function renderAll() {
-    for (const fn of [renderPlan, renderOrb, renderTiles, renderStrength, renderCalc, renderJournal, renderAnalytics, renderPatterns, renderReviewSelect, renderReview]) {
+    for (const fn of [renderPlan, renderOrb, renderOrbExec, renderTiles, renderStrength, renderCalc, renderJournal, renderAnalytics, renderPatterns, renderReviewSelect, renderReview]) {
       try { fn(); } catch (e) { console.error(fn.name + " failed:", e); }
     }
   }

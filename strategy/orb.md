@@ -24,6 +24,14 @@ A separate, fully automatic strategy that runs on the dashboard's **Opening Rang
 - **Outcome:** after each signal, the card tracks whether the stop or target was touched first. A candle that touches both counts as the stop.
 - **Reset:** everything is recomputed from that day's candles, so it starts fresh at each day's 6:30am PT open. It's off on weekends.
 
+## Grading your trades
+The **Journal** tab grades your OANDA live trades from the last 30 days against the Opening Range, in your browser (your token never leaves it).
+- **Match:** same pair and direction as that day's trade 1 or trade 2 signal, opened after the breakout candle closed, with the fill within the trade-matching tolerance in Settings (10 pips by default).
+- **A:** followed the signal. Fill within 2 pips of the signal's entry, entered within 15 minutes, stop and target at the signal's levels (within 2 pips), and closed at the stop or target.
+- **B:** one minor deviation: slippage over 2 pips, a late entry, a different target, or closing by hand.
+- **C:** no stop loss, a stop more than 2 pips from the signal's stop, or two or more deviations.
+- **R** is measured against the signal's risk (entry to stop), so a loss taken by the rules is −1R and can still be an A.
+
 ## What it doesn't do
 - It doesn't place trades. Signals only.
 - It doesn't apply the news filter or the daily loss limit. Check those yourself before acting on a signal.
