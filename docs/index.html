@@ -314,6 +314,11 @@
     <section class="tab" id="tab-journal" hidden>
       <div class="tab-head"><h1>Journal</h1><p>Your OANDA live trades, matched to your plans</p></div>
       <div id="journal-notice"></div>
+      <div class="panel" id="copy-panel">
+        <h2>Send to the daily review <span>copies the day's trades and grades as text, without dollar amounts or position sizes</span></h2>
+        <div class="toolbar" style="margin:0"><select id="copy-day" aria-label="Day" style="width:auto"></select><button type="button" id="copy-review">Copy trades for review</button><span id="copy-msg" class="muted"></span></div>
+        <textarea id="copy-fallback" readonly hidden rows="8" style="width:100%;margin-top:12px;font:12px var(--mono);background:var(--panel-2);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:10px"></textarea>
+      </div>
       <div class="panel" id="orb-exec-panel"><h2>Opening Range execution <span>your trades matched to the ORB signal they came from, graded A/B/C</span></h2><div class="scroll" id="orb-exec"></div></div>
       <div class="panel"><div class="scroll"><table class="data" id="journal-table"></table></div></div>
     </section>
@@ -906,6 +911,59 @@
       }).join("") + "</tbody></table>";
   }
 
+  // ---------- "Copy trades for review" ----------
+  // Plain text for Claude's daily review: R and pips only, no dollar amounts, balances or units (the review is public).
+  function tradeDays() {
+    const since = Date.now() - 30 * 864e5;
+    return [...new Set(state.closed.concat(state.open).filter(t => new Date(t.openTime).getTime() >= since).map(t => pt(new Date(t.openTime)).date))].sort().reverse();
+  }
+  function renderCopyDays() {
+    const sel = $("copy-day"), keep = sel.value, days = tradeDays();
+    $("copy-panel").hidden = !state.connected;
+    sel.innerHTML = days.length ? days.map(d => '<option value="' + d + '">' + esc(longDate(d)) + "</option>").join("") : '<option value="">No trades in the last 30 days</option>';
+    if (keep && days.includes(keep)) sel.value = keep;
+  }
+  function reviewText(day) {
+    const trades = state.closed.concat(state.open).filter(t => pt(new Date(t.openTime)).date === day).sort((a, b) => new Date(a.openTime) - new Date(b.openTime));
+    const lines = ["TruLux trades for review: " + day + " (PT)", "Please add these to that day's daily review (docs/data/days/" + day + ".json, review.trades).", ""];
+    let net = 0, closedN = 0, noR = 0;
+    trades.forEach((t, i) => {
+      const x = tradeInfo(t), ox = orbExec(t), p = t.instrument, pip = pipOf(p), sign = x.dir === "long" ? 1 : -1;
+      const slO = t.stopLossOrder && t.stopLossOrder.price != null ? +t.stopLossOrder.price : null;
+      const tpO = t.takeProfitOrder && t.takeProfitOrder.price != null ? +t.takeProfitOrder.price : null;
+      const r = ox && ox.signal ? ox.r : x.r;
+      if (x.exit != null) { closedN++; if (r != null) net += r; else noR++; }
+      lines.push((i + 1) + ". " + fmtHM(pt(x.open).mins) + " PT · " + pairName(p) + " " + (x.dir === "long" ? "BUY" : "SELL") + " · fill " + fx(p, x.entry) +
+        " · SL " + (slO != null ? fx(p, slO) : (t.stopLossOrderID ? "set" : "none")) + " · TP " + (tpO != null ? fx(p, tpO) : "none") +
+        " · " + (x.exit != null ? "closed " + fx(p, x.exit) + " (" + signed((x.exit - x.entry) * sign / pip, 1) + " pips" + (r != null ? ", " + signed(r, 2) + "R" : "") + ")" : "still open"));
+      if (ox && ox.signal) lines.push("   From: Opening Range trade " + ox.n + " · signal " + ox.signal.dir.toUpperCase() + " " + fx(p, ox.signal.entry) + ", SL " + fx(p, ox.signal.sl) + ", TP " + fx(p, ox.signal.tp) + " · execution grade " + ox.grade + " · " + (ox.issues.length ? ox.issues.join("; ") : "followed the signal"));
+      else if (x.match) lines.push("   From: plan setup " + x.match.s.id + " (grade " + x.match.grade + ", " + (PATTERN_NAMES[x.match.s.pattern] || x.match.s.pattern) + ") · slip " + signed(x.slip, 1) + " pips" + (x.slMoved ? " · stop moved" : "") + (x.manualExit && x.exit != null ? " · closed by hand" : ""));
+      else lines.push("   From: not from the plan or an Opening Range signal");
+    });
+    if (!trades.length) lines.push("No trades this day.");
+    lines.push("", "Day: " + trades.length + " trade" + (trades.length === 1 ? "" : "s") + ", " + closedN + " closed, net " + signed(net, 2) + "R" + (noR ? " (" + noR + " closed trade" + (noR === 1 ? "" : "s") + " with no stop, so no R)" : ""));
+    // Opening Range signals that day, for context (all pairs today; only traded pairs on past days).
+    const pairs = day === et(new Date()).date ? MAJORS : [...new Set(trades.map(t => t.instrument))].filter(p => MAJORS.includes(p));
+    const sig = pairs.map(p => {
+      const cs = orbCandlesFor(p, day);
+      if (!cs) return null;
+      const o = computeOrb(p, cs, day), ts = o.trades.filter(t => t.signal);
+      return pairName(p) + ": " + (ts.length ? ts.map(t => "T" + t.n + " " + t.signal.dir.toUpperCase() + " " + fx(p, t.signal.entry) + " (" + (t.outcome ? t.outcome.text : "open") + ")").join(", ") : o.status);
+    }).filter(Boolean);
+    if (sig.length) lines.push("Opening Range signals: " + sig.join(" · "));
+    return lines.join("\n");
+  }
+  $("copy-review").addEventListener("click", () => {
+    const day = $("copy-day").value;
+    if (!day) return;
+    const text = reviewText(day), box = $("copy-fallback");
+    box.value = text;
+    const fallback = () => { box.hidden = false; box.focus(); box.select(); $("copy-msg").textContent = "Couldn't copy automatically. The text is selected below: copy it, then paste it to Claude."; };
+    try {
+      navigator.clipboard.writeText(text).then(() => { box.hidden = true; $("copy-msg").textContent = "Copied. Paste it to Claude (for example, in the daily review session)."; }, fallback);
+    } catch (e) { fallback(); }
+  });
+
   function renderOrb() {
     $("orb-sub").textContent = longDate(pt(new Date()).date) + " · " + ptClock(Date.now() / 1000) + " · range from the 6:30am PT candle";
     const live = orbTradingDay() && state.connected;
@@ -1204,6 +1262,11 @@
         asList(rv.planVsOutcome).map(o => { const s = byId[o.setupId]; return "<tr><td><b>" + esc(s ? pairName(s.pair) + " " + s.direction : o.setupId) + "</b></td><td>" + esc(o.result) + '</td><td class="mono ' + (o.r > 0 ? "up" : o.r < 0 ? "down" : "muted") + '">' + (o.r == null ? "—" : signed(o.r, 1)) + "</td></tr>"; }).join("") + "</tbody></table></div></div>" +
         '<div class="grid-even"><div class="panel review-block"><h3>Mistakes</h3><ul class="plain">' + asList(rv.mistakes).map(x => "<li>" + esc(x) + "</li>").join("") + '</ul></div><div class="panel review-block"><h3>Lessons</h3><ul class="plain">' + asList(rv.lessons).map(x => "<li>" + esc(x) + "</li>").join("") + "</ul></div></div>" +
         '<div class="panel review-block"><h3>Grading audit</h3><p style="margin:0">' + esc(rv.gradingAudit || "") + "</p></div>";
+      // Trades you took, added when you send them from the Journal.
+      const took = asList(rv.trades);
+      html += '<div class="panel review-block"><h3>Trades you took</h3>' + (took.length ? '<div class="scroll"><table class="cal"><thead><tr><th>Time</th><th>Trade</th><th>From</th><th>Grade</th><th>R</th><th>Review</th></tr></thead><tbody>' +
+        took.map(t => '<tr><td class="mono">' + esc(t.time || "") + "</td><td><b>" + esc(t.trade || "") + "</b></td><td>" + esc(t.source || "") + "</td><td>" + esc(t.grade || "—") + '</td><td class="mono ' + (t.r > 0 ? "up" : t.r < 0 ? "down" : "muted") + '">' + (t.r == null ? "—" : signed(+t.r, 2)) + "</td><td>" + esc(t.note || "") + "</td></tr>").join("") + "</tbody></table></div>"
+        : '<p class="muted" style="margin:0">None sent yet. Use "Copy trades for review" on the Journal tab and paste it to Claude.</p>') + "</div>";
     }
     $("review").innerHTML = html;
   }
@@ -1279,7 +1342,7 @@
 
   // Each section renders on its own, so one bad day file can't take down the page or the OANDA connection.
   function renderAll() {
-    for (const fn of [renderPlan, renderOrb, renderOrbExec, renderTiles, renderStrength, renderCalc, renderJournal, renderAnalytics, renderPatterns, renderReviewSelect, renderReview]) {
+    for (const fn of [renderPlan, renderOrb, renderOrbExec, renderCopyDays, renderTiles, renderStrength, renderCalc, renderJournal, renderAnalytics, renderPatterns, renderReviewSelect, renderReview]) {
       try { fn(); } catch (e) { console.error(fn.name + " failed:", e); }
     }
   }
