@@ -27,5 +27,19 @@
     "07:00 USD Revised UoM Consumer Sentiment: blocks EUR_USD, GBP_USD, USD_JPY, USD_CHF, AUD_USD, USD_CAD, NZD_USD until released"
   ],
   "watchFor": [],
-  "review": null
+  "review": {
+    "writtenAt": "2026-11-20T14:20:00-08:00",
+    "planVsOutcome": [],
+    "mistakes": [
+      "None. It was a calendar-only day with no chart, levels, setups or watchlist, so there was nothing to break.",
+      "This review covers price action from web reports, not OANDA fills. No trades have been pasted from the Journal yet, so review.trades is left empty.",
+      "Price data was too thin to judge any break and retest. Web sources only gave snapshot quotes (EUR/USD about 1.097, GBP/USD about 1.310, USD/JPY about 159.1 in the London morning) and no M5/M15 candles, so it can't be said whether any pair produced an A or B setup after the 07:00 release."
+    ],
+    "lessons": [
+      "Repeat: Standing aside without a chart was the right call. With no marked levels there is nothing to grade a break and retest against, and both news blocks (05:30 CAD Retail Sales, 07:00 USD UoM Sentiment) covered the start of the window for every USD pair.",
+      "Improve tomorrow: The dollar is near a 19-month high (DXY about 103.8) going into the weekend, with EUR/USD near its lowest since April 2025 and GBP/USD near a one-year low. On Monday, mark those lows plus the Friday highs and lows as H1 levels, and post a chart so the plan has levels to grade. Canada's September retail sales beat (+0.8%), but the October flash was -1.5%, so watch USD/CAD around its recent range.",
+      "Most profit: No plan setups or pasted trades today, so there is no R to compare. The edge on a calendar-only day comes from the Opening Range signals taken after the news blocks clear, at the signal's price, stop and target."
+    ],
+    "gradingAudit": "No setups were graded today because there was no chart, so there is nothing to audit. Standing aside fits the rules: no levels means no break and retest can be scored."
+  }
 }
