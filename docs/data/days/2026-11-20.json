@@ -1,0 +1,31 @@
+{
+  "date": "2026-11-20",
+  "updatedAt": "2026-11-20T05:05:00-08:00",
+  "verdict": {
+    "headline": "Calendar only",
+    "reason": "No chart today. The calendar below drives the news filter; use the Opening Range tab for today's signals."
+  },
+  "calendar": [
+    {
+      "time": "05:30",
+      "currency": "CAD",
+      "event": "Retail Sales m/m (Sep)",
+      "impact": "high"
+    },
+    {
+      "time": "07:00",
+      "currency": "USD",
+      "event": "Revised UoM Consumer Sentiment (Nov) (impact varies by source)",
+      "impact": "high"
+    }
+  ],
+  "levels": [],
+  "setups": [],
+  "watchlist": [],
+  "newsBlocks": [
+    "05:30 CAD Retail Sales: blocks USD_CAD, EUR_CAD, GBP_CAD, AUD_CAD, NZD_CAD, CAD_JPY, CAD_CHF until released",
+    "07:00 USD Revised UoM Consumer Sentiment: blocks EUR_USD, GBP_USD, USD_JPY, USD_CHF, AUD_USD, USD_CAD, NZD_USD until released"
+  ],
+  "watchFor": [],
+  "review": null
+}
