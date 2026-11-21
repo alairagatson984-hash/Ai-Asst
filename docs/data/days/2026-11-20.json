@@ -31,15 +31,67 @@
     "writtenAt": "2026-11-20T14:20:00-08:00",
     "planVsOutcome": [],
     "mistakes": [
-      "None. It was a calendar-only day with no chart, levels, setups or watchlist, so there was nothing to break.",
-      "This review covers price action from web reports, not OANDA fills. No trades have been pasted from the Journal yet, so review.trades is left empty.",
-      "Price data was too thin to judge any break and retest. Web sources only gave snapshot quotes (EUR/USD about 1.097, GBP/USD about 1.310, USD/JPY about 159.1 in the London morning) and no M5/M15 candles, so it can't be said whether any pair produced an A or B setup after the 07:00 release."
+      "No plan setups today (calendar only), so this review covers the pasted Opening Range trades and web price reports, not OANDA fills.",
+      "News filter broken: all five T1 trades (6:40–6:47am) were USD pairs entered before the 07:00 USD UoM Consumer Sentiment release, which blocked every USD pair. All five stopped out (−5.06R).",
+      "AUD/USD T2 had no take profit and was closed by hand, and its stop was 5 pips tighter than the signal's. It finished well (+2.96R), but that isn't set and forget.",
+      "Daily loss limit: the five T1 losses add up to −5.06R. At 2% per R that is about −10%, well past the −4% limit. Close times aren't in the block, so it can't be told whether the 7:14am AUD/USD T2 entry came after the limit was hit.",
+      "Two T2 signals that hit +2R targets after the news were missed (USD/CAD and NZD/USD)."
     ],
     "lessons": [
-      "Repeat: Standing aside without a chart was the right call. With no marked levels there is nothing to grade a break and retest against, and both news blocks (05:30 CAD Retail Sales, 07:00 USD UoM Sentiment) covered the start of the window for every USD pair.",
-      "Improve tomorrow: The dollar is near a 19-month high (DXY about 103.8) going into the weekend, with EUR/USD near its lowest since April 2025 and GBP/USD near a one-year low. On Monday, mark those lows plus the Friday highs and lows as H1 levels, and post a chart so the plan has levels to grade. Canada's September retail sales beat (+0.8%), but the October flash was -1.5%, so watch USD/CAD around its recent range.",
-      "Most profit: No plan setups or pasted trades today, so there is no R to compare. The edge on a calendar-only day comes from the Opening Range signals taken after the news blocks clear, at the signal's price, stop and target."
+      "Repeat: Execution on the T1 signals was clean: signal price, signal stop and target, and each loss held to about −1R. Taking AUD/USD T2 once the news cleared was the right signal.",
+      "Improve tomorrow: Check the news blocks before the first entry. When a red-folder USD event is at 07:00, skip T1 on USD pairs and wait for T2 after the release. Give every trade the signal's stop and target, and stop for the day at −2R closed (−4%).",
+      "Most profit: T2 paid and T1 didn't. All 7 T1 signals stopped (−7R) while T2 hit 3 targets (AUD/USD, USD/CAD, NZD/USD +2R each), stopped 2 (USD/JPY, USD/CHF) and 2 were still open, for +4R so far. Skipping the T1 trades inside the news block and taking the three T2 winners at their targets would have made about +6R instead of −2.10R."
     ],
-    "gradingAudit": "No setups were graded today because there was no chart, so there is nothing to audit. Standing aside fits the rules: no levels means no break and retest can be scored."
+    "gradingAudit": "No plan setups to audit today. Execution: 5 A, 0 B, 1 C across 6 trades, all closed, net −2.10R. The A grades are fair for following the signals, but they don't capture the news-filter break: all five A trades were entered before the 07:00 USD release. The one C trade was the only winner (+2.96R).",
+    "trades": [
+      {
+        "time": "6:40am PT",
+        "trade": "EUR/USD SELL",
+        "source": "Opening Range T1",
+        "grade": "A",
+        "r": -0.98,
+        "note": "Taken at the signal with the signal's stop and target, and stopped out as planned. A clean loss, but entered 20 minutes before the 07:00 USD news block cleared."
+      },
+      {
+        "time": "6:40am PT",
+        "trade": "GBP/USD SELL",
+        "source": "Opening Range T1",
+        "grade": "A",
+        "r": -1.0,
+        "note": "Taken at the signal and stopped out for a clean −1R. Entered inside the 07:00 USD news block."
+      },
+      {
+        "time": "6:45am PT",
+        "trade": "AUD/USD SELL",
+        "source": "Opening Range T1",
+        "grade": "A",
+        "r": -1.09,
+        "note": "Filled 0.6 pips better than the signal and stopped for −1.09R. Entered inside the 07:00 USD news block."
+      },
+      {
+        "time": "6:45am PT",
+        "trade": "USD/CAD BUY",
+        "source": "Opening Range T1",
+        "grade": "A",
+        "r": -0.97,
+        "note": "Taken at the signal and stopped for a clean −1R. Entered inside the 07:00 USD news block."
+      },
+      {
+        "time": "6:47am PT",
+        "trade": "NZD/USD SELL",
+        "source": "Opening Range T1",
+        "grade": "A",
+        "r": -1.02,
+        "note": "Taken at the signal and stopped for −1R. Entered inside the 07:00 USD news block."
+      },
+      {
+        "time": "7:14am PT",
+        "trade": "AUD/USD SELL",
+        "source": "Opening Range T2",
+        "grade": "C",
+        "r": 2.96,
+        "note": "Right call after the news cleared and it made +2.96R, but the stop was 5 pips tighter than the signal's, there was no target, and it was closed by hand."
+      }
+    ]
   }
 }
