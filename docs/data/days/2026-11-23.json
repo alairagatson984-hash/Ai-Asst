@@ -1,0 +1,25 @@
+{
+  "date": "2026-11-23",
+  "updatedAt": "2026-11-23T05:05:00-08:00",
+  "verdict": {
+    "headline": "Calendar only",
+    "reason": "No chart today. The calendar below drives the news filter; use the Opening Range tab for today's signals."
+  },
+  "calendar": [
+    { "time": "00:30", "currency": "EUR", "event": "German Flash Manufacturing & Services PMI (Nov) (time unconfirmed)", "impact": "high" },
+    { "time": "01:00", "currency": "EUR", "event": "Eurozone Flash Manufacturing & Services PMI (Nov) (impact varies by source)", "impact": "high" },
+    { "time": "01:30", "currency": "GBP", "event": "UK Flash Manufacturing & Services PMI (Nov)", "impact": "high" },
+    { "time": "06:45", "currency": "USD", "event": "US Flash Manufacturing & Services PMI (Nov)", "impact": "high" }
+  ],
+  "levels": [],
+  "setups": [],
+  "watchlist": [],
+  "newsBlocks": [
+    "00:30 EUR German Flash PMIs: blocks EUR_USD, EUR_GBP, EUR_JPY, EUR_CHF, EUR_AUD, EUR_CAD, EUR_NZD until released",
+    "01:00 EUR Eurozone Flash PMIs: blocks EUR_USD, EUR_GBP, EUR_JPY, EUR_CHF, EUR_AUD, EUR_CAD, EUR_NZD until released",
+    "01:30 GBP UK Flash PMIs: blocks GBP_USD, EUR_GBP, GBP_JPY, GBP_CHF, GBP_AUD, GBP_CAD, GBP_NZD until released",
+    "06:45 USD US Flash PMIs: blocks EUR_USD, GBP_USD, USD_JPY, USD_CHF, AUD_USD, USD_CAD, NZD_USD until released"
+  ],
+  "watchFor": [],
+  "review": null
+}
