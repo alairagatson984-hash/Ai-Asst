@@ -6,10 +6,30 @@
     "reason": "No chart today. The calendar below drives the news filter; use the Opening Range tab for today's signals."
   },
   "calendar": [
-    { "time": "00:30", "currency": "EUR", "event": "German Flash Manufacturing & Services PMI (Nov) (time unconfirmed)", "impact": "high" },
-    { "time": "01:00", "currency": "EUR", "event": "Eurozone Flash Manufacturing & Services PMI (Nov) (impact varies by source)", "impact": "high" },
-    { "time": "01:30", "currency": "GBP", "event": "UK Flash Manufacturing & Services PMI (Nov)", "impact": "high" },
-    { "time": "06:45", "currency": "USD", "event": "US Flash Manufacturing & Services PMI (Nov)", "impact": "high" }
+    {
+      "time": "00:30",
+      "currency": "EUR",
+      "event": "German Flash Manufacturing & Services PMI (Nov) (time unconfirmed)",
+      "impact": "high"
+    },
+    {
+      "time": "01:00",
+      "currency": "EUR",
+      "event": "Eurozone Flash Manufacturing & Services PMI (Nov) (impact varies by source)",
+      "impact": "high"
+    },
+    {
+      "time": "01:30",
+      "currency": "GBP",
+      "event": "UK Flash Manufacturing & Services PMI (Nov)",
+      "impact": "high"
+    },
+    {
+      "time": "06:45",
+      "currency": "USD",
+      "event": "US Flash Manufacturing & Services PMI (Nov)",
+      "impact": "high"
+    }
   ],
   "levels": [],
   "setups": [],
@@ -21,5 +41,18 @@
     "06:45 USD US Flash PMIs: blocks EUR_USD, GBP_USD, USD_JPY, USD_CHF, AUD_USD, USD_CAD, NZD_USD until released"
   ],
   "watchFor": [],
-  "review": null
+  "review": {
+    "writtenAt": "2026-11-23T14:20:00-08:00",
+    "planVsOutcome": [],
+    "mistakes": [
+      "None. Today's plan was calendar only: no chart, no levels, no setups and no watchlist. So there was nothing to break by the rules.",
+      "This review covers price action from web sources, not OANDA fills. The sandbox can't reach OANDA, and no trades have been pasted from the Journal yet. Web coverage of today's moves after the PMIs was too thin to say whether any major broke and retested a level, so no hindsight setups are graded."
+    ],
+    "lessons": [
+      "Repeat: The news filter was set up correctly before the window. All four red-folder flash PMI releases (EUR 00:30 and 01:00, GBP 01:30, USD 06:45) were logged with their pair blocks, and the 06:45 USD block covered all 7 majors at the start of the window.",
+      "Improve tomorrow: Calendar-only days leave the review with no levels to check. Even without a chart, log the Asian range (4–11pm PT) and the prior-day high and low for the 7 majors, so a stand-aside day can still be checked against real levels. Don't take any Opening Range entry on USD pairs before a 06:45 USD release, which was the costly mistake on 11-20.",
+      "Most profit: With no plan setups, any profit today came from the Opening Range tab. Going by 11-20, the T2 signals after the news cleared paid best, and T1 entries inside a news block lost. Waiting until after 06:45 for USD pairs was the setup most likely to pay today."
+    ],
+    "gradingAudit": "No setups were graded today, so there are no A, B or C grades to audit. Standing aside on the plan was the right call: with no chart there was no evidence to grade a break and retest, and a USD red-folder release fell 15 minutes into the window. If trades were taken from the Opening Range tab, paste them in and the execution audit will be added."
+  }
 }
