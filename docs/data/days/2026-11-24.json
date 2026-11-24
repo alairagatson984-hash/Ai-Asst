@@ -41,5 +41,18 @@
     "16:30 AUD CPI: blocks AUD_USD, EUR_AUD, GBP_AUD, AUD_JPY, AUD_CHF, AUD_CAD, AUD_NZD until released"
   ],
   "watchFor": [],
-  "review": null
+  "review": {
+    "writtenAt": "2026-11-24T14:20:00-08:00",
+    "planVsOutcome": [],
+    "mistakes": [
+      "None. Today's plan was calendar only: no chart, no levels, no setups and no watchlist, so there was nothing to break by the rules.",
+      "This review covers price action from web sources, not OANDA fills. The sandbox can't reach OANDA, and no trades have been pasted from the Journal yet. Web coverage gave the news outcome but not intraday M5/M15 price action on the majors, so no hindsight break-and-retest is graded."
+    ],
+    "lessons": [
+      "Repeat: The news filter was set up before the window. All four red-folder events (EUR Ifo 01:00, USD ADP weekly 05:15, USD Consumer Confidence 07:00, AUD CPI 16:30) were logged with their pair blocks, and the 07:00 USD block covered all 7 majors for the first hour of the window. Consumer Confidence came in far above forecast (103.3 vs about 92.2 expected, up from 91.9), the kind of surprise that whipsaws USD pairs, so staying out until it cleared was right.",
+      "Improve tomorrow: This is the second calendar-only day in a row, and again the review had no levels to check. Log the Asian range (4-11pm PT) and the prior-day high and low for the 7 majors in the plan, even with no chart. AUD CPI lands at 16:30 tonight, inside tomorrow's Asian range window, so expect a wide AUD/USD and NZD/USD Asian range and treat its edges as tomorrow's key levels.",
+      "Most profit: With no plan setups, any profit today came from the Opening Range tab. Going by recent days, signals taken after the news cleared (here after 07:00 PT for USD pairs) paid best, and entries inside a news block lost. One source reported the dollar index lost ground and broke below 104.00 later in the session despite the strong data, which is unconfirmed, but it shows the first reaction to a beat can reverse, so waiting for a clean retest beats chasing the release candle."
+    ],
+    "gradingAudit": "No setups were graded today, so there are no A, B or C grades to audit. Standing aside on the plan was the right call: with no chart there was no evidence to grade a break and retest, and a USD red-folder release fell an hour into the window. If trades were taken from the Opening Range tab, paste them in and the execution audit will be added."
+  }
 }
