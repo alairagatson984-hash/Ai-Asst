@@ -1,0 +1,45 @@
+{
+  "date": "2026-11-24",
+  "updatedAt": "2026-11-24T05:05:00-08:00",
+  "verdict": {
+    "headline": "Calendar only",
+    "reason": "No chart today. The calendar below drives the news filter; use the Opening Range tab for today's signals."
+  },
+  "calendar": [
+    {
+      "time": "01:00",
+      "currency": "EUR",
+      "event": "German Ifo Business Climate (Nov) (time unconfirmed: 01:00 or 01:30 PT; impact varies by source)",
+      "impact": "high"
+    },
+    {
+      "time": "05:15",
+      "currency": "USD",
+      "event": "ADP Weekly Employment Change (time unconfirmed; impact varies by source)",
+      "impact": "high"
+    },
+    {
+      "time": "07:00",
+      "currency": "USD",
+      "event": "CB Consumer Confidence (Nov)",
+      "impact": "high"
+    },
+    {
+      "time": "16:30",
+      "currency": "AUD",
+      "event": "Australia Monthly CPI (Oct)",
+      "impact": "high"
+    }
+  ],
+  "levels": [],
+  "setups": [],
+  "watchlist": [],
+  "newsBlocks": [
+    "01:00 EUR German Ifo: blocks EUR_USD, EUR_GBP, EUR_JPY, EUR_CHF, EUR_AUD, EUR_CAD, EUR_NZD until released",
+    "05:15 USD ADP weekly: blocks EUR_USD, GBP_USD, USD_JPY, USD_CHF, AUD_USD, USD_CAD, NZD_USD until released",
+    "07:00 USD Consumer Confidence: blocks EUR_USD, GBP_USD, USD_JPY, USD_CHF, AUD_USD, USD_CAD, NZD_USD until released",
+    "16:30 AUD CPI: blocks AUD_USD, EUR_AUD, GBP_AUD, AUD_JPY, AUD_CHF, AUD_CAD, AUD_NZD until released"
+  ],
+  "watchFor": [],
+  "review": null
+}
