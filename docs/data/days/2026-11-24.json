@@ -1,9 +1,9 @@
 {
   "date": "2026-11-24",
-  "updatedAt": "2026-11-24T05:05:00-08:00",
+  "updatedAt": "2026-11-24T09:05:54-08:00",
   "verdict": {
-    "headline": "Calendar only",
-    "reason": "No chart today. The calendar below drives the news filter; use the Opening Range tab for today's signals."
+    "headline": "No trade today",
+    "reason": "Called no trade for the day. Red-folder news is in the calendar below (Ifo, ADP weekly, Consumer Confidence, AUD CPI)."
   },
   "calendar": [
     {
