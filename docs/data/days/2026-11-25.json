@@ -52,5 +52,18 @@
     "07:00 USD New Home Sales: blocks EUR_USD, GBP_USD, USD_JPY, USD_CHF, AUD_USD, USD_CAD, NZD_USD until released"
   ],
   "watchFor": [],
-  "review": null
+  "review": {
+    "writtenAt": "2026-11-25T14:20:00-08:00",
+    "planVsOutcome": [],
+    "mistakes": [
+      "None. Today's plan was calendar only: no chart, no levels, no setups and no watchlist, so there was nothing to break by the rules.",
+      "This review covers price action from web sources, not OANDA fills. The sandbox can't reach OANDA, and no trades have been pasted from the Journal yet. Web coverage gave the news outcome but not intraday M5/M15 price action on the majors, so no hindsight break-and-retest is graded."
+    ],
+    "lessons": [
+      "Repeat: All the red-folder events were logged with their pair blocks before the window. The 05:30 USD cluster (PCE, GDP, Durable Goods, Claims) and the 07:00 New Home Sales covered all 7 majors for the first hour. Core PCE came in hot (3.3% y/y vs 3.2% expected, up from 3.1%) and headline matched at 3.8%. Stocks and gold fell, but the dollar index was only slightly weaker and stalled near the 104.65 Fibonacci level, so there was no clean directional break to chase. Standing aside was right.",
+      "Improve tomorrow: This is the third calendar-only day in a row with no levels for the review to check. Log the Asian range (4-11pm PT) and the prior-day high and low for the 7 majors, even without a chart. Tomorrow (Thu 26 Nov) is US Thanksgiving: US markets are closed and liquidity will be thin, so expect few valid breaks and treat any USD-pair move with extra suspicion. Friday is a half-session.",
+      "Most profit: With no plan setups, any profit today came from the Opening Range tab. Going by recent days, signals taken after the news cleared (after 07:00 PT for USD pairs) paid best. Today's muted dollar reaction to a hot core PCE suggests skipping weak or choppy signals beat forcing trades on the release."
+    ],
+    "gradingAudit": "No setups were graded today, so there are no A, B or C grades to audit. Standing aside on the plan was the right call: there was no chart and so no evidence to grade a break and retest, USD red-folder releases covered the first hour of the window, and the dollar's post-data move was small and indecisive by the available reports. If trades were taken from the Opening Range tab, paste them in and the execution audit will be added."
+  }
 }
