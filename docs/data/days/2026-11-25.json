@@ -1,0 +1,56 @@
+{
+  "date": "2026-11-25",
+  "updatedAt": "2026-11-25T04:56:10-08:00",
+  "verdict": {
+    "headline": "Calendar only",
+    "reason": "No chart today. The calendar below drives the news filter; use the Opening Range tab for today's signals."
+  },
+  "calendar": [
+    {
+      "time": "05:30",
+      "currency": "USD",
+      "event": "Core PCE Price Index / Personal Income & Spending (Oct)",
+      "impact": "high"
+    },
+    {
+      "time": "05:30",
+      "currency": "USD",
+      "event": "GDP Q3 (Second Estimate)",
+      "impact": "high"
+    },
+    {
+      "time": "05:30",
+      "currency": "USD",
+      "event": "Durable Goods Orders (Oct)",
+      "impact": "high"
+    },
+    {
+      "time": "05:30",
+      "currency": "USD",
+      "event": "Initial Jobless Claims (holiday-shifted; date unconfirmed)",
+      "impact": "high"
+    },
+    {
+      "time": "06:15",
+      "currency": "GBP",
+      "event": "BoE Governor Bailey Speaks (time and impact unconfirmed)",
+      "impact": "high"
+    },
+    {
+      "time": "07:00",
+      "currency": "USD",
+      "event": "New Home Sales (Oct) (impact varies by source)",
+      "impact": "high"
+    }
+  ],
+  "levels": [],
+  "setups": [],
+  "watchlist": [],
+  "newsBlocks": [
+    "05:30 USD PCE, GDP, Durable Goods, Jobless Claims: blocks EUR_USD, GBP_USD, USD_JPY, USD_CHF, AUD_USD, USD_CAD, NZD_USD until released",
+    "06:15 GBP BoE Bailey speech: blocks GBP_USD, EUR_GBP, GBP_JPY, GBP_CHF, GBP_AUD, GBP_CAD, GBP_NZD until it starts",
+    "07:00 USD New Home Sales: blocks EUR_USD, GBP_USD, USD_JPY, USD_CHF, AUD_USD, USD_CAD, NZD_USD until released"
+  ],
+  "watchFor": [],
+  "review": null
+}
