@@ -1,0 +1,17 @@
+{
+  "date": "2026-11-26",
+  "updatedAt": "2026-11-26T04:58:00-08:00",
+  "verdict": {
+    "headline": "Calendar only",
+    "reason": "No chart today. The calendar below drives the news filter; use the Opening Range tab for today's signals."
+  },
+  "calendar": [],
+  "levels": [],
+  "setups": [],
+  "watchlist": [],
+  "newsBlocks": [
+    "No red-folder events today (US Thanksgiving, US markets closed). No pairs are blocked; expect thin liquidity."
+  ],
+  "watchFor": [],
+  "review": null
+}
