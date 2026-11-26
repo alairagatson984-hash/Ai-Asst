@@ -13,5 +13,18 @@
     "No red-folder events today (US Thanksgiving, US markets closed). No pairs are blocked; expect thin liquidity."
   ],
   "watchFor": [],
-  "review": null
+  "review": {
+    "writtenAt": "2026-11-26T14:20:00-08:00",
+    "planVsOutcome": [],
+    "mistakes": [
+      "None. Today's plan was calendar only: no chart, no levels, no setups and no watchlist, so there was nothing to break by the rules.",
+      "This review is based on price action from web sources, not OANDA fills. The sandbox can't reach OANDA, and no trades have been pasted from the Journal yet. Web coverage described the session in general terms only. There was no intraday M5/M15 data for the majors, so no hindsight break and retest is graded."
+    ],
+    "lessons": [
+      "Repeat: The holiday was flagged before the window (US Thanksgiving, US markets closed, thin liquidity), with no red-folder events and no pairs blocked. Same-day reports had the majors range-bound. GBP/USD was flat near 1.3100-1.3110, USD/JPY hovered near 159.25 below the 160.00 intervention-risk zone, and the dollar index was roughly flat (+0.1%) just below this year's highs. Without US order flow, there was no clean directional break to trade. Standing aside was right.",
+      "Improve tomorrow: Friday 27 Nov is a US half-session after the holiday, so liquidity stays thin and false breaks are more likely. Demand strong displacement and clear follow-through before counting a break. Watch USD/JPY near 160.00 for intervention spikes; they can look like breaks but aren't valid S/R evidence. This is the fourth calendar-only day in a row: log the Asian range (4-11pm PT) and the prior-day high and low for the 7 majors so the review has levels to check.",
+      "Most profit: With no plan setups and a flat, holiday-thinned tape, the most profitable choice today was not trading (0R). Any Opening Range signals were taken in very low liquidity, so skipping weak or choppy ones would most likely have beaten forcing trades. Paste any trades from the Journal and this will be updated with real R."
+    ],
+    "gradingAudit": "No setups were graded today, so there are no A, B or C grades to audit. Standing aside on the plan was right. There was no chart, so there was no evidence to grade a break and retest. US markets were closed for Thanksgiving, and the available reports describe the majors as flat and range-bound in thin liquidity. If trades were taken from the Opening Range tab, paste them in and the execution audit will be added."
+  }
 }
