@@ -18,5 +18,18 @@
     "Tokyo CPI already came out yesterday at 15:30 PT (Thu), so it blocks nothing today. US half-day after Thanksgiving (bond and stock markets close early): thin liquidity, more false breaks."
   ],
   "watchFor": [],
-  "review": null
+  "review": {
+    "writtenAt": "2026-11-27T14:20:00-08:00",
+    "planVsOutcome": [],
+    "mistakes": [
+      "None. Today's plan was calendar only: no chart, no levels, no setups and no watchlist, so there was nothing to break by the rules.",
+      "This review covers price action from web sources, not OANDA fills. The sandbox can't reach OANDA, and no trades have been pasted from the Journal. Web coverage described the session in general terms only. There was no intraday M5/M15 data for the majors, so no hindsight break and retest is graded."
+    ],
+    "lessons": [
+      "Repeat: The thin US half-session after Thanksgiving was flagged before the window, and the unconfirmed EUR and USD releases were treated as blocks. Same-day reports had the dollar index flat near 103.70 for a second day. EUR/USD traded around 1.0970, range-bound below 1.1000, and USD/JPY drifted toward 159.00-159.20 below the 160.00 intervention zone. Nothing showed a clean, displaced break with follow-through, so standing aside was right.",
+      "Improve tomorrow: Monday 30 Nov brings back full liquidity after a holiday week. Watch EUR/USD at 1.1000 (resistance) and 1.0880-1.0920 (Monday's low and the bottom of the range), and USD/JPY at 159.00 and 160.00 (intervention risk; spikes there aren't valid S/R breaks). This is the fifth calendar-only day in a row. Log the Asian range (4-11pm PT) and the prior-day high and low for the 7 majors so the review has levels to check.",
+      "Most profit: With no plan setups and a thin, range-bound tape, the most profitable choice today was not trading (0R). Any Opening Range signals came in holiday-thin liquidity, where false breaks are more likely, so skipping weak ones would most likely have beaten forcing trades. Paste any trades from the Journal and this will be updated with real R."
+    ],
+    "gradingAudit": "No setups were graded today, so there are no A, B or C grades to audit. Standing aside on the plan was right: there was no chart, so there was no evidence to grade a break and retest. The reports describe the majors as flat and range-bound in a US half-session (DXY ~103.70, EUR/USD ~1.0970 below 1.1000, USD/JPY ~159). If trades were taken from the Opening Range tab, paste them in and the execution audit will be added."
+  }
 }
