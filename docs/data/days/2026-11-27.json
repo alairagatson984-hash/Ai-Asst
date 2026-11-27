@@ -1,0 +1,22 @@
+{
+  "date": "2026-11-27",
+  "updatedAt": "2026-11-27T05:02:00-08:00",
+  "verdict": {
+    "headline": "Calendar only",
+    "reason": "No chart today. The calendar below drives the news filter; use the Opening Range tab for today's signals."
+  },
+  "calendar": [
+    { "time": "02:00", "currency": "EUR", "event": "Eurozone flash CPI / unemployment (date, time and red-folder rating unconfirmed; only one calendar lists them for today)", "impact": "high" },
+    { "time": "05:30", "currency": "USD", "event": "Advance Goods Trade Balance (Oct) (red-folder rating unconfirmed; sources disagree)", "impact": "high" }
+  ],
+  "levels": [],
+  "setups": [],
+  "watchlist": [],
+  "newsBlocks": [
+    "02:00 PT EUR flash CPI / unemployment (unconfirmed): blocks EUR_USD, EUR_GBP, EUR_JPY, EUR_CHF, EUR_AUD, EUR_CAD, EUR_NZD before release, if it comes out today.",
+    "05:30 PT USD Goods Trade Balance (unconfirmed red folder): blocks EUR_USD, GBP_USD, USD_JPY, USD_CHF, AUD_USD, USD_CAD, NZD_USD before release.",
+    "Tokyo CPI already came out yesterday at 15:30 PT (Thu), so it blocks nothing today. US half-day after Thanksgiving (bond and stock markets close early): thin liquidity, more false breaks."
+  ],
+  "watchFor": [],
+  "review": null
+}
